@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://dht2s0ccv6v1l"]
+
+[ext_resource type="Script" path="res://manipulable_hand_area.gd" id="1_dbyry"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_5grvk"]
+plane = Plane(0, 0, 1, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0s7bu"]
+shading_mode = 0
+albedo_color = Color(0.498039, 0.498039, 0.498039, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_pg0as"]
+size = Vector2(6, 2)
+
+[node name="HandArea" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+script = ExtResource("1_dbyry")
+
+[node name="AllArea" type="Area3D" parent="."]
+collision_mask = 0
+input_ray_pickable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AllArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.1)
+shape = SubResource("WorldBoundaryShape3D_5grvk")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_overlay = SubResource("StandardMaterial3D_0s7bu")
+mesh = SubResource("QuadMesh_pg0as")
+
+[connection signal="input_event" from="AllArea" to="." method="_on_all_area_input_event"]
+[connection signal="mouse_exited" from="AllArea" to="." method="_on_all_area_mouse_exited"]

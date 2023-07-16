@@ -1,0 +1,249 @@
+
+
+class_name IGameServer
+
+# 何らかの事情でゲームを強制終了する時のシグナル
+signal recieved_end(msg)
+# func _on_GameServer_recieved_end(msg:String)->void:
+
+# 1ターン目の情報を受信した時のシグナル
+signal recieved_first_data(first_data : FirstData)
+# func _on_GameServer_recieved_first_data(data:FirstData)->void:
+
+signal recieved_combat_result(data : CombatData)
+# func _on_GameServer_recieved_combat_result(data:CombatData)->void:
+signal recieved_recovery_result(data : RecoveryData)
+# func _on_GameServer_recieved_recovery_result(data:RecoveryData)->void:
+
+signal recieved_complete_board(data)
+# func _on_GameServer_recieved_complete_board(data:CompleteData)->void:
+
+
+enum Phase {GAME_END = -1,COMBAT = 0,RECOVERY = 1}
+
+
+class PrimaryData:
+	var my_deck_list : PackedInt32Array
+	var rival_deck_list : PackedInt32Array
+	var my_name:String
+	var rival_name:String
+	var deck_regulation : RegulationData.DeckRegulation
+	var match_regulation : RegulationData.MatchRegulation
+
+	func _init(name:String,deck:PackedInt32Array,rname:String,rdeck:PackedInt32Array,
+			dr:RegulationData.DeckRegulation,mr:RegulationData.MatchRegulation):
+		my_deck_list = deck
+		rival_deck_list = rdeck
+		my_name = name
+		rival_name = rname
+		deck_regulation = dr
+		match_regulation = mr
+
+
+class FirstData:
+	class PlayerData:
+		var hand : PackedInt32Array # of int
+		var life : int
+		var time : float # thinking time
+		var initial : Array[EffectLog]	# デッキアビリティ
+		var start : Array[EffectLog]	# 開始時効果
+		
+		func _init(h : PackedInt32Array,l : int,t : float):
+			hand = h
+			life = l
+			time = t
+
+	var myself:PlayerData
+	var rival:PlayerData
+
+	func _init(p1:PlayerData,p2:PlayerData):
+		myself = p1
+		rival = p2
+
+
+class CombatData:
+	var round_count : int
+	var next_phase : Phase
+
+	class PlayerData:
+		var hand : PackedInt32Array
+		var select : int
+		
+		var before : Array[EffectLog]
+		var moment : Array[EffectLog]
+		var result : Array[EffectFragment]
+		var after : Array[EffectLog]
+		var end : Array[EffectLog]
+		var start : Array[EffectLog]
+		
+		var damage:int
+		var life:int
+		var time:float # remain time
+		
+		func _init(h,s,e1,e2,r,e3,e4,e0,d,l,t):
+			hand = h
+			select = s
+			before = e1
+			moment = e2
+			result = r
+			after = e3
+			end = e4
+			start = e0
+			
+			damage = d
+			life = l
+			time = t
+
+	var myself:PlayerData
+	var rival:PlayerData
+	
+	func _init(rc:int,np:Phase,p1:PlayerData,p2:PlayerData):
+		round_count = rc
+		next_phase = np
+		myself = p1
+		rival = p2
+
+
+class RecoveryData:
+	var round_count : int
+	var phase : int
+
+	class PlayerData:
+		var hand : PackedInt32Array
+		var select : int
+		
+		var start : Array[EffectLog]
+
+		var draw:PackedInt32Array
+		var damage:int
+		var life:int
+		var time:float # remain time
+		
+		func _init(h,s,e0,dc,d,l,t):
+			hand = h
+			select = s
+			start = e0
+			draw = dc
+			damage = d
+			life = l
+			time = t
+
+	var myself:PlayerData
+	var rival:PlayerData
+	
+	func _init(rc:int,p:int,p1:PlayerData,p2:PlayerData):
+		round_count = rc
+		phase = p
+		myself = p1
+		rival = p2
+
+
+enum EffectSourceType {
+	SKILL = 0,
+	STATE = 1,
+	ABILITY = 2,
+}
+
+class EffectLog:
+	var type : EffectSourceType
+	var id : int
+	var priority : int
+	var fragment : Array[EffectFragment]
+	
+	func _init(t,i,p,f):
+		type = t
+		id = i
+		priority = p
+		fragment = f
+
+
+enum EffectFragmentType {
+	DAMAGE,			# [damage : int,block : int]
+	INITIATIVE,		# initiative : bool
+	CHANGE_STATS,	# [card_id : int,power : int,hit : int,block : int]
+	DRAW_CARD,		# card_id : int
+	DISCARD,		# card_id : int
+	BOUNCE_CARD,	# [card_id : int,position : int]
+	
+	CREATE_STATE,	# [state_id : int,card_id:int,skill_index:int,state_index:int,param : Array
+	UPDATE_STATE,	# [state_id : int,param : Array]
+	DELETE_STATE,	# state_id : int
+	
+	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
+	
+	PERFORMANCE,
+}
+
+class EffectFragment:
+	var type : EffectFragmentType
+	var opponent : bool
+	var data
+	var passive : Array[PassiveLog]
+
+
+class PassiveLog:
+	var opponent : bool
+	var state_id : int
+	var parameter : Array
+
+
+
+ # 初期データ（このゲームのルールパラメータとかマッチング時に提出したお互いのデータ）
+ # インターフェイスを利用する側はこれが有効になった状態（マッチングが完了した状態）で渡される
+func _get_primary_data() -> PrimaryData:
+	return null
+	
+
+# ゲーム開始準備完了を送信
+# これ以後、サーバからrecieved_first_data,recieved_XXX_resultが発生する
+func _send_ready():
+	pass
+
+#
+func _send_combat_select(_round_count:int,_index:int,_hands_order:PackedInt32Array = []):
+	pass
+#
+func _send_recovery_select(_round_count:int,_index:int,_hands_order:PackedInt32Array = []):
+	pass
+
+# 即時ゲーム終了（降参）を送信
+func _send_surrender():
+	pass
+
+
+
+
+class CompleteData:
+	var round_count : int
+	var next_phase : int
+
+	class PlayerData:
+		var hand:PackedInt32Array
+		var played:PackedInt32Array
+		var discard:PackedInt32Array
+		var stock:int
+		var life:int
+		var damage:int
+		var states:Array # of Array [id,data]
+		var affected_list:Array # CardData.Stats
+		var additional_deck:PackedInt32Array
+		
+		func _init(hc,pc,dc,s,l,d,st,al,ad):
+			hand = hc
+			played = pc
+			discard = dc
+			stock = s
+			life = l
+			damage = d
+			states = st
+			affected_list = al
+			additional_deck = ad
+
+	var myself:PlayerData
+	var rival:PlayerData
+	
+	func _init(rc,np,m,r):
+		round_count = rc
+		next_phase = np
+		myself = m
+		rival = r

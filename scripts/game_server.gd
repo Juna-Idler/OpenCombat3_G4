@@ -71,7 +71,7 @@ class CombatData:
 		
 		var before : Array[EffectLog]
 		var moment : Array[EffectLog]
-		var result : Array[EffectFragment]
+		var result : EffectLog
 		var after : Array[EffectLog]
 		var end : Array[EffectLog]
 		var start : Array[EffectLog]
@@ -80,7 +80,9 @@ class CombatData:
 		var life:int
 		var time:float # remain time
 		
-		func _init(h,s,e1,e2,r,e3,e4,e0,d,l,t):
+		func _init(h:PackedInt32Array,s:int,
+				e1: Array[EffectLog],e2: Array[EffectLog],r:EffectLog,e3: Array[EffectLog],e4: Array[EffectLog],e0: Array[EffectLog],
+				d:int,l:int,t:float):
 			hand = h
 			select = s
 			before = e1
@@ -106,24 +108,25 @@ class CombatData:
 
 class RecoveryData:
 	var round_count : int
-	var phase : int
+	var phase : Phase
+	var repeat : int
 
 	class PlayerData:
 		var hand : PackedInt32Array
 		var select : int
 		
 		var start : Array[EffectLog]
+		var result : EffectLog
 
-		var draw:PackedInt32Array
 		var damage:int
 		var life:int
 		var time:float # remain time
 		
-		func _init(h,s,e0,dc,d,l,t):
+		func _init(h:PackedInt32Array,s:int,e0:Array[EffectLog],r:EffectLog,d:int,l:int,t:float):
 			hand = h
 			select = s
 			start = e0
-			draw = dc
+			result = r
 			damage = d
 			life = l
 			time = t
@@ -131,17 +134,19 @@ class RecoveryData:
 	var myself:PlayerData
 	var rival:PlayerData
 	
-	func _init(rc:int,p:int,p1:PlayerData,p2:PlayerData):
+	func _init(rc:int,p:Phase,rp:int,p1:PlayerData,p2:PlayerData):
 		round_count = rc
 		phase = p
+		repeat = rp
 		myself = p1
 		rival = p2
 
 
 enum EffectSourceType {
-	SKILL = 0,
-	STATE = 1,
-	ABILITY = 2,
+	SYSTEM_PROCESS = 0,
+	SKILL = 1,
+	STATE = 2,
+	ABILITY = 3,
 }
 
 class EffectLog:

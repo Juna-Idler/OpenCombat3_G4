@@ -60,7 +60,7 @@ class IPlayer:
 
 
 	
-	func _get_caard_factory() -> ICardFactory:
+	func _get_card_factory() -> ICardFactory:
 		return null
 		
 	
@@ -91,8 +91,6 @@ class IPlayer:
 	func _get_damage() -> int:
 		return 0
 
-	func _get_draw() -> PackedInt32Array:
-		return PackedInt32Array()
 
 
 	func _combat_start(_index : int) -> void:
@@ -103,9 +101,6 @@ class IPlayer:
 	func _get_link_color() -> CatalogData.CardColors:
 		return CatalogData.CardColors.NOCOLOR
 
-	func _has_initiative() -> bool:
-		return false
-
 
 	func _get_current_power() -> int:
 		return 0
@@ -114,7 +109,10 @@ class IPlayer:
 	func _get_current_block() -> int:
 		return 0
 
-	func _get_card_stats(_id) -> PackedInt32Array:
+	func _has_initiative() -> bool:
+		return false
+
+	func _get_card_stats(_id:int) -> PackedInt32Array:
 		return [0,0,0]
 
 
@@ -123,14 +121,15 @@ class IPlayer:
 
 	func _combat_end() -> void:
 		return
-		
+	
+	#ダメージを受けたときの回復前ドロー挙動
+	func _supply() -> IGameServer.EffectLog:
+		return null
 
+	#ダメージを受けたときの回復挙動
+	func _recover(_index : int) -> IGameServer.EffectLog:
+		return null
 
-	func _recover(_index : int) -> void:
-		return
-
-	func _no_recover() -> void:
-		return
 		
 	func _is_recovery() -> bool:
 		return true
@@ -140,55 +139,60 @@ class IPlayer:
 		return
 
 
-	func _reset_select() -> void:
-		return
 
-
-
-
+	func _start_effect_log_temporary() -> Array[IGameServer.EffectLog]:
+		return []
+	func _before_effect_log_temporary() -> Array[IGameServer.EffectLog]:
+		return []
+	func _moment_effect_log_temporary() -> Array[IGameServer.EffectLog]:
+		return []
+	func _after_effect_log_temporary() -> Array[IGameServer.EffectLog]:
+		return []
+	func _end_effect_log_temporary() -> Array[IGameServer.EffectLog]:
+		return []
 
 #	IGameServer.EffectFragment
 
 #	DAMAGE,			# [damage : int,block : int]
-	func _add_damage(_damage: int) -> IGameServer.EffectFragment:
+	func _add_damage(_damage: int,_opponent : bool = true) -> IGameServer.EffectFragment:
 		return null
 		
 #	INITIATIVE,		# initiative : bool
-	func _set_initiative(_initiative : bool) -> IGameServer.EffectFragment:
+	func _set_initiative(_initiative : bool,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 		
 #	CHANGE_STATS,	# [card_id : int,power : int,hit : int,block : int]
-	func _change_card_stats(_card : int,_stats : PackedInt32Array) -> IGameServer.EffectFragment:
+	func _change_card_stats(_card : int,_stats : PackedInt32Array,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	
 #	DRAW_CARD,		# card_id : int
-	func _draw_card() -> IGameServer.EffectFragment:
+	func _draw_card(_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 		
 #	DISCARD,		# card_id : int
-	func _discard_card(_card : int) -> IGameServer.EffectFragment:
+	func _discard_card(_card : int,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 		
 #	BOUNCE_CARD,	# [card_id : int,position : int]
-	func _bounce_card(_card : int,_position : int) -> IGameServer.EffectFragment:
+	func _bounce_card(_card : int,_position : int,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 
 
 #	CREATE_STATE,	# [state_id : int,opponent_source : bool,data_id : int,param : Array]
-	func _create_state(_factory : ICardFactory,_data_id : int,_param : Array) -> IGameServer.EffectFragment:
+	func _create_state(_factory : ICardFactory,_data_id : int,_param : Array,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	
 #	UPDATE_STATE,	# [state_id : int,param : Array]
-	func _update_state(_state : IState,_param:Array) -> IGameServer.EffectFragment:
+	func _update_state(_state : IState,_param:Array,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	
 #	DELETE_STATE,	# state_id : int
-	func _delete_state(_state : IState) -> IGameServer.EffectFragment:
+	func _delete_state(_state : IState,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 
 
 #	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
-	func _create_card(_factory : ICardFactory , _data_id:int,_changes : Dictionary) -> IGameServer.EffectFragment:
+	func _create_card(_factory : ICardFactory , _data_id:int,_changes : Dictionary,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 
 
@@ -197,27 +201,27 @@ class IEffect:
 
 	func _before_priority() -> Array:
 		return []
-	func _process_before(_index : int,_priority : int,
-			_myself : IPlayer,_rival : IPlayer) -> void:
-		pass
+	func _before_effect(_index : int,_priority : int,
+			_myself : IPlayer,_rival : IPlayer) -> IGameServer.EffectLog:
+		return null
 		
-	func _engaged_priority() -> Array:
+	func _moment_priority() -> Array:
 		return []
-	func _process_engaged(_index : int,_priority : int,situation : int,
-			_myself : IPlayer,_rival : IPlayer) -> int:
-		return situation
+	func _moment_effect(_index : int,_priority : int,
+			_myself : IPlayer,_rival : IPlayer) -> IGameServer.EffectLog:
+		return null
 		
 	func _after_priority() -> Array:
 		return []
-	func _process_after(_index : int,_priority : int,_situation : int,
-			_myself : IPlayer,_rival : IPlayer) -> void:
-		pass
+	func _after_effect(_index : int,_priority : int,
+			_myself : IPlayer,_rival : IPlayer) -> IGameServer.EffectLog:
+		return null
 		
 	func _end_priority() -> Array:
 		return []
-	func _process_end(_index : int,_priority : int,_situation : int,
-			_myself : IPlayer,_rival : IPlayer) -> void:
-		pass
+	func _end_effect(_index : int,_priority : int,
+			_myself : IPlayer,_rival : IPlayer) -> IGameServer.EffectLog:
+		return null
 
 
 
@@ -243,9 +247,9 @@ class IState extends IEffect:
 		
 	func _start_priority() -> Array:
 		return []
-	func _process_start(_index : int,_priority : int,
-			_myself : IPlayer,_rival : IPlayer) -> void:
-		pass
+	func _start_effect(_index : int,_priority : int,
+			_myself : IPlayer,_rival : IPlayer) -> IGameServer.EffectLog:
+		return null
 		
 
 class BasicState extends IState:

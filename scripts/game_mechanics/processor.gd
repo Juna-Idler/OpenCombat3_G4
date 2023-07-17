@@ -1,13 +1,12 @@
 
 class_name GameProcessor
 
-enum  Phase {GAME_END = -1,COMBAT = 0,RECOVERY = 1}
 
 var round_count : int
-var phase : int
+var phase : IGameServer.Phase
+var recovery_count : int
 var player1 : MechanicsData.IPlayer
 var player2 : MechanicsData.IPlayer
-
 
 
 class EffectOrder:
@@ -33,7 +32,7 @@ func _init():
 
 func standby(p1 : MechanicsData.IPlayer,p2 : MechanicsData.IPlayer):
 	round_count = 1
-	phase = Phase.COMBAT;
+	phase = IGameServer.Phase.COMBAT;
 	player1 = p1
 	player2 = p2
 
@@ -45,17 +44,33 @@ func reorder_hand2(hand:PackedInt32Array):
 	player2._change_order(hand)
 
 
-func combat(index1 : int,index2 : int) -> void:
-	if phase != Phase.COMBAT:
-		return
+func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
+	if phase != IGameServer.Phase.COMBAT:
+		return null
+	
 	index1 = mini(maxi(0, index1), player1._get_hand().size() - 1);
 	index2 = mini(maxi(0, index2), player2._get_hand().size() - 1);
+
+	player1._start_effect_log_temporary().clear()
+	player1._before_effect_log_temporary().clear()
+	player1._moment_effect_log_temporary().clear()
+	player1._after_effect_log_temporary().clear()
+	player1._end_effect_log_temporary().clear()
+
+	player2._start_effect_log_temporary().clear()
+	player2._before_effect_log_temporary().clear()
+	player2._moment_effect_log_temporary().clear()
+	player2._after_effect_log_temporary().clear()
+	player2._end_effect_log_temporary().clear()
+
+	var p1_hand := player1._get_hand().duplicate()
+	var p2_hand := player2._get_hand().duplicate()
 
 
 	player1._combat_start(index1)
 	player2._combat_start(index2)
 
-	_before_process()
+	_before_effect()
 
 	var situation := player1._get_current_power() - player2._get_current_power();
 	if situation > 0:
@@ -68,65 +83,99 @@ func combat(index1 : int,index2 : int) -> void:
 		player1._set_initiative(false)
 		player2._set_initiative(false)
 
-	_engaged_process()
+	_moment_effect()
 
+	var p1_result := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
+	var p2_result := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
 	if (player1._has_initiative()):
-		player2._add_damage(player1._get_current_hit())
+		p1_result.fragment.append(player2._add_damage(player1._get_current_hit()))
 	if (player2._has_initiative()):
-		player1._add_damage(player2._get_current_hit())
+		p2_result.fragment.append(player1._add_damage(player2._get_current_hit()))
 
-	_after_process()
+	_after_effect()
 
 	var p1fatal := player1._damage_is_fatal()
 	var p2fatal := player2._damage_is_fatal()
 
 	if p1fatal or p2fatal:
-		phase = Phase.GAME_END
-		return
+		phase = IGameServer.Phase.GAME_END
+	else:
+		_end_effect()
+		var p1_draw := player1._draw_card()
+		var p2_draw := player2._draw_card()
+		player1._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,p1_draw))
+		player2._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,p2_draw))
+		
+		player1._combat_end()
+		player2._combat_end()
 
-	_end_process()
-	player1._supply()
-	player2._supply()
+		if player1._is_recovery() and player2._is_recovery():
+			round_count += 1
+			_start_effect()
+		else:
+			phase = IGameServer.Phase.RECOVERY
+			recovery_count = 0
+			if not player1._is_recovery():
+				player1._start_effect_log_temporary().append(player1._supply())
+			if not player2._is_recovery():
+				player2._start_effect_log_temporary().append(player2._supply())
+
+
+	return IGameServer.CombatData.new(round_count,phase,
+			IGameServer.CombatData.PlayerData.new(p1_hand,index1,
+					player1._before_effect_log_temporary(),
+					player1._moment_effect_log_temporary(),
+					p1_result,
+					player1._after_effect_log_temporary(),
+					player1._end_effect_log_temporary(),
+					player1._start_effect_log_temporary(),
+					player1._get_damage(),player1._get_life(),0),
+			IGameServer.CombatData.PlayerData.new(p2_hand,index2,
+					player2._before_effect_log_temporary(),
+					player2._moment_effect_log_temporary(),
+					p2_result,
+					player2._after_effect_log_temporary(),
+					player2._end_effect_log_temporary(),
+					player2._start_effect_log_temporary(),
+					player2._get_damage(),player2._get_life(),0))
 	
-	player1._combat_end()
-	player2._combat_end()
 
+func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
+	recovery_count += 1
+	
+	var p1_hand := player1._get_hand().duplicate()
+	var p2_hand := player2._get_hand().duplicate()
+	
+	player1._start_effect_log_temporary().clear()
+	player2._start_effect_log_temporary().clear()
 
+	var p1_result := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[]) \
+			if player1._is_recovery() else player1._recover(index1)
+	var p2_result := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[]) \
+			if player2._is_recovery() else player2._recover(index2)
+	
 	if player1._is_recovery() and player2._is_recovery():
 		round_count += 1
-#		_start_process()
-		
-	else:
-		phase = Phase.RECOVERY
-
-func recover(index1:int,index2:int):
-	if index1 < 0:
-		player1._no_recover()
-	else:
-		player1._recover(index1)
-	if index2 < 0:
-		player2._no_recover()
-	else:
-		player2._recover(index2)
-		
-	if player1._is_recovery() and player2._is_recovery():
-		round_count += 1
-		phase = Phase.COMBAT
+		phase = IGameServer.Phase.COMBAT
+		_start_effect()
 	elif (((not player1._is_recovery()) and
 			player1._get_hand().size() + player1._get_stock_count() <= 1)
 			or
 			((not player2._is_recovery()) and
 			player2._get_hand().size() + player2._get_stock_count() <= 1)):
-		phase = Phase.GAME_END
+		phase = IGameServer.Phase.GAME_END
 
-func reset_select():
-	player1._reset_select()
-	player2._reset_select()
+	return IGameServer.RecoveryData.new(round_count,phase,recovery_count,
+			IGameServer.RecoveryData.PlayerData.new(p1_hand,index1,
+			player1._start_effect_log_temporary(),p1_result,
+			player1._get_damage(),player1._get_life(),0),
+			IGameServer.RecoveryData.PlayerData.new(p2_hand,index2,
+			player2._start_effect_log_temporary(),p2_result,
+			player2._get_damage(),player2._get_life(),0))
 
 
-
-func _before_process():
-	var effect_order := []
+func _before_effect():
+	var effect_order : Array[EffectOrder] = []
 	for s in player1._get_states():
 		for p in s._before_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
@@ -134,109 +183,115 @@ func _before_process():
 		for p in s._before_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 	
+	var p1_color := player1._get_playing_card().data.color
+	var p2_color := player2._get_playing_card().data.color
 	var p1_link_color := player1._get_link_color()
 	var p2_link_color := player2._get_link_color()
 	for s in player1._get_playing_card().skills:
-		if s._get_skill().test_condition(player2._get_playing_card().data.color,p1_link_color):
-			var priority = s._before_priority()
-			for p in priority:
+		if s._get_skill().test_condition(p2_color,p1_link_color):
+			for p in s._before_priority():
 				effect_order.append(EffectOrder.new(s,p,player1,player2))
 	for s in player2._get_playing_card().skills:
-		if s._get_skill().test_condition(player1._get_playing_card().data.color,p2_link_color):
-			var priority = s._before_priority()
-			for p in priority:
+		if s._get_skill().test_condition(p1_color,p2_link_color):
+			for p in s._before_priority():
 				effect_order.append(EffectOrder.new(s,p,player2,player1))
 	effect_order.sort_custom(EffectOrder.custom_compare)
+	
 	for s in effect_order:
-		s.effect._process_before(s.index,s.priority,s.myself,s.rival)
+		s.myself._before_effect_log_temporary().append(
+				s.effect._before_effect(s.index,s.priority,s.myself,s.rival))
 
 
-func _engaged_process():
-	var effect_order := []
-	for i in player1._get_states().size():
-		var s := player1._get_states()[i] as MechanicsData.IState
-		for p in s._engaged_priority():
+func _moment_effect():
+	var effect_order : Array[EffectOrder] = []
+	for s in player1._get_states():
+		for p in s._moment_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for i in player2._get_states().size():
-		var s := player2._get_states()[i] as MechanicsData.IState
-		for p in s._engaged_priority():
+	for s in player2._get_states():
+		for p in s._moment_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
-
+	
+	var p1_color := player1._get_playing_card().data.color
+	var p2_color := player2._get_playing_card().data.color
 	var p1_link_color := player1._get_link_color()
 	var p2_link_color := player2._get_link_color()
-	for i in player1._get_playing_card().data.skills.size():
-		var s := player1._get_playing_card().skills[i] as MechanicsData.ISkill
-		if s._get_skill().test_condition(player2._get_playing_card().data.color,p1_link_color):
-			var priority = s._engaged_priority()
-			for p in priority:
+	for s in player1._get_playing_card().skills:
+		if s._get_skill().test_condition(p2_color,p1_link_color):
+			for p in s._moment_priority():
 				effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for i in player2._get_playing_card().data.skills.size():
-		var s := player2._get_playing_card().skills[i] as MechanicsData.ISkill
-		if s._get_skill().test_condition(player1._get_playing_card().data.color,p2_link_color):
-			var priority = s._engaged_priority()
-			for p in priority:
+	for s in player2._get_playing_card().skills:
+		if s._get_skill().test_condition(p1_color,p2_link_color):
+			for p in s._moment_priority():
 				effect_order.append(EffectOrder.new(s,p,player2,player1))
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
-		s.effect._process_engaged(s.index,s.priority,s.myself,s.rival)
+		s.myself._moment_effect_log_temporary().append(
+				s.effect._moment_effect(s.index,s.priority,s.myself,s.rival))
 
 
-func _after_process():
-	var effect_order := []
-	for i in player1._get_states().size():
-		var s := player1._get_states()[i] as MechanicsData.IState
+func _after_effect():
+	var effect_order : Array[EffectOrder] = []
+	for s in player1._get_states():
 		for p in s._after_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for i in player2._get_states().size():
-		var s := player2._get_states()[i] as MechanicsData.IState
+	for s in player2._get_states():
 		for p in s._after_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 
+	var p1_color := player1._get_playing_card().data.color
+	var p2_color := player2._get_playing_card().data.color
 	var p1_link_color := player1._get_link_color()
 	var p2_link_color := player2._get_link_color()
-	for i in player1._get_playing_card().data.skills.size():
-		var s := player1._get_playing_card().skills[i] as MechanicsData.ISkill
-		if s._get_skill().test_condition(player2._get_playing_card().data.color,p1_link_color):
-			var priority = s._after_priority()
-			for p in priority:
+	for s in player1._get_playing_card().skills:
+		if s._get_skill().test_condition(p2_color,p1_link_color):
+			for p in s._after_priority():
 				effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for i in player2._get_playing_card().data.skills.size():
-		var s := player2._get_playing_card().skills[i] as MechanicsData.ISkill
-		if s._get_skill().test_condition(player1._get_playing_card().data.color,p2_link_color):
-			var priority = s._after_priority()
-			for p in priority:
+	for s in player2._get_playing_card().skills:
+		if s._get_skill().test_condition(p1_color,p2_link_color):
+			for p in s._after_priority():
 				effect_order.append(EffectOrder.new(s,p,player2,player1))
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
-		s.effect._process_after(s.index,s.priority,s.situation,s.myself,s.rival)
+		s.myself._after_effect_log_temporary().append(
+				s.effect._after_effect(s.index,s.priority,s.myself,s.rival))
 
 
-func _end_process():
-	var effect_order := []
-	for i in player1._get_states().size():
-		var s := player1._get_states()[i] as MechanicsData.IState
+func _end_effect():
+	var effect_order : Array[EffectOrder] = []
+	for s in player1._get_states():
 		for p in s._end_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for i in player2._get_states().size():
-		var s := player2._get_states()[i] as MechanicsData.IState
+	for s in player2._get_states():
 		for p in s._end_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 	
+	var p1_color := player1._get_playing_card().data.color
+	var p2_color := player2._get_playing_card().data.color
 	var p1_link_color := player1._get_link_color()
 	var p2_link_color := player2._get_link_color()
-	for i in player1._get_playing_card().data.skills.size():
-		var s := player1._get_playing_card().skills[i] as MechanicsData.ISkill
-		if s._get_skill().test_condition(player2._get_playing_card().data.color,p1_link_color):
-			var priority = s._end_priority()
-			for p in priority:
+	for s in player1._get_playing_card().skills:
+		if s._get_skill().test_condition(p2_color,p1_link_color):
+			for p in s._end_priority():
 				effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for i in player2._get_playing_card().data.skills.size():
-		var s := player2._get_playing_card().skills[i] as MechanicsData.ISkill
-		if s._get_skill().test_condition(player1._get_playing_card().data.color,p2_link_color):
-			var priority = s._end_priority()
-			for p in priority:
+	for s in player2._get_playing_card().skills:
+		if s._get_skill().test_condition(p1_color,p2_link_color):
+			for p in s._end_priority():
 				effect_order.append(EffectOrder.new(s,p,player2,player1,))
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
-		s.effect._process_end(s.index,s.priority,s.situation,s.myself,s.rival)
+		s.myself._end_effect_log_temporary().append(
+				s.effect._end_effect(s.index,s.priority,s.myself,s.rival))
 
+
+func _start_effect():
+	var effect_order : Array[EffectOrder] = []
+	for s in player1._get_states():
+		for p in s._start_priority():
+			effect_order.append(EffectOrder.new(s,p,player1,player2))
+	for s in player2._get_states():
+		for p in s._start_priority():
+			effect_order.append(EffectOrder.new(s,p,player2,player1))
+	effect_order.sort_custom(EffectOrder.custom_compare)
+	for s in effect_order:
+		s.myself._start_effect_log_temporary().append(
+				s.effect._start_effect(s.index,s.priority,s.myself,s.rival))

@@ -155,7 +155,7 @@ class EffectLog:
 	var priority : int
 	var fragment : Array[EffectFragment]
 	
-	func _init(t,i,p,f):
+	func _init(t : EffectSourceType,i: int,p: int,f: Array[EffectFragment]):
 		type = t
 		id = i
 		priority = p

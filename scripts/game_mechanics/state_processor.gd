@@ -1,24 +1,31 @@
 
 class_name StateProcessor
 
+static func create_log(id : int, priority:int,fragments :Array[IGameServer.EffectFragment]) -> IGameServer.EffectLog:
+		return IGameServer.EffectLog.new(IGameServer.EffectSourceType.STATE,id,priority,fragments)
 
 
 class Reinforce extends MechanicsData.BasicState:
-	const STATE_ID = 1
+	const DATA_ID = 1
 	const PRIORITY = 1
-	var _stats : MechanicsData.Stats
-	func _init(stats : MechanicsData.Stats,container : Array):
-		super(container)
-		_stats = stats
+	var _stats : PackedInt32Array
+	
+	func _get_data_id() -> int:
+		return DATA_ID
+	
+	func _init(match_id:int,param : Array,_attached : IPlayer,_opponent : IPlayer):
+		super(match_id)
+		_stats = param[0]
 
 	func _before_priority() -> Array:
 		return [PRIORITY]
-	func _process_before(index : int,_priority : int,
-			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> void:
-		var affected := myself._get_playing_card().affected
-		affected.add(_stats)
-		myself._append_effect_log(index,MechanicsData.EffectTiming.BEFORE,PRIORITY,true)
-		remove_self()
+	func _before_effect(_priority : int,
+			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
+		var stats := myself._get_card_stats(myself._get_playing_card_id())
+		stats[0] += _stats[0]
+		stats[1] += _stats[1]
+		stats[2] += _stats[2]
+		var fragment := myself._change_card_stats(myself._get_playing_card_id(),stats,false)
+		var fragment2 := myself._delete_state(self,false)
+		return StateProcessor.create_log(_match_id,PRIORITY,[fragment,fragment2])
 
-	func _serialize() -> Array: # [id,fit_data]
-		return [STATE_ID,_stats.to_array()]

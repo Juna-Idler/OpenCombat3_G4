@@ -16,6 +16,7 @@ const skill_behaviors : Array = [
 ]
 const state_behaviors : Array = [
 	null,
+	StateProcessor.Reinforce,
 ]
 
 var _card_catalog : CardCatalog
@@ -33,5 +34,5 @@ func _create(iid : int,data_id : int) -> Card:
 func _create_skill(skill : CatalogData.CardSkill) -> ISkill:
 	return skill_behaviors[skill.data.id].new(skill)
 	
-func _create_state(data_id : int,param : Array,attached : IPlayer,opponent : IPlayer) -> IState:
-	return state_behaviors[data_id].new(param,attached,opponent)
+func _create_state(match_id:int,data_id : int,param : Array,attached : IPlayer,opponent : IPlayer) -> IState:
+	return state_behaviors[data_id].new(match_id,param,attached,opponent)

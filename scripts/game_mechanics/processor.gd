@@ -103,8 +103,8 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 		_end_effect()
 		var p1_draw := player1._draw_card()
 		var p2_draw := player2._draw_card()
-		player1._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,p1_draw))
-		player2._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,p2_draw))
+		player1._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,[p1_draw]))
+		player2._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,[p2_draw]))
 		
 		player1._combat_end()
 		player2._combat_end()
@@ -199,7 +199,7 @@ func _before_effect():
 	
 	for s in effect_order:
 		s.myself._before_effect_log_temporary().append(
-				s.effect._before_effect(s.index,s.priority,s.myself,s.rival))
+				s.effect._before_effect(s.priority,s.myself,s.rival))
 
 
 func _moment_effect():
@@ -226,7 +226,7 @@ func _moment_effect():
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
 		s.myself._moment_effect_log_temporary().append(
-				s.effect._moment_effect(s.index,s.priority,s.myself,s.rival))
+				s.effect._moment_effect(s.priority,s.myself,s.rival))
 
 
 func _after_effect():
@@ -253,7 +253,7 @@ func _after_effect():
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
 		s.myself._after_effect_log_temporary().append(
-				s.effect._after_effect(s.index,s.priority,s.myself,s.rival))
+				s.effect._after_effect(s.priority,s.myself,s.rival))
 
 
 func _end_effect():
@@ -280,7 +280,7 @@ func _end_effect():
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
 		s.myself._end_effect_log_temporary().append(
-				s.effect._end_effect(s.index,s.priority,s.myself,s.rival))
+				s.effect._end_effect(s.priority,s.myself,s.rival))
 
 
 func _start_effect():
@@ -294,4 +294,4 @@ func _start_effect():
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
 		s.myself._start_effect_log_temporary().append(
-				s.effect._start_effect(s.index,s.priority,s.myself,s.rival))
+				s.effect._start_effect(s.priority,s.myself,s.rival))

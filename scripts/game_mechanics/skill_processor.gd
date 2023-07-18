@@ -1,137 +1,142 @@
 
 class_name SkillProcessor
 
+static func create_log(index : int, priority:int,fragments :Array[IGameServer.EffectFragment]) -> IGameServer.EffectLog:
+		return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SKILL,index,priority,fragments)
 
 class Reinforce extends MechanicsData.BasicSkill:
 	const PRIORITY = 1
-	func _init(data : CatalogData.CardSkill).(data):
+	func _init(data : CatalogData.CardSkill):
+		super(data)
 		pass
 	
 	func _before_priority() -> Array:
 		return [PRIORITY]
-	func _process_before(index : int,_priority : int,
-			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> void:
-		var affected := myself._get_playing_card().affected
-		var effect := _skill.parameter[0].data as CatalogData.Stats
-		affected.power += effect.power
-		affected.hit += effect.hit
-		affected.block += effect.block
-		myself._append_effect_log(index,MechanicsData.EffectTiming.BEFORE,PRIORITY,true)
+	func _before_effect(_priority : int,
+			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
+
+		var effect := _skill.parameter[0].data as PackedInt32Array
+		var stats := myself._get_card_stats(myself._get_playing_card_id())
+		stats[0] += effect[0]
+		stats[1] += effect[1]
+		stats[2] += effect[2]
+		var fragment := myself._change_card_stats(myself._get_playing_card_id(),stats,false)
+		return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
 
 
 class Pierce extends MechanicsData.BasicSkill:
 	const PRIORITY = 1
-	func _init(data : CatalogData.CardSkill).(data):
+	func _init(data : CatalogData.CardSkill):
+		super(data)
 		pass
 	
 	func _after_priority() -> Array:
 		return [PRIORITY]
-	func _process_after(index : int,_priority : int,situation : int,
-			myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> void:
-		var damage := 0
-		if situation > 0:
-# warning-ignore:integer_division
-			damage = (rival._get_current_block() + 1) / 2
-			rival._add_damage(damage)
-		myself._append_effect_log(index,MechanicsData.EffectTiming.AFTER,PRIORITY,damage)
+	func _after_effect(_priority : int,
+			myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
+		if myself._has_initiative() and not rival._has_initiative():
+			@warning_ignore("integer_division")
+			var damage := (rival._get_current_block() + 1) / 2
+			var fragment := rival._add_damage(damage,true)
+			return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
+		return SkillProcessor.create_log(_skill.index,PRIORITY,[])
 
 
 class Charge extends MechanicsData.BasicSkill:
 	const PRIORITY = 1
-	func _init(data : CatalogData.CardSkill).(data):
+	func _init(data : CatalogData.CardSkill):
+		super(data)
 		pass
 	
 	func _end_priority() -> Array:
 		return [PRIORITY]
-	func _process_end(index : int,_priority : int,_situation : int,
-			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> void:
-		if myself._is_recovery():
-			var effect := _skill.parameter[0].data as CatalogData.Stats
-			var _state = StateProcessor.Reinforce.new(effect,myself._get_states())
-			myself._append_effect_log(index,MechanicsData.EffectTiming.END,PRIORITY,true)
-		else:
-			myself._append_effect_log(index,MechanicsData.EffectTiming.END,PRIORITY,false)
+	func _end_effect(_priority : int,
+			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
+		if myself._get_damage() == 0:
+			var effect := _skill.parameter[0].data as PackedInt32Array
+			var fragment := myself._create_state(myself._get_card_factory(),StateProcessor.Reinforce.DATA_ID,[effect],false)
+			return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
+		return SkillProcessor.create_log(_skill.index,PRIORITY,[])
 
 
 class Isolate extends MechanicsData.BasicSkill:
 	const PRIORITY = 255
-	func _init(data : CatalogData.CardSkill).(data):
+	func _init(data : CatalogData.CardSkill):
+		super(data)
 		pass
 	
-	func _engaged_priority() -> Array:
+	func _moment_priority() -> Array:
 		return [PRIORITY]
-	func _process_engaged(index : int,_priority : int,_situation : int,
-			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> int:
-		myself._add_damage(1)
-		myself._append_effect_log(index,MechanicsData.EffectTiming.ENGAGED,PRIORITY,true)
-		return 0
+	func _moment_effect(_priority : int,
+			myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
+		var fragments : Array[IGameServer.EffectFragment] = []
+		fragments.append(myself._add_damage(1,false))
+		fragments.append(myself._set_initiative(false,false))
+		fragments.append(rival._set_initiative(false,true))
+		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
 
 class Absorb extends MechanicsData.BasicSkill:
 	const PRIORITY = 1
-	func _init(data : CatalogData.CardSkill).(data):
+	func _init(data : CatalogData.CardSkill):
+		super(data)
 		pass
 	
 	func _before_priority() -> Array:
 		return [PRIORITY]
-	func _process_before(index : int,_priority : int,
-			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> void:
+	func _before_effect(_priority : int,
+			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 		var level := 0
-		var data := -1
-		for i in myself._get_hand().size():
-			var card := myself._get_deck_list()[myself._get_hand()[i]] as MechanicsData.PlayerCard
+		var fragments : Array[IGameServer.EffectFragment] = []
+		for h in myself._get_hand():
+			var card := myself._get_deck_list()[h]
 			if card.data.color == _skill.parameter[0].data:
 				level = card.data.level
-				myself._discard_card(i)
-				myself._draw_card()
-				data = i
+				fragments.append(myself._discard_card(h))
+				fragments.append(myself._draw_card())
 				break
-		var affected := myself._get_playing_card().affected
-		var effect := _skill.parameter[1].data as CatalogData.Stats
-		affected.power += effect.power * level
-		affected.hit += effect.hit * level
-		affected.block += effect.block * level
-		myself._append_effect_log(index,MechanicsData.EffectTiming.BEFORE,PRIORITY,data)
-	
+
+		var stats := myself._get_card_stats(myself._get_playing_card_id())
+		var effect := _skill.parameter[1].data as PackedInt32Array
+		stats[0] += effect[0] * level
+		stats[1] += effect[1] * level
+		stats[2] += effect[2] * level
+		fragments.append(myself._change_card_stats(myself._get_playing_card_id(),stats,false))
+		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
+
 
 class BlowAway extends MechanicsData.BasicSkill:
 	const PRIORITY = 4
-	func _init(data : CatalogData.CardSkill).(data):
+	func _init(data : CatalogData.CardSkill):
+		super(data)
 		pass
 	
 	func _after_priority() -> Array:
 		return [PRIORITY]
-	func _process_after(index : int,_priority : int,_situation : int,
-			myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> void:
-		var hand_size = rival._get_hand().size()
+	func _after_effect(_priority : int,
+			_myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 		var count := _skill.parameter[0].data as int
-		if hand_size < count:
-			count = hand_size
 
-		var data = []
+		var fragments : Array[IGameServer.EffectFragment] = []
 		for i in count:
-			data.append(rival._get_hand()[0])
-			rival._hand_to_deck_bottom(0)
-			rival._draw_card()
-		myself._append_effect_log(index,MechanicsData.EffectTiming.AFTER,PRIORITY,data)
+			fragments.append(rival._bounce_card(rival._get_hand()[0],0,true))
+			fragments.append(rival._draw_card(true))
+		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
+
 
 class Attract extends MechanicsData.BasicSkill:
 	const PRIORITY = 3
-	func _init(data : CatalogData.CardSkill).(data):
+	func _init(data : CatalogData.CardSkill):
+		super(data)
 		pass
 	
 	func _after_priority() -> Array:
 		return [PRIORITY]
-	func _process_after(index : int,_priority : int,_situation : int,
-			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> void:
-		var hand_size = myself._get_hand().size()
+	func _after_effect(_priority : int,
+			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 		var count := _skill.parameter[0].data as int
-		if hand_size < count:
-			count = hand_size
-		var data = []
+		var fragments : Array[IGameServer.EffectFragment] = []
 		for i in count:
-			data.append(myself._get_hand()[0])
-			myself._hand_to_deck_bottom(0)
-			myself._draw_card()
-		myself._append_effect_log(index,MechanicsData.EffectTiming.AFTER,PRIORITY,data)
-
+			fragments.append(myself._bounce_card(myself._get_hand()[0],0))
+			fragments.append(myself._draw_card())
+		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
 

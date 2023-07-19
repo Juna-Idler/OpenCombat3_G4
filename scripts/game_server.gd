@@ -184,12 +184,23 @@ class EffectFragment:
 	var opponent : bool
 	var data
 	var passive : Array[PassiveLog]
+	
+	func _init(t: EffectFragmentType,o:bool,d,p:Array[PassiveLog]):
+		type = t
+		opponent = o
+		data = d
+		passive = p
 
 
 class PassiveLog:
 	var opponent : bool
 	var state_id : int
 	var parameter : Array
+	
+	func _init(o,sid,p):
+		opponent = o
+		state_id = sid
+		parameter = p
 
 
 

@@ -43,7 +43,7 @@ class ICardFactory:
 
 class IPlayer:
 	
-#	func _add_log(_opponent:bool,_state_id : int,_param : Array) -> void:
+#	func _add_log(log : IGameServer.PassiveLog) -> void:
 #		return
 	signal passive_damaged(damage:int,block:int,_add_log : Callable)
 	signal passive_initiative_changed(new_init:bool,old_init:bool,_add_log : Callable)
@@ -82,15 +82,9 @@ class IPlayer:
 	func _get_states() -> Dictionary:
 		return {}
 
-	func _get_playing_hand() -> PackedInt32Array:
-		return PackedInt32Array()
-
-	func _get_select() -> int:
-		return 0
 
 	func _get_damage() -> int:
 		return 0
-
 
 
 	func _combat_start(_index : int) -> void:
@@ -98,8 +92,10 @@ class IPlayer:
 
 	func _get_playing_card_id() -> int:
 		return -1
+
 	func _get_playing_card() -> Card:
 		return null
+	
 	func _get_link_color() -> CatalogData.CardColors:
 		return CatalogData.CardColors.NOCOLOR
 
@@ -125,12 +121,12 @@ class IPlayer:
 		return
 	
 	#ダメージを受けたときの回復前ドロー挙動
-	func _supply() -> IGameServer.EffectLog:
-		return null
+	func _supply() -> Array[IGameServer.EffectFragment]:
+		return []
 
 	#ダメージを受けたときの回復挙動
-	func _recover(_index : int) -> IGameServer.EffectLog:
-		return null
+	func _recover(_index : int) -> Array[IGameServer.EffectFragment]:
+		return []
 
 		
 	func _is_recovery() -> bool:

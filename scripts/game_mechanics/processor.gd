@@ -116,9 +116,9 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 			phase = IGameServer.Phase.RECOVERY
 			recovery_count = 0
 			if not player1._is_recovery():
-				player1._start_effect_log_temporary().append(player1._supply())
+				player1._start_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player1._supply()))
 			if not player2._is_recovery():
-				player2._start_effect_log_temporary().append(player2._supply())
+				player2._start_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player2._supply()))
 
 
 	return IGameServer.CombatData.new(round_count,phase,
@@ -142,17 +142,27 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 
 func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
 	recovery_count += 1
-	
+
 	var p1_hand := player1._get_hand().duplicate()
 	var p2_hand := player2._get_hand().duplicate()
 	
 	player1._start_effect_log_temporary().clear()
 	player2._start_effect_log_temporary().clear()
 
-	var p1_result := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[]) \
-			if player1._is_recovery() else player1._recover(index1)
-	var p2_result := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[]) \
-			if player2._is_recovery() else player2._recover(index2)
+	var p1_result : IGameServer.EffectLog
+	if player1._is_recovery():
+		index1 = -1
+		p1_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
+	else:
+		index1 = mini(maxi(0, index1), p1_hand.size() - 1);
+		p1_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player1._recover(index1))
+	var p2_result : IGameServer.EffectLog
+	if player2._is_recovery():
+		index2 = -1
+		p2_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
+	else:
+		index2 = mini(maxi(0, index2), p2_hand.size() - 1);
+		p2_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player2._recover(index2))
 	
 	if player1._is_recovery() and player2._is_recovery():
 		round_count += 1

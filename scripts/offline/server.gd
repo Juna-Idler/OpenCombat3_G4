@@ -62,7 +62,7 @@ func _send_ready():
 	_result = _commander._first_select(p2.hand,p1.hand)
 	
 	_emit_time = Time.get_ticks_msec()
-	recieved_combat_result.emit(p1first)
+	recieved_first_data.emit(p1first)
 	_player_time = int(match_regulation.thinking_time * 1000)
 	_delay_time = int(match_regulation.combat_time * 1000) + 1000
 

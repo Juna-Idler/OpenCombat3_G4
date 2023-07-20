@@ -87,7 +87,7 @@ func _load_card_data():
 	var cards = carddata_resource.text.split("\n")
 	for c in cards:
 		var tsv = c.split("\t")
-		var skills = []
+		var skills : Array[CatalogData.CardSkill] = []
 		var skill_texts = tsv[9].split(";")
 		if skill_texts.size() == 1 and skill_texts[0] == "":
 			skill_texts.resize(0)
@@ -128,7 +128,7 @@ func _load_skill_data():
 		var text = tsv[7].replace("\\n","\n")
 
 		var states_strings : PackedStringArray = tsv[6].split(",")
-		var states : Array = []
+		var states : Array[CatalogData.StateData] = []
 		if not (states_strings.size() == 1 and states_strings[0].is_empty()):
 			for i in states_strings:
 				states.append(_state_catalog[int(i)])
@@ -168,7 +168,7 @@ func _load_state_data():
 		var param_type : PackedInt32Array = Array(tsv[4].split(","))
 		var param_name : PackedStringArray = []
 		if not tsv[5].is_empty():
-			param_name = tsv[4].split(",")
+			param_name = tsv[5].split(",")
 		var text = tsv[6].replace("\\n","\n")
 		_state_catalog[id] = CatalogData.StateData.new(id,tsv[1],tsv[3],param_type,param_name,text)
 	
@@ -192,11 +192,13 @@ func _load_state_data():
 
 
 func _load_param_names():
-	var param_names_resource = load("res://card_data/attribute_catalog.txt")
-	var param_names = param_names_resource.text.split("\n")
+	var param_names_resource := preload("res://card_data/param_name_catalog.txt")
+	var param_names := (param_names_resource.text as String).split("\n")
 	_param_names.resize(param_names.size())
 	for s in param_names:
-		var tsv = s.split("\t")
+		var tsv := s.split("\t")
+		if tsv.size() < 3:
+			continue
 		var id := int(tsv[0])
 		_param_names[id] = CatalogData.ParameterName.new(id,tsv[2])
 		

@@ -1,5 +1,4 @@
-ID	STRING_ID	Names
-0	VOID	
-1	INTEGER	
-2	STATS	力,打,防
-3	COLOR	無,赤,緑,青
+0	VOID		なし
+1	INTEGER		整数値と扱われる文字列
+2	STATS	力,打,防	空白で区切られたPHBを頭文字とする整数値文字列
+3	COLOR	無,赤,緑,青	0,1,2,3のいづれかの数字

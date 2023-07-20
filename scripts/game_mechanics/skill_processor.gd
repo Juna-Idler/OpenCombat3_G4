@@ -15,7 +15,7 @@ class Reinforce extends MechanicsData.BasicSkill:
 	func _before_effect(_priority : int,
 			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 
-		var effect := _skill.parameter[0].data as PackedInt32Array
+		var effect := _skill.parameter[0] as PackedInt32Array
 		var stats := myself._get_card_stats(myself._get_playing_card_id())
 		stats[0] += effect[0]
 		stats[1] += effect[1]
@@ -53,7 +53,7 @@ class Charge extends MechanicsData.BasicSkill:
 	func _end_effect(_priority : int,
 			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 		if myself._get_damage() == 0:
-			var effect := _skill.parameter[0].data as PackedInt32Array
+			var effect := _skill.parameter[0] as PackedInt32Array
 			var fragment := myself._create_state(myself._get_card_factory(),StateProcessor.Reinforce.DATA_ID,[effect],false)
 			return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
 		return SkillProcessor.create_log(_skill.index,PRIORITY,[])
@@ -89,14 +89,14 @@ class Absorb extends MechanicsData.BasicSkill:
 		var fragments : Array[IGameServer.EffectFragment] = []
 		for h in myself._get_hand():
 			var card := myself._get_deck_list()[h]
-			if card.data.color == _skill.parameter[0].data:
+			if card.data.color == _skill.parameter[0]:
 				level = card.data.level
 				fragments.append(myself._discard_card(h))
 				fragments.append(myself._draw_card())
 				break
 
 		var stats := myself._get_card_stats(myself._get_playing_card_id())
-		var effect := _skill.parameter[1].data as PackedInt32Array
+		var effect := _skill.parameter[1] as PackedInt32Array
 		stats[0] += effect[0] * level
 		stats[1] += effect[1] * level
 		stats[2] += effect[2] * level
@@ -114,7 +114,7 @@ class BlowAway extends MechanicsData.BasicSkill:
 		return [PRIORITY]
 	func _after_effect(_priority : int,
 			_myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
-		var count := _skill.parameter[0].data as int
+		var count := _skill.parameter[0] as int
 
 		var fragments : Array[IGameServer.EffectFragment] = []
 		for i in count:
@@ -133,7 +133,7 @@ class Attract extends MechanicsData.BasicSkill:
 		return [PRIORITY]
 	func _after_effect(_priority : int,
 			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
-		var count := _skill.parameter[0].data as int
+		var count := _skill.parameter[0] as int
 		var fragments : Array[IGameServer.EffectFragment] = []
 		for i in count:
 			fragments.append(myself._bounce_card(myself._get_hand()[0],0))

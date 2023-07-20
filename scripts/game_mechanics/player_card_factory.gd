@@ -6,13 +6,13 @@ extends MechanicsData.ICardFactory
 
 const skill_behaviors : Array = [
 	null,
-#	SkillProcessor.Reinforce,
-#	SkillProcessor.Pierce,
-#	SkillProcessor.Charge,
-#	SkillProcessor.Isolate,
-#	SkillProcessor.Absorb,
-#	SkillProcessor.BlowAway,
-#	SkillProcessor.Attract,
+	SkillProcessor.Reinforce,
+	SkillProcessor.Pierce,
+	SkillProcessor.Charge,
+	SkillProcessor.Isolate,
+	SkillProcessor.Absorb,
+	SkillProcessor.BlowAway,
+	SkillProcessor.Attract,
 ]
 const state_behaviors : Array = [
 	null,

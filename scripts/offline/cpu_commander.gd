@@ -2,13 +2,13 @@
 class_name ICpuCommander
 
 class Player:
-	var hand : PoolIntArray
-	var played : PoolIntArray
-	var discard : PoolIntArray
+	var hand : PackedInt32Array
+	var played : PackedInt32Array
+	var discard : PackedInt32Array
 	
 	var stock_count : int
 	var life : int
-	var states : Array
+	var states : Dictionary
 	
 	func _init(h,p,d,s,l,st):
 		hand = h
@@ -22,10 +22,10 @@ class Player:
 func _get_commander_name()-> String:
 	return ""
 
-func _set_deck_list(_mydeck : PoolIntArray,_rivaldeck : PoolIntArray):
+func _set_deck_list(_mydeck : PackedInt32Array,_rivaldeck : PackedInt32Array):
 	return
 
-func _first_select(_myhand : PoolIntArray, _rivalhand : PoolIntArray)-> int:
+func _first_select(_myhand : PackedInt32Array, _rivalhand : PackedInt32Array)-> int:
 	return 0
 
 func _combat_select(_myself : Player,_rival : Player)-> int:

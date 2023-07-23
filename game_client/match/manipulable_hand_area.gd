@@ -4,7 +4,7 @@ extends Node3D
 signal clicked(card : Card3D)
 
 
-@export var cards : Array[Card3D]
+var cards : Array[Card3D]
 
 const HAND_AREA_WIDTH := 6.0
 const CARD_WIDTH := 1.0
@@ -31,6 +31,16 @@ func _ready():
 	move_card(1)
 	pass # Replace with function body.
 
+func set_cards(new_cards : Array[Card3D]):
+	for c in cards:
+		if not new_cards.has(c):
+			c.input_event.disconnect(on_card3d_input_event)
+	for c in new_cards:
+		if not cards.has(c):
+			c.input_event.connect(on_card3d_input_event)
+	cards = new_cards
+	align()
+	pass
 
 func align():
 	var hand_count := cards.size()
@@ -39,7 +49,7 @@ func align():
 	if step < CARD_WIDTH + CARD_SPACE:
 		start = step / 10
 		step = (HAND_AREA_WIDTH - CARD_WIDTH - start*2) / (hand_count - 1);
-		start -= HAND_AREA_WIDTH/2
+		start -= (HAND_AREA_WIDTH - CARD_WIDTH)/2
 	_hand_positions.resize(hand_count)
 	for i in range(hand_count):
 		_hand_positions[i] = Vector3(position.x + start + step * i,position.y,0.01 * (i + 1))
@@ -112,6 +122,7 @@ func _on_all_area_input_event(_camera, event, hit_position, _normal, _shape_idx)
 			_drag_card.set_ray_pickable(true)
 			$AllArea.input_ray_pickable = false
 			if _drag_card.position.y >= position.y + CARD_PLAY_MOVE_Y:
+				
 				pass
 			_drag_card = null
 			$MeshInstance3D.material_overlay.albedo_color = Color(0.5,0.5,0.5)

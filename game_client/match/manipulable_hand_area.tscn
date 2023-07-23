@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dht2s0ccv6v1l"]
 
-[ext_resource type="Script" path="res://manipulable_hand_area.gd" id="1_dbyry"]
+[ext_resource type="Script" path="res://game_client/match/manipulable_hand_area.gd" id="1_dbyry"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_5grvk"]
 plane = Plane(0, 0, 1, 0)

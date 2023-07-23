@@ -30,6 +30,8 @@ func set_ray_pickable(enable : bool):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	tween = create_tween()
+	tween.kill()
 	pass # Replace with function body.
 
 

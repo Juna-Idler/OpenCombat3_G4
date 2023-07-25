@@ -78,7 +78,7 @@ func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSki
 				var color := int(skill_params[i])
 				params.append(color)
 				names.append(_param_names[CatalogData.ParamType.COLOR].names[color])
-	var title := data.name + "(" + ",".join(names) + ")"
+	var title := data.name + ("" if names.is_empty() else "(" + ",".join(names) + ")")
 	return CatalogData.CardSkill.new(index,data,condition,params,title)
 		
 

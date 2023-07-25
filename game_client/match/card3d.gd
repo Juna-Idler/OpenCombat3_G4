@@ -14,15 +14,35 @@ var location : int
 
 var card_name : String
 
-var color : int
+var color : CatalogData.CardColors
 var level : int
 var power : int
 var hit : int
 var block : int
 
-var skills : Array # of MatchEffect.IEffect
+var skills : Array[CatalogData.CardSkill]
 
-var picture
+var picture : Texture2D
+
+
+func initialize(id : int,cn : String,
+		c : CatalogData.CardColors,l : int,p : int,h : int,b : int,
+		sk : Array[CatalogData.CardSkill],pict : Texture2D,opponent : bool = false):
+	id_in_deck = id
+	location = 0
+	
+	card_name = cn
+	color = c
+	level = l
+	power = p
+	hit = h
+	block = b
+	skills = sk
+	picture = pict
+	
+	$SubViewport/CardFront.initialize(card_name,c,l,p,h,b,sk,pict,opponent)
+	$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+
 
 
 func set_ray_pickable(enable : bool):
@@ -40,13 +60,14 @@ func _process(_delta):
 	pass
 
 
+
 func _on_area_3d_mouse_entered():
-	$MeshInstance3D.material_override.albedo_color = Color(1,0,0)
+#	$MeshInstance3D.material_override.albedo_color = Color(1,0,0)
 	pass # Replace with function body.
 
 
 func _on_area_3d_mouse_exited():
-	$MeshInstance3D.material_override.albedo_color = Color(1,1,1)
+#	$MeshInstance3D.material_override.albedo_color = Color(1,1,1)
 	pass # Replace with function body.
 
 

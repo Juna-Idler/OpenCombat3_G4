@@ -3,7 +3,7 @@ class_name CatalogData
 
 
 enum CardColors {NOCOLOR = 0,RED = 1,GREEN = 2,BLUE = 3}
-const RGB = [Color(0.5,0.5,0.5),Color(1,0,0),Color(0,0.7,0),Color(0,0,1)]
+const RGB : Array[Color] = [Color(0.5,0.5,0.5),Color(1,0,0),Color(0,0.7,0),Color(0,0,1)]
 
 enum ColorCondition {
 	NOCONDITION = 0,

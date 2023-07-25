@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://41vguxcbj5ix"]
 
 [ext_resource type="Script" path="res://game_client/match/card3d.gd" id="1_gqbhw"]
-[ext_resource type="PackedScene" uid="uid://88s2fwk2lrtx" path="res://game_client/match/card_front.tscn" id="1_ircpo"]
+[ext_resource type="PackedScene" uid="uid://88s2fwk2lrtx" path="res://game_client/card/card_front.tscn" id="1_ircpo"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_63w52"]
 viewport_path = NodePath("SubViewport")
@@ -35,7 +35,8 @@ size = Vector3(1, 1.5, 0.01)
 script = ExtResource("1_gqbhw")
 
 [node name="SubViewport" type="SubViewport" parent="."]
-size = Vector2i(340, 510)
+size = Vector2i(364, 510)
+render_target_clear_mode = 1
 render_target_update_mode = 1
 
 [node name="CardFront" parent="SubViewport" instance=ExtResource("1_ircpo")]

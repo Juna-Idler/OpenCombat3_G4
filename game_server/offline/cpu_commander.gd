@@ -34,3 +34,8 @@ func _combat_select(_myself : Player,_rival : Player)-> int:
 func _recover_select(_myself : Player,_rival : Player)-> int:
 	return 0
 
+
+class ZeroCommander extends ICpuCommander:
+	func _get_commander_name()-> String:
+		return "ZeroCommander"
+		

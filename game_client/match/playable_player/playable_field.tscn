@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://8vwxugps26b7"]
+
+[ext_resource type="Script" path="res://game_client/match/playable_player/playable_field.gd" id="1_dtbyg"]
+[ext_resource type="PackedScene" uid="uid://c3vagp01edafj" path="res://game_client/match/playable_player/manipulable_hand_area.tscn" id="2_1ehc6"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_omqhk"]
+size = Vector2(1, 1.5)
+
+[node name="PlayableField" type="Node3D"]
+script = ExtResource("1_dtbyg")
+
+[node name="HandArea" parent="." instance=ExtResource("2_1ehc6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0.5)
+
+[node name="MeshInstance3D" parent="HandArea" index="1"]
+visible = true
+
+[node name="DeckPosition" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, -2, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="DeckPosition"]
+mesh = SubResource("QuadMesh_omqhk")
+
+[node name="CardHolder" type="Node3D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[editable path="HandArea"]

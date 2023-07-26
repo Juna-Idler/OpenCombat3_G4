@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://bwerycwtb56bb"]
+
+[ext_resource type="PackedScene" uid="uid://c1jb7cip5c33x" path="res://game_client/match/player/field/hand_area.tscn" id="1_agw5q"]
+[ext_resource type="Script" path="res://game_client/match/player/field/playable_hand_area.gd" id="2_1d6nt"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_qjtgk"]
+plane = Plane(0, 0, 1, 0)
+
+[node name="HandArea" instance=ExtResource("1_agw5q")]
+script = ExtResource("2_1d6nt")
+
+[node name="AllArea" type="Area3D" parent="." index="1"]
+collision_mask = 0
+input_ray_pickable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AllArea" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.1)
+shape = SubResource("WorldBoundaryShape3D_qjtgk")
+
+[connection signal="input_event" from="AllArea" to="." method="_on_all_area_input_event"]
+[connection signal="mouse_exited" from="AllArea" to="." method="_on_all_area_mouse_exited"]

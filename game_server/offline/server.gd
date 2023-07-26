@@ -130,7 +130,6 @@ func _send_recovery_select(round_count:int,index:int,hands_order:PackedInt32Arra
 				_player_time = 0
 	
 	var index2 = _result
-# warning-ignore:integer_division
 	if _processor.round_count != round_count:
 		return
 	if _processor.phase != Phase.RECOVERY:
@@ -143,9 +142,6 @@ func _send_recovery_select(round_count:int,index:int,hands_order:PackedInt32Arra
 	recovery_result.myself.time = _player_time / 1000.0
 	recovery_result.rival.time = -1
 
-
-#	var p2update := UpdateData.new(_processor.round_count,_processor.phase,-_processor.situation,p2,p1)
-	_processor.reset_select()
 	
 	if _processor.phase == Phase.COMBAT:
 		_result = _commander._combat_select(OfflineServer.create_commander_player(_processor.player2),

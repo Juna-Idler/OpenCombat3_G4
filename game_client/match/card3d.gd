@@ -2,6 +2,13 @@ extends Node3D
 
 class_name Card3D
 
+enum CardLocation {
+	STOCK,
+	HAND,
+	COMBAT,
+	PLAYED,
+	DISCARD,
+}
 
 signal input_event(card : Card3D,camera : Camera3D, event : InputEvent, position : Vector3)
 
@@ -10,7 +17,7 @@ var tween : Tween	#個別にキャンセル可能にするための固有Tween
 
 var id_in_deck : int
 
-var location : int
+var location : CardLocation
 
 var card_name : String
 
@@ -29,7 +36,7 @@ func initialize(id : int,cn : String,
 		c : CatalogData.CardColors,l : int,p : int,h : int,b : int,
 		sk : Array[CatalogData.CardSkill],pict : Texture2D,opponent : bool = false):
 	id_in_deck = id
-	location = 0
+	location = CardLocation.STOCK
 	
 	card_name = cn
 	color = c

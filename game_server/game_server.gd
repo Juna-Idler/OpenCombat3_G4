@@ -108,7 +108,7 @@ class CombatData:
 
 class RecoveryData:
 	var round_count : int
-	var phase : Phase
+	var next_phase : Phase
 	var repeat : int
 
 	class PlayerData:
@@ -134,9 +134,9 @@ class RecoveryData:
 	var myself:PlayerData
 	var rival:PlayerData
 	
-	func _init(rc:int,p:Phase,rp:int,p1:PlayerData,p2:PlayerData):
+	func _init(rc:int,np:Phase,rp:int,p1:PlayerData,p2:PlayerData):
 		round_count = rc
-		phase = p
+		next_phase = np
 		repeat = rp
 		myself = p1
 		rival = p2

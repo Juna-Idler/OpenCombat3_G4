@@ -17,7 +17,7 @@ script = ExtResource("1_jvtjj")
 [node name="Field" type="Node3D" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="Field"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
 environment = SubResource("Environment_m7sro")
 fov = 45.0
 

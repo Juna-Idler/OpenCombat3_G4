@@ -31,7 +31,6 @@ func initialize(card_name : String,
 	$TextureRect.texture = pict
 	
 	if opponent:
-		rotation_degrees = 180
 		%LabelName.rotation_degrees = 180
 		$LabelPower.rotation_degrees = 180
 		$LabelHit.rotation_degrees = 180

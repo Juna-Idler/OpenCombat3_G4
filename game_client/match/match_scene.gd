@@ -45,12 +45,11 @@ func initialize(server : IGameServer,
 	_rival = rival
 	$Field.add_child(_myself._get_scene())
 	$Field.add_child(_rival._get_scene())
-	_rival._get_scene().rotation_degrees.z = 180
 
 	var pd := _game_server._get_primary_data()
 
-	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog)
-	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog)
+	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog,false)
+	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog,true)
 	
 
 func terminalize():
@@ -84,16 +83,31 @@ func _on_recieved_first_data(first_data : IGameServer.FirstData):
 		
 func _on_recieved_combat_result(data : IGameServer.CombatData):
 	_performing = true
+	_myself._combat_start(data.myself.hand,data.myself.select)
+	_rival._combat_start(data.rival.hand,data.rival.select)
 	
-	perform_effect_timing(data.myself.before,data.rival.before)
+	await _myself.sync_action_finished
+	await _rival.sync_action_finished
+	
+	await perform_effect_timing(data.myself.before,data.rival.before)
 
-	perform_effect_timing(data.myself.moment,data.rival.moment)
-	
-	perform_effect_timing(data.myself.after,data.rival.after)
-	
-	perform_effect_timing(data.myself.end,data.rival.end)
+	await perform_effect_timing(data.myself.moment,data.rival.moment)
 
-	perform_effect_timing(data.myself.start,data.rival.start)
+	_myself._perform_effect_sync(data.myself.result,_rival)
+	_rival._perform_effect_sync(data.rival.result,_myself)
+	await _myself.sync_action_finished
+	await _rival.sync_action_finished
+	
+	await perform_effect_timing(data.myself.after,data.rival.after)
+	
+	await perform_effect_timing(data.myself.end,data.rival.end)
+	
+	_myself._combat_end()
+	_rival._combat_end()
+	await _myself.sync_action_finished
+	await _rival.sync_action_finished
+
+	await perform_effect_timing(data.myself.start,data.rival.start)
 	
 	_performing = false
 	performed.emit()
@@ -101,6 +115,10 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	_performing = true
 
+	_myself._perform_effect_sync(data.myself.result,_rival)
+	_rival._perform_effect_sync(data.rival.result,_myself)
+	await _myself.sync_action_finished
+	await _rival.sync_action_finished
 
 	perform_effect_timing(data.myself.start,data.rival.start)
 	
@@ -121,19 +139,19 @@ func perform_effect_timing(my_log : Array[IGameServer.EffectLog],
 	var ri : int = 0
 	while (true):
 		if mi == my_log.size():
-			_rival._perform_effect(rival_log[ri],_myself)
+			await _rival._perform_effect(rival_log[ri],_myself)
 			for i in range(ri,rival_log.size()):
-				_rival._perform_effect(rival_log[i],_myself)
+				await _rival._perform_effect(rival_log[i],_myself)
 			break
 		if ri == rival_log.size():
-			_myself._perform_effect(my_log[mi],_rival)
+			await _myself._perform_effect(my_log[mi],_rival)
 			for i in range(mi,my_log.size()):
-				_myself._perform_effect(my_log[i],_rival)
+				await _myself._perform_effect(my_log[i],_rival)
 			break
 		if my_log[mi].priority <= rival_log[ri].priority:
-			_myself._perform_effect(my_log[mi],_rival)
-			_rival._perform_effect(rival_log[ri],_myself)
+			await _myself._perform_effect(my_log[mi],_rival)
+			await _rival._perform_effect(rival_log[ri],_myself)
 		else:
-			_rival._perform_effect(rival_log[ri],_myself)
-			_myself._perform_effect(my_log[mi],_rival)
+			await _rival._perform_effect(rival_log[ri],_myself)
+			await _myself._perform_effect(my_log[mi],_rival)
 			

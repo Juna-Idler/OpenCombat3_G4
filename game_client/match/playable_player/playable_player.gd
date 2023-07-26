@@ -13,8 +13,8 @@ func _init():
 func _get_scene() -> Node3D:
 	return _scene
 
-func _initialize(player_name:String,deck : PackedInt32Array,catalog : CardCatalog) -> void:
-	_scene.initialize(player_name,deck,catalog)
+func _initialize(player_name:String,deck : PackedInt32Array,catalog : CardCatalog,opponent : bool) -> void:
+	_scene.initialize(player_name,deck,catalog,opponent)
 
 func _set_first_data(data : IGameServer.FirstData.PlayerData) -> void:
 	_scene.set_first_data(data)

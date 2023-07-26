@@ -1,13 +1,44 @@
-[gd_scene load_steps=4 format=3 uid="uid://dyost4yggrs3l"]
+[gd_scene load_steps=9 format=3 uid="uid://dyost4yggrs3l"]
 
-[ext_resource type="Script" path="res://game_client/match/playable_player/playable_field.gd" id="1_lejv1"]
+[ext_resource type="Script" path="res://game_client/match/non_playable_player/non_playable_field.gd" id="1_n2swy"]
 [ext_resource type="PackedScene" uid="uid://c1jb7cip5c33x" path="res://game_client/match/non_playable_player/hand_area.tscn" id="2_6pu6v"]
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="3_3hlns"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_omqhk"]
 size = Vector2(1, 1.5)
 
-[node name="PlayableField" type="Node3D"]
-script = ExtResource("1_lejv1")
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_25tjm"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.25098)
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_x1wxm"]
+font = ExtResource("3_3hlns")
+font_size = 18
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gcq6u"]
+bg_color = Color(0, 0, 0, 0.752941)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_mn78f"]
+font = ExtResource("3_3hlns")
+font_size = 20
+
+[node name="NonPlayableField" type="Node3D"]
+script = ExtResource("1_n2swy")
 
 [node name="HandArea" parent="." instance=ExtResource("2_6pu6v")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0.5)
@@ -21,3 +52,61 @@ mesh = SubResource("QuadMesh_omqhk")
 [node name="CardHolder" type="Node3D" parent="."]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -109.0
+offset_bottom = 109.0
+grow_horizontal = 0
+grow_vertical = 2
+pivot_offset = Vector2(120, 79)
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/CenterContainer"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+mouse_filter = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_25tjm")
+text = "次強化(力+1 打+2 防+1)
+次強化(力+1 打+2 防+1)
+次強化(力+1 打+2 防+1)
+次強化(力+1 打+2 防+1) 
+次強化(力+1 打+2 防+1)
+次強化(力+1 打+2 防+1)
+次強化(力+1 打+2 防+1)"
+label_settings = SubResource("LabelSettings_x1wxm")
+vertical_alignment = 1
+clip_text = true
+
+[node name="LabelName" type="Label" parent="CanvasLayer/Control"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+pivot_offset = Vector2(120, 20)
+theme_override_styles/normal = SubResource("StyleBoxFlat_gcq6u")
+text = "名前"
+label_settings = SubResource("LabelSettings_mn78f")
+horizontal_alignment = 1
+vertical_alignment = 1

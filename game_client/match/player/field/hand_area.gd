@@ -36,6 +36,20 @@ func set_cards(new_cards : Array[Card3D]):
 	align()
 	pass
 
+func set_cards_in_deck(new_hand : PackedInt32Array,deck : Array[Card3D]):
+	var new_cards : Array[Card3D] = []
+	for h in new_hand:
+		var card := deck[h]
+		new_cards.append(card)
+		if not cards.has(card):
+			card.input_event.connect(on_card3d_input_event)
+	for c in cards:
+		if not new_cards.has(c):
+			c.input_event.disconnect(on_card3d_input_event)
+	cards = new_cards
+	align()
+	pass
+
 func align():
 	var hand_count := cards.size()
 	var step := HAND_AREA_WIDTH / (hand_count + 1)

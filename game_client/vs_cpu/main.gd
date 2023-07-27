@@ -17,7 +17,7 @@ func _ready():
 	var m := RegulationData.MatchRegulation.new("",4,60,10,5)
 	
 	server.initialize("",pile,ICpuCommander.ZeroCommander.new(),pile,d,m,catalog)
-	$match_scene.initialize(server,catalog,catalog,myself,rival)
+	$match_scene.initialize(server,myself,rival,catalog,catalog)
 	$match_scene.performed.connect(on_match_scene_performed)
 	server._send_ready()
 
@@ -34,16 +34,17 @@ func on_hand_selected(index : int,hand : Array[Card3D]):
 	match $match_scene.phase:
 		IGameServer.Phase.COMBAT:
 			server._send_combat_select($match_scene.round_count,index,order)
-			pass
 		IGameServer.Phase.RECOVERY:
 			server._send_recovery_select($match_scene.round_count,index,order)
-			pass
 		IGameServer.Phase.GAME_END:
 			pass
 	await myself.fix_select_card(hand[index])
 	pass
 
 func on_match_scene_performed():
+	if server.non_playable_recovery_phase:
+		server._send_recovery_select($match_scene.round_count,-1)
+		return
 	if $match_scene.phase != IGameServer.Phase.GAME_END:
 		myself._hand_area.set_playable(true)
 	

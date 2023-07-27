@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://d3vqtf8tawmd"]
+
+[ext_resource type="Script" path="res://game_client/match/test_card.gd" id="1_au24m"]
+[ext_resource type="PackedScene" uid="uid://41vguxcbj5ix" path="res://game_client/match/card3d.tscn" id="1_guvs4"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_uhu1q"]
+viewport_path = NodePath("Node3D/SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5xuh0"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_uhu1q")
+
+[node name="test_card" type="Node3D"]
+script = ExtResource("1_au24m")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.06506)
+
+[node name="Node3D" parent="." instance=ExtResource("1_guvs4")]
+
+[node name="MeshInstance3D" parent="Node3D" index="1"]
+material_override = SubResource("StandardMaterial3D_5xuh0")
+
+[editable path="Node3D"]

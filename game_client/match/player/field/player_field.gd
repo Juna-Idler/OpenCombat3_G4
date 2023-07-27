@@ -5,6 +5,8 @@ const Card3D_Scene := preload("res://game_client/match/card3d.tscn")
 
 
 @onready var deck_position = $DeckPosition
+@onready var avatar_position = $AvatarPosition
+
 @onready var card_holder = $CardHolder
 var _hand_area : HandArea = null
 
@@ -24,6 +26,8 @@ var _playing_card : Card3D = null
 
 var _player_name : String
 
+var _catalog : I_CardCatalog
+var _rival_catalog : I_CardCatalog
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -31,7 +35,7 @@ func _ready():
 
 
 func initialize(hand_area : HandArea,
-		player_name:String,deck : PackedInt32Array,catalog : CardCatalog,opponent : bool):
+		player_name:String,deck : PackedInt32Array,catalog : I_CardCatalog,opponent : bool):
 	
 	if _hand_area:
 		remove_child(_hand_area)
@@ -77,6 +81,10 @@ func initialize(hand_area : HandArea,
 		$CanvasLayer/Control/CenterContainer.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT,Control.PRESET_MODE_MINSIZE)
 		$CanvasLayer/Control/LabelName.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT,Control.PRESET_MODE_KEEP_SIZE)
 
+	_catalog = catalog
+
+func set_rival_catalog(catalog : I_CardCatalog):
+	_rival_catalog = catalog
 
 
 func set_first_data(data : IGameServer.FirstData.PlayerData):
@@ -133,6 +141,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 		IGameServer.EffectFragmentType.DAMAGE:
 			var damage : int = fragment.data[0]
 			var block : int = fragment.data[1]
+			
 			pass
 		IGameServer.EffectFragmentType.INITIATIVE:
 			var initiative : bool = fragment.data
@@ -144,10 +153,26 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var block : int = fragment.data[3]
 			pass
 		IGameServer.EffectFragmentType.DRAW_CARD:
-			var card : int = fragment.data
+			var card_id : int = fragment.data
+			var card := _deck[card_id]
+			card.location = Card3D.CardLocation.HAND
+			_hand.append(card_id)
+			_hand_area.set_cards_in_deck(_hand,_deck)
+			_hand_area.move_card(0.5)
+			await get_tree().create_timer(0.5).timeout
 			pass
 		IGameServer.EffectFragmentType.DISCARD:
-			var card : int = fragment.data
+			var card_id : int = fragment.data
+			var card := _deck[card_id]
+			if card.location == Card3D.CardLocation.HAND:
+				_hand.remove_at(_hand.find(card_id))
+				_hand_area.set_cards_in_deck(_hand,_deck)
+				_hand_area.move_card(0.5)
+			card.location = Card3D.CardLocation.DISCARD
+			var tween := create_tween().set_parallel()
+			tween.tween_property(card,"position",avatar_position.position,0.5)
+			tween.tween_method(card.set_transparency,1.0,0.0,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
+			await tween.finished
 			pass
 		IGameServer.EffectFragmentType.BOUNCE_CARD:
 			var card : int = fragment.data[0]
@@ -159,6 +184,8 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var opponent_source : bool = fragment.data[1]
 			var data_id : int = fragment.data[2]
 			var param = fragment.data[3]
+			var sd := _rival_catalog._get_state_data(data_id)
+			_states[state_id] = [data_id,param]
 			pass
 		IGameServer.EffectFragmentType.UPDATE_STATE:
 			var state_id : int = fragment.data[0]

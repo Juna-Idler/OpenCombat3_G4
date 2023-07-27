@@ -117,7 +117,7 @@ func _supply() -> Array[IGameServer.EffectFragment]:
 func _recover(index : int) -> Array[IGameServer.EffectFragment]:
 	var fragments : Array[IGameServer.EffectFragment] = []
 	_select_card = _hand[index]
-	fragments.append(_discard_card(index))
+	fragments.append(_discard_card(_select_card))
 	_damage -= _deck_list[_select_card].data.level
 	if _damage <= 0:
 		_damage = 0

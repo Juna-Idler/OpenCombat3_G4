@@ -45,6 +45,8 @@ func reorder_hand2(hand:PackedInt32Array):
 
 
 func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
+	var current_round_count := round_count
+	
 	if phase != IGameServer.Phase.COMBAT:
 		return null
 	
@@ -121,7 +123,7 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 				player2._start_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player2._supply()))
 
 
-	return IGameServer.CombatData.new(round_count,phase,
+	return IGameServer.CombatData.new(current_round_count,phase,
 			IGameServer.CombatData.PlayerData.new(p1_hand,index1,
 					player1._before_effect_log_temporary(),
 					player1._moment_effect_log_temporary(),
@@ -141,6 +143,7 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 	
 
 func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
+	var current_round_count := round_count
 	recovery_count += 1
 
 	var p1_hand := player1._get_hand().duplicate()
@@ -175,7 +178,7 @@ func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
 			player2._get_hand().size() + player2._get_stock_count() <= 1)):
 		phase = IGameServer.Phase.GAME_END
 
-	return IGameServer.RecoveryData.new(round_count,phase,recovery_count,
+	return IGameServer.RecoveryData.new(current_round_count,phase,recovery_count,
 			IGameServer.RecoveryData.PlayerData.new(p1_hand,index1,
 			player1._start_effect_log_temporary(),p1_result,
 			player1._get_damage(),player1._get_life(),0),

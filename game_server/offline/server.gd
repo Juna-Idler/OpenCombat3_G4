@@ -20,6 +20,8 @@ var _player_time : int
 var _emit_time : int
 var _delay_time : int
 
+var non_playable_recovery_phase : bool = false
+
 
 func _init():
 	pass
@@ -101,9 +103,12 @@ func _send_combat_select(round_count:int,index:int,hands_order:PackedInt32Array 
 		if not _processor.player2._is_recovery():
 			_result = _commander._recover_select(OfflineServer.create_commander_player(_processor.player2),
 					OfflineServer.create_commander_player(_processor.player1))
+			if _processor.player1._is_recovery():
+				non_playable_recovery_phase = true
 		else:
 			_result = -1
 		_delay_time += int(match_regulation.recovery_time * 1000)
+	
 	_emit_time = Time.get_ticks_msec()
 	recieved_combat_result.emit(combat_result)
 
@@ -142,7 +147,7 @@ func _send_recovery_select(round_count:int,index:int,hands_order:PackedInt32Arra
 	recovery_result.myself.time = _player_time / 1000.0
 	recovery_result.rival.time = -1
 
-	
+	non_playable_recovery_phase = false
 	if _processor.phase == Phase.COMBAT:
 		_result = _commander._combat_select(OfflineServer.create_commander_player(_processor.player2),
 				OfflineServer.create_commander_player(_processor.player1));
@@ -151,6 +156,8 @@ func _send_recovery_select(round_count:int,index:int,hands_order:PackedInt32Arra
 		if not _processor.player2._is_recovery():
 			_result = _commander._recover_select(OfflineServer.create_commander_player(_processor.player2),
 					OfflineServer.create_commander_player(_processor.player1))
+			if _processor.player1._is_recovery():
+				non_playable_recovery_phase = true
 		else:
 			_result = -1
 		_delay_time = int(match_regulation.recovery_time * 1000) + RECOVER_RESULT_DELAY

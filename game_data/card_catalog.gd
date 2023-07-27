@@ -33,14 +33,12 @@ func get_max_card_id() -> int:
 func _get_card_data(id : int) -> CatalogData.CardData:
 	return _card_catalog[id]
 
-	
+func _get_state_data(id : int) -> CatalogData.StateData:
+	return _state_catalog[id]
 
 
 func get_skill_data(id : int) -> CatalogData.SkillData:
 	return _skill_catalog[id]
-
-func get_state_data(id : int) -> CatalogData.StateData:
-	return _state_catalog[id]
 
 func get_param_name(param_type : int) -> CatalogData.ParameterName:
 	return _param_names[param_type]

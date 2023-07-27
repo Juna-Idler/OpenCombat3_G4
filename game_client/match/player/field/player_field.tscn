@@ -1,10 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://8vwxugps26b7"]
+[gd_scene load_steps=10 format=3 uid="uid://8vwxugps26b7"]
 
 [ext_resource type="Script" path="res://game_client/match/player/field/player_field.gd" id="1_l8tbv"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="2_7b1gt"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_omqhk"]
 size = Vector2(1, 1.5)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_iq1xn"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rvbv3"]
+noise = SubResource("FastNoiseLite_iq1xn")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fkvqf"]
 content_margin_left = 8.0
@@ -57,6 +62,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.25, -0.1)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="PlayedPosition"]
 transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("QuadMesh_omqhk")
+
+[node name="AvatarPosition" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -0.5)
+texture = SubResource("NoiseTexture2D_rvbv3")
+region_enabled = true
+region_rect = Rect2(0, 0, 150, 300)
 
 [node name="CardHolder" type="Node3D" parent="."]
 

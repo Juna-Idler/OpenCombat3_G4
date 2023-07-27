@@ -34,8 +34,8 @@ func _process(_delta):
 	pass
 
 func initialize(server : IGameServer,
-		my_catalog : I_CardCatalog,rival_catalog : I_CardCatalog,
-		myself : I_MatchPlayer,rival : I_MatchPlayer):
+		myself : I_MatchPlayer,rival : I_MatchPlayer,
+		my_catalog : I_CardCatalog,rival_catalog : I_CardCatalog):
 	terminalize()
 	_game_server = server
 	_game_server.recieved_first_data.connect(_on_recieved_first_data)
@@ -53,6 +53,8 @@ func initialize(server : IGameServer,
 
 	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog,false)
 	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog,true)
+	_myself._set_rival(_rival)
+	_rival._set_rival(_myself)
 	
 
 func terminalize():
@@ -104,8 +106,8 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	await perform_effect(data.myself.moment,data.rival.moment)
 
-	_myself._perform_effect(data.myself.result,_rival)
-	_rival._perform_effect(data.rival.result,_myself)
+	_myself._perform_effect(data.myself.result)
+	_rival._perform_effect(data.rival.result)
 #	await get_tree().create_timer(0.5).timeout
 	
 	await perform_effect(data.myself.after,data.rival.after)
@@ -127,9 +129,10 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	_performing = true
 
-	_myself._perform_effect(data.myself.result,_rival)
-	_rival._perform_effect(data.rival.result,_myself)
+	_myself._perform_effect(data.myself.result)
+	_rival._perform_effect(data.rival.result)
 	await get_tree().create_timer(0.5).timeout
+
 
 	round_count = data.round_count + (1 if data.next_phase == IGameServer.Phase.COMBAT else 0)
 	phase = data.next_phase
@@ -154,18 +157,18 @@ func perform_effect(my_log : Array[IGameServer.EffectLog],
 	while (true):
 		if mi == my_log.size():
 			for i in range(ri,rival_log.size()):
-				await _rival._perform_effect(rival_log[i],_myself)
+				await _rival._perform_effect(rival_log[i])
 			break
 		if ri == rival_log.size():
 			for i in range(mi,my_log.size()):
-				await _myself._perform_effect(my_log[i],_rival)
+				await _myself._perform_effect(my_log[i])
 			break
 		if my_log[mi].priority <= rival_log[ri].priority:
-			await _myself._perform_effect(my_log[mi],_rival)
-			await _rival._perform_effect(rival_log[ri],_myself)
+			await _myself._perform_effect(my_log[mi])
+			await _rival._perform_effect(rival_log[ri])
 		else:
-			await _rival._perform_effect(rival_log[ri],_myself)
-			await _myself._perform_effect(my_log[mi],_rival)
+			await _rival._perform_effect(rival_log[ri])
+			await _myself._perform_effect(my_log[mi])
 		mi += 1
 		ri += 1
 		

@@ -24,7 +24,12 @@ func _perform_effect(_effect : IGameServer.EffectLog,_rival : I_MatchPlayer) -> 
 	@warning_ignore("redundant_await")
 	await 0
 	
-func _perform_effect_fragment(_fragment : IGameServer.EffectFragment) -> void:
+func _perform_effect_fragment(_fragment : IGameServer.EffectFragment,_rival : I_MatchPlayer) -> void:
+	assert(false)
+	@warning_ignore("redundant_await")
+	await 0
+
+func _perform_passive(_passive : IGameServer.PassiveLog) -> void:
 	assert(false)
 	@warning_ignore("redundant_await")
 	await 0

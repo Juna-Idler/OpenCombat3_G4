@@ -113,6 +113,78 @@ func get_playing_card() -> Card3D:
 	return _playing_card
 	
 	
+func perform_effect(effect : IGameServer.EffectLog):
+	match effect.type:
+		IGameServer.EffectSourceType.SYSTEM_PROCESS:
+			pass
+		IGameServer.EffectSourceType.SKILL:
+			var card := get_playing_card()
+			card.skills[effect.id]
+			pass
+		IGameServer.EffectSourceType.STATE:
+			_states[effect.id]
+			pass
+		IGameServer.EffectSourceType.ABILITY:
+			pass
+
+
+func perform_effect_fragment(fragment : IGameServer.EffectFragment):
+	match fragment.type:
+		IGameServer.EffectFragmentType.DAMAGE:
+			var damage : int = fragment.data[0]
+			var block : int = fragment.data[1]
+			pass
+		IGameServer.EffectFragmentType.INITIATIVE:
+			var initiative : bool = fragment.data
+			pass
+		IGameServer.EffectFragmentType.CHANGE_STATS:
+			var card : int = fragment.data[0]
+			var power : int = fragment.data[1]
+			var hit : int = fragment.data[2]
+			var block : int = fragment.data[3]
+			pass
+		IGameServer.EffectFragmentType.DRAW_CARD:
+			var card : int = fragment.data
+			pass
+		IGameServer.EffectFragmentType.DISCARD:
+			var card : int = fragment.data
+			pass
+		IGameServer.EffectFragmentType.BOUNCE_CARD:
+			var card : int = fragment.data[0]
+			var pos : int = fragment.data[1]
+			pass
+		
+		IGameServer.EffectFragmentType.CREATE_STATE:
+			var state_id : int = fragment.data[0]
+			var opponent_source : bool = fragment.data[1]
+			var data_id : int = fragment.data[2]
+			var param = fragment.data[3]
+			pass
+		IGameServer.EffectFragmentType.UPDATE_STATE:
+			var state_id : int = fragment.data[0]
+			var param = fragment.data[1]
+			pass
+		IGameServer.EffectFragmentType.DELETE_STATE:
+			var state_id : int = fragment.data
+			pass
+		
+		IGameServer.EffectFragmentType.CREATE_CARD:
+			var card : int = fragment.data[0]
+			var opponent_source : bool = fragment.data[1]
+			var data_id : int = fragment.data[2]
+			var changes : Dictionary = fragment.data[3]
+			pass
+		
+		IGameServer.EffectFragmentType.PERFORMANCE:
+			pass
+			
+	pass
+
+func perform_passive(passive : IGameServer.PassiveLog) -> void:
+	pass
+
+	
+	
 func combat_end() -> void:
 	_played.append(_playing_card.id_in_deck)
 	_playing_card.location = Card3D.CardLocation.PLAYED

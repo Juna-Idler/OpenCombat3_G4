@@ -170,12 +170,12 @@ enum EffectFragmentType {
 	DISCARD,		# card_id : int
 	BOUNCE_CARD,	# [card_id : int,position : int]
 	
-	CREATE_STATE,	# [state_id : int,card_id:int,skill_index:int,state_index:int,param : Array
+	CREATE_STATE,	# [state_id : int,opponent_source : bool,data_id : int,param : Array]
 	UPDATE_STATE,	# [state_id : int,param : Array]
 	DELETE_STATE,	# state_id : int
 	
 	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
-	
+
 	PERFORMANCE,
 }
 

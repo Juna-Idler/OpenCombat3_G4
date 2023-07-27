@@ -177,7 +177,7 @@ class IPlayer:
 
 
 #	CREATE_STATE,	# [state_id : int,opponent_source : bool,data_id : int,param : Array]
-	func _create_state(_factory : ICardFactory,_data_id : int,_param : Array,_opponent : bool = false) -> IGameServer.EffectFragment:
+	func _create_state(_factory : ICardFactory,_data_id : int,_param : Array,_rival : IPlayer,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	
 #	UPDATE_STATE,	# [state_id : int,param : Array]
@@ -239,12 +239,10 @@ class BasicSkill extends ISkill:
 class IState extends IEffect:
 	func _get_data_id() -> int:
 		return -1
-	func _get_match_id() -> int:
-		return -1
 	
 	func _term() -> void:
 		return
-		
+	
 	func _start_priority() -> Array:
 		return []
 	func _start_effect(_priority : int,

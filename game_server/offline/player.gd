@@ -16,6 +16,7 @@ var _discard : PackedInt32Array = []
 var _life : int = 0
 
 var _states : Dictionary = {}
+var _states_counter : int = 0
 
 var _damage : int = 0
 var _select_card : int = -1
@@ -223,3 +224,36 @@ func _bounce_card(card : int,position : int,opponent : bool = false) -> IGameSer
 		return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.BOUNCE_CARD,opponent,[card,position],passive)
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.BOUNCE_CARD,opponent,[-1,0],[])
 
+
+func _create_state(factory : ICardFactory,data_id : int,param : Array,rival : MechanicsData.IPlayer,opponent : bool = false) -> IGameServer.EffectFragment:
+	_states_counter += 1
+	var state := factory._create_state(_states_counter,data_id,param,self,rival)
+	_states[state] = _states_counter
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CREATE_STATE,
+			opponent,[_states_counter,opponent,data_id,param],[])
+
+func _update_state(state : IState,param:Array,opponent : bool = false) -> IGameServer.EffectFragment:
+	var id : int = _states[state]
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.UPDATE_STATE,
+			opponent,[id,param],[])
+
+#	DELETE_STATE,	# state_id : int
+func _delete_state(state : IState,opponent : bool = false) -> IGameServer.EffectFragment:
+	var id : int = _states[state]
+	state._term()
+	_states.erase(state)
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DELETE_STATE,
+			opponent,id,[])
+	
+
+#	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
+func _create_card(factory : ICardFactory , data_id:int,changes : Dictionary,opponent : bool = false) -> IGameServer.EffectFragment:
+	var index := _deck_list.size()
+	var card := factory._create(index,data_id)
+	_deck_list.append(card)
+	
+	var passive : Array[IGameServer.PassiveLog] = []
+	passive_card_created.emit(index,
+				func (plog : IGameServer.PassiveLog): passive.append(plog))
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CREATE_CARD,
+			opponent,[index,opponent,data_id,changes],passive)

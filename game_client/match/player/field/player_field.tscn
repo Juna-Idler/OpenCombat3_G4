@@ -96,7 +96,8 @@ grow_horizontal = 0
 grow_vertical = 2
 pivot_offset = Vector2(120, 79)
 
-[node name="Label" type="Label" parent="CanvasLayer/Control/CenterContainer"]
+[node name="LabelEnchant" type="Label" parent="CanvasLayer/Control/CenterContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 mouse_filter = 0

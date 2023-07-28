@@ -3,6 +3,24 @@ extends Node3D
 
 const Card3D_Scene := preload("res://game_client/match/card3d.tscn")
 
+class Enchantment:
+	var data : CatalogData.StateData
+	var parameter : Array
+	var title : String
+
+	func _init(d,p):
+		data = d
+		parameter = p
+		var p_str := Global.card_catalog.param_to_string(data.param_type,parameter)
+		title = data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )
+	
+	func change_parameter(p):
+		parameter = p
+		var p_str := Global.card_catalog.param_to_string(data.param_type,parameter)
+		title = data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )
+
+
+var _opponent_layout : bool
 
 @onready var deck_position = $DeckPosition
 @onready var avatar_position = $AvatarPosition
@@ -20,7 +38,7 @@ var _stock_count : int
 var _life : int = 0
 var _damage : int = 0
 
-var _states : Dictionary = {} # of MatchEffect.IState
+var _states : Dictionary = {} # key int, value Enchantment
 
 var _playing_card : Card3D = null
 
@@ -36,7 +54,7 @@ func _ready():
 
 func initialize(hand_area : HandArea,
 		player_name:String,deck : PackedInt32Array,catalog : I_CardCatalog,opponent : bool):
-	
+
 	if _hand_area:
 		remove_child(_hand_area)
 		_hand_area.queue_free()
@@ -76,6 +94,7 @@ func initialize(hand_area : HandArea,
 	_player_name = player_name
 	$CanvasLayer/Control/LabelName.text = _player_name
 	
+	_opponent_layout = opponent
 	if opponent:
 		rotation_degrees.z = 180
 		$CanvasLayer/Control/CenterContainer.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT,Control.PRESET_MODE_MINSIZE)
@@ -185,14 +204,19 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var data_id : int = fragment.data[2]
 			var param = fragment.data[3]
 			var sd := _rival_catalog._get_state_data(data_id)
-			_states[state_id] = [data_id,param]
+			_states[state_id] = Enchantment.new(sd,param)
+			update_label_enchant()
 			pass
 		IGameServer.EffectFragmentType.UPDATE_STATE:
 			var state_id : int = fragment.data[0]
 			var param = fragment.data[1]
+			_states[state_id].change_parameter(param)
+			update_label_enchant()
 			pass
 		IGameServer.EffectFragmentType.DELETE_STATE:
 			var state_id : int = fragment.data
+			_states.erase(state_id)
+			update_label_enchant()
 			pass
 		
 		IGameServer.EffectFragmentType.CREATE_CARD:
@@ -228,4 +252,16 @@ func combat_end() -> void:
 
 func fix_select_card(card : Card3D):
 	await _hand_area.fix_select_card(card)
+
+
+func update_label_enchant():
+	var lines : PackedStringArray = []
+	for s in _states.values():
+		var e := s as Enchantment
+		lines.append(e.title)
+	if lines.is_empty():
+		%LabelEnchant.visible = false
+	else:
+		%LabelEnchant.text = "\n".join(lines)
+		%LabelEnchant.visible = true
 

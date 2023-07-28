@@ -48,14 +48,12 @@ func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSki
 	var condition : int = int(skill[0])
 	var data := get_skill_data(int(skill[1]))
 	var params := []
-	var names : PackedStringArray = []
 	var skill_params : PackedStringArray = skill[2].split(",")
 	for i in data.param_type.size():
 		match data.param_type[i]:
 			CatalogData.ParamType.INTEGER:
 				var integer : int = int(skill_params[i])
 				params.append(integer)
-				names.append(str(integer))
 			CatalogData.ParamType.STATS:
 				var stats := [0,0,0]
 				for e in skill_params[i].split(" "):
@@ -66,19 +64,34 @@ func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSki
 					elif e.find("B") == 0:
 						stats[2] = int(e.substr("B".length()))
 				params.append(stats)
+			CatalogData.ParamType.COLOR:
+				var color := int(skill_params[i])
+				params.append(color)
+	var param_string := param_to_string(data.param_type,params)
+	var title := data.name + ("" if param_string.is_empty() else "(" + param_string + ")")
+	return CatalogData.CardSkill.new(index,data,condition,params,title)
+		
+
+func param_to_string(param_type : PackedInt32Array,param : Array) -> String:
+	var param_string : PackedStringArray = []
+	for i in param_type.size():
+		match param_type[i]:
+			CatalogData.ParamType.INTEGER:
+				var integer : int = param[i]
+				param_string.append(str(integer))
+			CatalogData.ParamType.STATS:
+				var stats : PackedInt32Array = param[i]
 				var stats_names : PackedStringArray = []
 				var stats_table := _param_names[CatalogData.ParamType.STATS].names
 				for j in 3:
 					if stats[j] != 0:
 						stats_names.append(stats_table[j] + "%+d" % stats[j])
-				names.append(" ".join(stats_names))
+				param_string.append(" ".join(stats_names))
 			CatalogData.ParamType.COLOR:
-				var color := int(skill_params[i])
-				params.append(color)
-				names.append(_param_names[CatalogData.ParamType.COLOR].names[color])
-	var title := data.name + ("" if names.is_empty() else "(" + ",".join(names) + ")")
-	return CatalogData.CardSkill.new(index,data,condition,params,title)
-		
+				var color : int = param[i]
+				param_string.append(_param_names[CatalogData.ParamType.COLOR].names[color])
+	return ",".join(param_string)
+
 
 func _load_card_data():
 	var carddata_resource := load("res://card_data/card_data_catalog.txt")

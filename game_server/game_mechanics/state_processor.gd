@@ -25,7 +25,7 @@ class Reinforce extends MechanicsData.BasicState:
 		stats[0] += _stats[0]
 		stats[1] += _stats[1]
 		stats[2] += _stats[2]
-		var fragment := myself._change_card_stats(myself._get_playing_card_id(),stats,false)
+		var fragment := myself._change_combat_card_stats(stats,false)
 		var fragment2 := myself._delete_state(self,false)
 		return StateProcessor.create_log(_match_id,PRIORITY,[fragment,fragment2])
 

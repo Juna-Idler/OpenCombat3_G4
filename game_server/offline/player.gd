@@ -173,8 +173,23 @@ func _set_initiative(initiative : bool,opponent : bool = false) -> IGameServer.E
 	_initiative = initiative
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.INITIATIVE,
 			opponent,_initiative,passive)
+
+func _change_combat_card_stats(stats : PackedInt32Array,opponent : bool = false) -> IGameServer.EffectFragment:
+	var id := _get_playing_card_id()
+	var old := _get_card_stats(id)
+	var passive : Array[IGameServer.PassiveLog] = []
+	passive_card_stats_changed.emit(id,
+			stats[0],stats[1],stats[2],
+			old[0],old[1],old[2],
+			func (plog : IGameServer.PassiveLog): passive.append(plog))
+	var card := _deck_list[id]
+	card.power = stats[0]
+	card.hit = stats[1]
+	card.block = stats[2]
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.COMBAT_STATS,
+			opponent,[card.power,card.hit,card.block],passive)
 	
-#	CHANGE_STATS,	# [card_id : int,power : int,hit : int,block : int]
+#	CARD_STATS,	# [card_id : int,power : int,hit : int,block : int]
 func _change_card_stats(id : int,stats : PackedInt32Array,opponent : bool = false) -> IGameServer.EffectFragment:
 	var old := _get_card_stats(id)
 	var passive : Array[IGameServer.PassiveLog] = []
@@ -186,7 +201,7 @@ func _change_card_stats(id : int,stats : PackedInt32Array,opponent : bool = fals
 	card.power = stats[0]
 	card.hit = stats[1]
 	card.block = stats[2]
-	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CHANGE_STATS,
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CARD_STATS,
 			opponent,[id,card.power,card.hit,card.block],passive)
 
 

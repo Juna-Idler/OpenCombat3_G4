@@ -158,8 +158,12 @@ class IPlayer:
 #	INITIATIVE,		# initiative : bool
 	func _set_initiative(_initiative : bool,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
-		
-#	CHANGE_STATS,	# [card_id : int,power : int,hit : int,block : int]
+
+#	COMBAT_STATS,	# [power : int,hit : int,block : int]
+	func _change_combat_card_stats(_stats : PackedInt32Array,_opponent : bool = false) -> IGameServer.EffectFragment:
+		return null
+
+#	CARD_STATS,	# [card_id : int,power : int,hit : int,block : int]
 	func _change_card_stats(_card : int,_stats : PackedInt32Array,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	

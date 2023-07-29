@@ -20,7 +20,7 @@ class Reinforce extends MechanicsData.BasicSkill:
 		stats[0] += effect[0]
 		stats[1] += effect[1]
 		stats[2] += effect[2]
-		var fragment := myself._change_card_stats(myself._get_playing_card_id(),stats,false)
+		var fragment := myself._change_combat_card_stats(stats,false)
 		return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
 
 
@@ -102,7 +102,7 @@ class Absorb extends MechanicsData.BasicSkill:
 		stats[0] += effect[0] * level
 		stats[1] += effect[1] * level
 		stats[2] += effect[2] * level
-		fragments.append(myself._change_card_stats(myself._get_playing_card_id(),stats,false))
+		fragments.append(myself._change_combat_card_stats(stats,false))
 		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
 
 

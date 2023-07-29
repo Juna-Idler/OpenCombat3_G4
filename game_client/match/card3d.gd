@@ -50,14 +50,9 @@ func initialize(id : int,cn : String,
 	$SubViewport/CardFront.initialize(card_name,c,l,p,h,b,sk,pict,opponent)
 	$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
-func set_transparency(alpha : float):
+func set_albedo_color(color : Color):
 	var material : StandardMaterial3D = $MeshInstance3D.material_override
-	if alpha >= 1.0:
-		material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
-	else:
-		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		material.albedo_color.a = alpha
-	pass
+	material.albedo_color = color
 
 
 func set_ray_pickable(enable : bool):

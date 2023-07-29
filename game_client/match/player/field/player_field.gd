@@ -189,7 +189,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 				var number : String = str(_blocked_damage)
 				%LabelBlock.text = number
 				$CombatPosition/AudioStreamPlayer3D.play()
-				await get_tree().create_timer(0.5).timeout
+				await get_tree().create_timer(0.3).timeout
 			if unblocked_damage > 0:
 				$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/小パンチ.mp3")
 			for d in unblocked_damage:
@@ -197,12 +197,17 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 				var number : String = str(_damage)
 				%LabelDamage.text = number
 				$CombatPosition/AudioStreamPlayer3D.play()
-				await get_tree().create_timer(0.5).timeout
+				await get_tree().create_timer(0.3).timeout
 			pass
 		IGameServer.EffectFragmentType.INITIATIVE:
 			var initiative : bool = fragment.data
 			pass
-		IGameServer.EffectFragmentType.CHANGE_STATS:
+		IGameServer.EffectFragmentType.COMBAT_STATS:
+			var power : int = fragment.data[0]
+			var hit : int = fragment.data[1]
+			var block : int = fragment.data[2]
+			pass
+		IGameServer.EffectFragmentType.CARD_STATS:
 			var card : int = fragment.data[0]
 			var power : int = fragment.data[1]
 			var hit : int = fragment.data[2]
@@ -210,6 +215,8 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			pass
 		IGameServer.EffectFragmentType.DRAW_CARD:
 			var card_id : int = fragment.data
+			if card_id < 0:
+				return
 			var card := _deck[card_id]
 			card.location = Card3D.CardLocation.HAND
 			_hand.append(card_id)
@@ -227,7 +234,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			card.location = Card3D.CardLocation.DISCARD
 			var tween := create_tween().set_parallel()
 			tween.tween_property(card,"position",avatar_position.position,0.5)
-			tween.tween_method(card.set_transparency,1.0,0.0,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
+			tween.tween_method(card.set_albedo_color,Color.WHITE,Color.BLACK,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
 			await tween.finished
 			pass
 		IGameServer.EffectFragmentType.BOUNCE_CARD:

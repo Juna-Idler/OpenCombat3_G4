@@ -166,7 +166,8 @@ enum EffectFragmentType {
 	NO_EFFECT,		# null
 	DAMAGE,			# [unblocked_damage : int,blocked_damage : int]
 	INITIATIVE,		# initiative : bool
-	CHANGE_STATS,	# [card_id : int,power : int,hit : int,block : int]
+	COMBAT_STATS,	# [power : int,hit : int,block : int]
+	CARD_STATS,		# [card_id : int,power : int,hit : int,block : int]
 	DRAW_CARD,		# card_id : int
 	DISCARD,		# card_id : int
 	BOUNCE_CARD,	# [card_id : int,position : int]

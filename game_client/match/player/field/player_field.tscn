@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://8vwxugps26b7"]
+[gd_scene load_steps=12 format=3 uid="uid://8vwxugps26b7"]
 
 [ext_resource type="Script" path="res://game_client/match/player/field/player_field.gd" id="1_l8tbv"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="2_7b1gt"]
@@ -40,6 +40,18 @@ corner_radius_bottom_left = 8
 font = ExtResource("2_7b1gt")
 font_size = 20
 
+[sub_resource type="LabelSettings" id="LabelSettings_dkbr4"]
+font_size = 40
+font_color = Color(0, 0.360784, 1, 1)
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_70d2k"]
+font_size = 40
+font_color = Color(1, 0, 0, 1)
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
 [node name="PlayerField" type="Node3D"]
 script = ExtResource("1_l8tbv")
 
@@ -55,6 +67,8 @@ visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CombatPosition"]
 mesh = SubResource("QuadMesh_omqhk")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="CombatPosition"]
 
 [node name="PlayedPosition" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.25, -0.1)
@@ -131,4 +145,39 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_tfou3")
 text = "名前"
 label_settings = SubResource("LabelSettings_fvrkd")
 horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainerDamage" type="HBoxContainer" parent="CanvasLayer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 80.0
+offset_top = -30.0
+offset_right = 208.0
+offset_bottom = 34.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="LabelBlock" type="Label" parent="CanvasLayer/Control/HBoxContainerDamage"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_dkbr4")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="LabelDamage" type="Label" parent="CanvasLayer/Control/HBoxContainerDamage"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_70d2k")
 vertical_alignment = 1

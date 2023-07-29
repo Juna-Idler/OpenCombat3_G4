@@ -163,7 +163,8 @@ class EffectLog:
 
 
 enum EffectFragmentType {
-	DAMAGE,			# [damage : int,block : int]
+	NO_EFFECT,		# null
+	DAMAGE,			# [unblocked_damage : int,blocked_damage : int]
 	INITIATIVE,		# initiative : bool
 	CHANGE_STATS,	# [card_id : int,power : int,hit : int,block : int]
 	DRAW_CARD,		# card_id : int

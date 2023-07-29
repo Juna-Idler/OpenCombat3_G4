@@ -21,6 +21,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
 environment = SubResource("Environment_m7sro")
 fov = 45.0
 
+[node name="AudioListener3D" type="AudioListener3D" parent="Field"]
+
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15

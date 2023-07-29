@@ -47,6 +47,10 @@ var _player_name : String
 var _catalog : I_CardCatalog
 var _rival_catalog : I_CardCatalog
 
+
+var _blocked_damage : int
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -99,6 +103,16 @@ func initialize(hand_area : HandArea,
 		rotation_degrees.z = 180
 		$CanvasLayer/Control/CenterContainer.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT,Control.PRESET_MODE_MINSIZE)
 		$CanvasLayer/Control/LabelName.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT,Control.PRESET_MODE_KEEP_SIZE)
+		
+		%HBoxContainerDamage.move_child(%LabelDamage,0)
+		var center : Vector2 = $CanvasLayer/Control.size / 2
+		var offset = %HBoxContainerDamage.size/2
+		var pos = %HBoxContainerDamage.global_position + offset - center
+		%HBoxContainerDamage.global_position = center - pos - offset
+		%LabelBlock.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		%LabelDamage.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+
+
 
 	_catalog = catalog
 
@@ -130,6 +144,10 @@ func combat_start(hand : PackedInt32Array,select : int) -> void:
 	_playing_card.location = Card3D.CardLocation.COMBAT
 	_life -= _playing_card.level
 	
+	_damage = 0
+	_blocked_damage = 0
+	%LabelBlock.text = str(0)
+	%LabelDamage.text = str(0)
 	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(_playing_card,"position",$CombatPosition.position,0.5)
 	_hand_area.move_card(0.5)
@@ -157,10 +175,29 @@ func perform_effect(effect : IGameServer.EffectLog):
 
 func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 	match fragment.type:
+		IGameServer.EffectFragmentType.NO_EFFECT:
+			pass
 		IGameServer.EffectFragmentType.DAMAGE:
-			var damage : int = fragment.data[0]
-			var block : int = fragment.data[1]
+			var unblocked_damage : int = fragment.data[0]
+			var blocked_damage : int = fragment.data[1]
 			
+			%HBoxContainerDamage.visible = true
+			if blocked_damage > 0:
+				$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/剣で打ち合う4.mp3")
+			for d in blocked_damage:
+				_blocked_damage += 1
+				var number : String = str(_blocked_damage)
+				%LabelBlock.text = number
+				$CombatPosition/AudioStreamPlayer3D.play()
+				await get_tree().create_timer(0.5).timeout
+			if unblocked_damage > 0:
+				$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/小パンチ.mp3")
+			for d in unblocked_damage:
+				_damage += 1
+				var number : String = str(_damage)
+				%LabelDamage.text = number
+				$CombatPosition/AudioStreamPlayer3D.play()
+				await get_tree().create_timer(0.5).timeout
 			pass
 		IGameServer.EffectFragmentType.INITIATIVE:
 			var initiative : bool = fragment.data
@@ -247,6 +284,9 @@ func combat_end() -> void:
 	_playing_card.tween = tween
 	_playing_card = null
 	await tween.finished
+	
+	%HBoxContainerDamage.visible = false
+	
 	return
 
 

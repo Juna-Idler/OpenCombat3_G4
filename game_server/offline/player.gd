@@ -155,6 +155,11 @@ func _end_effect_log_temporary() -> Array[IGameServer.EffectLog]:
 func _add_damage(damage: int,opponent : bool = true) -> IGameServer.EffectFragment:
 	var block := maxi(_get_current_block() - _damage,0)
 	_damage += damage
+	if damage > block:
+		damage -= block
+	else:
+		block = damage
+		damage = 0
 	var passive : Array[IGameServer.PassiveLog] = []
 	passive_damaged.emit(damage,block,
 			func (plog : IGameServer.PassiveLog): passive.append(plog))

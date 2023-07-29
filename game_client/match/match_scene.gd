@@ -106,8 +106,8 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	await perform_effect(data.myself.moment,data.rival.moment)
 
-	_myself._perform_effect(data.myself.result)
-	_rival._perform_effect(data.rival.result)
+	await _myself._perform_effect(data.myself.result)
+	await _rival._perform_effect(data.rival.result)
 #	await get_tree().create_timer(0.5).timeout
 	
 	await perform_effect(data.myself.after,data.rival.after)

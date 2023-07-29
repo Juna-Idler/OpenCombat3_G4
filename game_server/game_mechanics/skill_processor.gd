@@ -37,6 +37,8 @@ class Pierce extends MechanicsData.BasicSkill:
 		if myself._has_initiative() and not rival._has_initiative():
 			@warning_ignore("integer_division")
 			var damage := (rival._get_current_block() + 1) / 2
+			if damage == 0:
+				return SkillProcessor.create_log(_skill.index,PRIORITY,[])
 			var fragment := rival._add_damage(damage,true)
 			return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
 		return SkillProcessor.create_log(_skill.index,PRIORITY,[])

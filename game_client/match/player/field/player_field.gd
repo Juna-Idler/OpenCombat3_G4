@@ -47,8 +47,10 @@ var _player_name : String
 var _catalog : I_CardCatalog
 var _rival_catalog : I_CardCatalog
 
-
 var _blocked_damage : int
+
+var _skill_titles : Array[Node2D] = []
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -112,6 +114,7 @@ func initialize(hand_area : HandArea,
 		%LabelBlock.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		%LabelDamage.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
+		$CanvasLayer/Node2D.rotation_degrees = 180
 
 
 	_catalog = catalog
@@ -144,6 +147,13 @@ func combat_start(hand : PackedInt32Array,select : int) -> void:
 	_playing_card.location = Card3D.CardLocation.COMBAT
 	_life -= _playing_card.level
 	
+	while _skill_titles.size() < _playing_card.skills.size():
+		var title = preload("res://game_client/match/player/field/skill_title.tscn").instantiate()
+		_skill_titles.append(title)
+		title.position.x = 230
+		title.position.y = 100 + 40 * _skill_titles.size()
+		$CanvasLayer/Node2D.add_child(title)
+
 	_damage = 0
 	_blocked_damage = 0
 	%LabelBlock.text = str(0)
@@ -151,20 +161,59 @@ func combat_start(hand : PackedInt32Array,select : int) -> void:
 	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(_playing_card,"position",$CombatPosition.position,0.5)
 	_hand_area.move_card(0.5)
+
+	tween.set_parallel()
+	for i in _playing_card.skills.size():
+		_skill_titles[i].initialize(_playing_card.skills[i],_opponent_layout)
+		_skill_titles[i].visible = true
+		_skill_titles[i].modulate.a = 0.0
+		tween.tween_property(_skill_titles[i],"modulate:a",1.0,0.5)
+	for i in range(_playing_card.skills.size(),_skill_titles.size()):
+		_skill_titles[i].visible = false
+		
+	
 	await tween.finished
 	return
 
 func get_playing_card() -> Card3D:
 	return _playing_card
+
+func combat_end() -> void:
+	_played.append(_playing_card.id_in_deck)
+	_playing_card.location = Card3D.CardLocation.PLAYED
+	var pos : Vector3 = $PlayedPosition.position
+	pos.z += 0.01 * _played.size()
+	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD).set_parallel()
+	tween.tween_property(_playing_card,"position",pos,0.5)
+	tween.tween_property(_playing_card,"rotation:z",-PI/2,0.5)
+	_playing_card.tween = tween
+	for i in _playing_card.skills.size():
+		tween.tween_property(_skill_titles[i],"modulate:a",0.0,0.5)
+	await tween.finished
 	
+	for i in _playing_card.skills.size():
+		_skill_titles[i].visible = false
+	%HBoxContainerDamage.visible = false
+	
+	_playing_card = null
+	return
+
 	
 func perform_effect(effect : IGameServer.EffectLog):
 	match effect.type:
 		IGameServer.EffectSourceType.SYSTEM_PROCESS:
 			pass
 		IGameServer.EffectSourceType.SKILL:
-			var card := get_playing_card()
-			card.skills[effect.id]
+			if effect.fragment.is_empty():
+				return
+			var origin := _skill_titles[effect.id].position
+			var tween := create_tween()
+			var target := Vector2(origin.x,0.0)
+			tween.tween_property(_skill_titles[effect.id],"position",target,0.3)
+			await tween.finished
+			tween = create_tween()
+			tween.tween_interval(0.5)
+			tween.tween_property(_skill_titles[effect.id],"position",origin,0.5)
 			pass
 		IGameServer.EffectSourceType.STATE:
 			_states[effect.id]
@@ -206,12 +255,16 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var power : int = fragment.data[0]
 			var hit : int = fragment.data[1]
 			var block : int = fragment.data[2]
+			var card := get_playing_card()
+			card.update_card_stats(power,hit,block)
 			pass
 		IGameServer.EffectFragmentType.CARD_STATS:
-			var card : int = fragment.data[0]
+			var card_id : int = fragment.data[0]
 			var power : int = fragment.data[1]
 			var hit : int = fragment.data[2]
 			var block : int = fragment.data[3]
+			var card := _deck[card_id]
+			card.update_card_stats(power,hit,block)
 			pass
 		IGameServer.EffectFragmentType.DRAW_CARD:
 			var card_id : int = fragment.data
@@ -279,22 +332,6 @@ func perform_passive(passive : IGameServer.PassiveLog) -> void:
 	pass
 
 	
-	
-func combat_end() -> void:
-	_played.append(_playing_card.id_in_deck)
-	_playing_card.location = Card3D.CardLocation.PLAYED
-	var pos : Vector3 = $PlayedPosition.position
-	pos.z += 0.01 * _played.size()
-	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD).set_parallel()
-	tween.tween_property(_playing_card,"position",pos,0.5)
-	tween.tween_property(_playing_card,"rotation:z",-PI/2,0.5)
-	_playing_card.tween = tween
-	_playing_card = null
-	await tween.finished
-	
-	%HBoxContainerDamage.visible = false
-	
-	return
 
 
 func fix_select_card(card : Card3D):
@@ -307,8 +344,10 @@ func update_label_enchant():
 		var e := s as Enchantment
 		lines.append(e.title)
 	if lines.is_empty():
-		%LabelEnchant.visible = false
+		%LabelEnchant.text = ""
+		pass
+#		%LabelEnchant.visible = false
 	else:
 		%LabelEnchant.text = "\n".join(lines)
-		%LabelEnchant.visible = true
+#		%LabelEnchant.visible = true
 

@@ -50,9 +50,18 @@ func initialize(id : int,cn : String,
 	$SubViewport/CardFront.initialize(card_name,c,l,p,h,b,sk,pict,opponent)
 	$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
-func set_albedo_color(color : Color):
+
+func update_card_stats(p:int,h:int,b:int):
+	power = p
+	hit = h
+	block = b
+	$SubViewport/CardFront.update_stats(power,hit,block)
+	$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+
+
+func set_albedo_color(c : Color):
 	var material : StandardMaterial3D = $MeshInstance3D.material_override
-	material.albedo_color = color
+	material.albedo_color = c
 
 
 func set_ray_pickable(enable : bool):

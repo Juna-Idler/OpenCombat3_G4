@@ -114,18 +114,10 @@ pivot_offset = Vector2(120, 79)
 
 [node name="LabelEnchant" type="Label" parent="CanvasLayer/Control/CenterContainer"]
 unique_name_in_owner = true
-visible = false
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 mouse_filter = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_fkvqf")
-text = "次強化(力+1 打+2 防+1)
-次強化(力+1 打+2 防+1)
-次強化(力+1 打+2 防+1)
-次強化(力+1 打+2 防+1)
-次強化(力+1 打+2 防+1)
-次強化(力+1 打+2 防+1)
-次強化(力+1 打+2 防+1)"
 label_settings = SubResource("LabelSettings_q1ho8")
 vertical_alignment = 1
 clip_text = true
@@ -185,3 +177,6 @@ size_flags_horizontal = 3
 text = "0"
 label_settings = SubResource("LabelSettings_70d2k")
 vertical_alignment = 1
+
+[node name="Node2D" type="Node2D" parent="CanvasLayer"]
+position = Vector2(640, 360)

@@ -1,0 +1,75 @@
+[gd_scene load_steps=5 format=3 uid="uid://dj8urkt8drx43"]
+
+[ext_resource type="Script" path="res://game_client/match/player/field/skill_title.gd" id="1_aby8f"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_grfii"]
+bg_color = Color(1, 1, 1, 0.878431)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_3oa71"]
+font_size = 20
+font_color = Color(0, 0, 0, 1)
+outline_size = 2
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_yniqu"]
+viewport_path = NodePath("SubViewport")
+
+[node name="SkillTitle" type="Node2D"]
+script = ExtResource("1_aby8f")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+size = Vector2i(320, 32)
+render_target_update_mode = 1
+
+[node name="Panel" type="Panel" parent="SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_grfii")
+
+[node name="Label" type="Label" parent="SubViewport/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(160, 16)
+text = "スキル名"
+label_settings = SubResource("LabelSettings_3oa71")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorRectCounter" type="ColorRect" parent="SubViewport/Panel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 4.0
+offset_top = -12.0
+offset_right = 20.0
+offset_bottom = 12.0
+grow_vertical = 2
+
+[node name="ColorRectLink" type="ColorRect" parent="SubViewport/Panel"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -28.0
+offset_top = -8.0
+offset_right = -4.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("ViewportTexture_yniqu")

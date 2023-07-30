@@ -36,5 +36,9 @@ func initialize(card_name : String,
 		$LabelHit.rotation_degrees = 180
 		$LabelBlock.rotation_degrees = 180
 		$LabelLevel.rotation_degrees = 180
-	
 	pass
+
+func update_stats(p : int,h : int,b : int):
+	$LabelPower.text = str(p)
+	$LabelHit.text = str(h)
+	$LabelBlock.text = str(b)

@@ -189,7 +189,7 @@ class IPlayer:
 		return null
 	
 #	DELETE_STATE,	# state_id : int
-	func _delete_state(_state : IState,_opponent : bool = false) -> IGameServer.EffectFragment:
+	func _delete_state(_state : IState,_expired : bool = true,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 
 

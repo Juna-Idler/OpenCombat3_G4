@@ -64,6 +64,12 @@ func _get_playing_card() -> Card3D:
 func _combat_end() -> void:
 	await _field.combat_end()
 
+func _begin_timing(timing : EffectTiming) -> void:
+	await _field.begin_timing(timing)
+
+func _finish_timing(timing : EffectTiming) -> void:
+	await _field.finish_timing(timing)
+
 
 func fix_select_card(card : Card3D):
 	await _field.fix_select_card(card)

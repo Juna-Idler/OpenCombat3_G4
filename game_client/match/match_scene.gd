@@ -80,15 +80,14 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 	round_count = 1
 	phase = IGameServer.Phase.COMBAT
 	recovery_repeat = 0
-
-	await perform_effect(data.myself.initial,data.rival.initial)
+	
+	await perform_effect(data.myself.initial,data.rival.initial,I_MatchPlayer.EffectTiming.INITIAL)
 
 	_myself._set_first_data(data.myself)
 	_rival._set_first_data(data.rival)
 	await get_tree().create_timer(1).timeout
 
-	await perform_effect(data.myself.start,data.rival.start)
-	
+	await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
 	
 	_performing = false
 	performed.emit()
@@ -96,23 +95,24 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 
 		
 func _on_recieved_combat_result(data : IGameServer.CombatData):
+	
 	_performing = true
 	_myself._combat_start(data.myself.hand,data.myself.select)
 	_rival._combat_start(data.rival.hand,data.rival.select)
 	await get_tree().create_timer(0.5).timeout
-	
-	await perform_effect(data.myself.before,data.rival.before)
-	
-	
-	await perform_effect(data.myself.moment,data.rival.moment)
+
+	await perform_effect(data.myself.before,data.rival.before,I_MatchPlayer.EffectTiming.BEFORE)
+
+	await perform_effect(data.myself.moment,data.rival.moment,I_MatchPlayer.EffectTiming.MOMENT)
 
 	await _myself._perform_effect(data.myself.result)
 	await _rival._perform_effect(data.rival.result)
 #	await get_tree().create_timer(0.5).timeout
+
+	await perform_effect(data.myself.after,data.rival.after,I_MatchPlayer.EffectTiming.AFTER)
 	
-	await perform_effect(data.myself.after,data.rival.after)
+	await perform_effect(data.myself.end,data.rival.end,I_MatchPlayer.EffectTiming.END)
 	
-	await perform_effect(data.myself.end,data.rival.end)
 	
 	_myself._combat_end()
 	_rival._combat_end()
@@ -121,7 +121,7 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	round_count = data.round_count + (1 if data.next_phase == IGameServer.Phase.COMBAT else 0)
 	phase = data.next_phase
 	
-	await perform_effect(data.myself.start,data.rival.start)
+	await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
 	
 	_performing = false
 	performed.emit()
@@ -137,7 +137,8 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	round_count = data.round_count + (1 if data.next_phase == IGameServer.Phase.COMBAT else 0)
 	phase = data.next_phase
 	recovery_repeat = data.repeat
-	perform_effect(data.myself.start,data.rival.start)
+	
+	await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
 	
 	_performing = false
 	performed.emit()
@@ -151,7 +152,10 @@ func _on_recieved_complete_board(_data : IGameServer.CompleteData):
 
 
 func perform_effect(my_log : Array[IGameServer.EffectLog],
-		rival_log : Array[IGameServer.EffectLog]):
+		rival_log : Array[IGameServer.EffectLog],timing : I_MatchPlayer.EffectTiming):
+	await _myself._begin_timing(timing)
+	await _rival._begin_timing(timing)
+	
 	var mi : int = 0
 	var ri : int = 0
 	while (true):
@@ -172,5 +176,7 @@ func perform_effect(my_log : Array[IGameServer.EffectLog],
 		mi += 1
 		ri += 1
 		
+	await _myself._finish_timing(timing)
+	await _rival._finish_timing(timing)
 
 

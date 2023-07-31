@@ -2,22 +2,8 @@ extends Node3D
 
 
 const Card3D_Scene := preload("res://game_client/match/card3d.tscn")
-
-class Enchantment:
-	var data : CatalogData.StateData
-	var parameter : Array
-	var title : String
-
-	func _init(d,p):
-		data = d
-		parameter = p
-		var p_str := Global.card_catalog.param_to_string(data.param_type,parameter)
-		title = data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )
-	
-	func change_parameter(p):
-		parameter = p
-		var p_str := Global.card_catalog.param_to_string(data.param_type,parameter)
-		title = data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )
+const EnchantmentTitleScene := preload("res://game_client/match/player/field/enchantment_title.tscn")
+const SkillTitleScene := preload("res://game_client/match/player/field/skill_title.tscn")
 
 
 var _opponent_layout : bool
@@ -27,6 +13,8 @@ var _opponent_layout : bool
 
 @onready var card_holder = $CardHolder
 var _hand_area : HandArea = null
+
+@onready var enchant_display = $CanvasLayer/Node2D/EnchantDisplay
 
 
 var _deck : Array[Card3D]
@@ -95,15 +83,15 @@ func initialize(hand_area : HandArea,
 	_life = life
 	_damage = 0
 
-	_states = {}
 	_playing_card = null
 	_player_name = player_name
 	$CanvasLayer/Control/LabelName.text = _player_name
+
+	enchant_display.initialize(opponent)
 	
 	_opponent_layout = opponent
 	if opponent:
 		rotation_degrees.z = 180
-		$CanvasLayer/Control/CenterContainer.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT,Control.PRESET_MODE_MINSIZE)
 		$CanvasLayer/Control/LabelName.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT,Control.PRESET_MODE_KEEP_SIZE)
 		
 		%HBoxContainerDamage.move_child(%LabelDamage,0)
@@ -133,6 +121,7 @@ func set_first_data(data : IGameServer.FirstData.PlayerData):
 		cards.append(_deck[h])
 	_hand_area.set_cards(cards)
 	_hand_area.move_card(1)
+
 	pass
 
 func combat_start(hand : PackedInt32Array,select : int) -> void:
@@ -207,16 +196,15 @@ func perform_effect(effect : IGameServer.EffectLog):
 			if effect.fragment.is_empty():
 				return
 			var origin := _skill_titles[effect.id].position
-			var tween := create_tween()
+			var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 			var target := Vector2(origin.x,0.0)
 			tween.tween_property(_skill_titles[effect.id],"position",target,0.3)
+			tween.tween_interval(0.2)
+			tween.tween_property(_skill_titles[effect.id],"position",origin,0.3)
 			await tween.finished
-			tween = create_tween()
-			tween.tween_interval(0.5)
-			tween.tween_property(_skill_titles[effect.id],"position",origin,0.5)
 			pass
 		IGameServer.EffectSourceType.STATE:
-			_states[effect.id]
+			await enchant_display.perform(effect.id)
 			pass
 		IGameServer.EffectSourceType.ABILITY:
 			pass
@@ -277,7 +265,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			_hand_area.move_card(0.5)
 			await get_tree().create_timer(0.5).timeout
 			pass
-		IGameServer.EffectFragmentType.DISCARD:
+		IGameServer.EffectFragmentType.DISCARD_CARD:
 			var card_id : int = fragment.data
 			var card := _deck[card_id]
 			if card.location == Card3D.CardLocation.HAND:
@@ -296,24 +284,23 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			pass
 		
 		IGameServer.EffectFragmentType.CREATE_STATE:
-			var state_id : int = fragment.data[0]
+			var id : int = fragment.data[0]
 			var opponent_source : bool = fragment.data[1]
 			var data_id : int = fragment.data[2]
 			var param = fragment.data[3]
-			var sd := _rival_catalog._get_state_data(data_id)
-			_states[state_id] = Enchantment.new(sd,param)
-			update_label_enchant()
+			var sd := (_rival_catalog._get_state_data(data_id) if opponent_source
+					else _catalog._get_state_data(data_id))
+			await enchant_display.create_enchantment(id,sd,param)
 			pass
 		IGameServer.EffectFragmentType.UPDATE_STATE:
-			var state_id : int = fragment.data[0]
+			var id : int = fragment.data[0]
 			var param = fragment.data[1]
-			_states[state_id].change_parameter(param)
-			update_label_enchant()
+			await enchant_display.update_enchantment(id,param)
 			pass
 		IGameServer.EffectFragmentType.DELETE_STATE:
-			var state_id : int = fragment.data
-			_states.erase(state_id)
-			update_label_enchant()
+			var id : int = fragment.data[0]
+			var expired : bool = fragment.data[1]
+			await enchant_display.delete_enchantment(id,expired)
 			pass
 		
 		IGameServer.EffectFragmentType.CREATE_CARD:
@@ -331,23 +318,42 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 func perform_passive(passive : IGameServer.PassiveLog) -> void:
 	pass
 
-	
 
+func begin_timing(timing : I_MatchPlayer.EffectTiming) -> void:
+	match timing:
+		I_MatchPlayer.EffectTiming.INITIAL:
+			pass
+		I_MatchPlayer.EffectTiming.START:
+			pass
+		I_MatchPlayer.EffectTiming.BEFORE:
+			pass
+		I_MatchPlayer.EffectTiming.MOMENT:
+			pass
+		I_MatchPlayer.EffectTiming.AFTER:
+			pass
+		I_MatchPlayer.EffectTiming.END:
+			pass
+	pass
+
+func finish_timing(timing : I_MatchPlayer.EffectTiming) -> void:
+	enchant_display.force_delete()
+	match timing:
+		I_MatchPlayer.EffectTiming.INITIAL:
+			pass
+		I_MatchPlayer.EffectTiming.START:
+			pass
+		I_MatchPlayer.EffectTiming.BEFORE:
+			pass
+		I_MatchPlayer.EffectTiming.MOMENT:
+			pass
+		I_MatchPlayer.EffectTiming.AFTER:
+			pass
+		I_MatchPlayer.EffectTiming.END:
+			pass
+	pass
 
 func fix_select_card(card : Card3D):
 	await _hand_area.fix_select_card(card)
 
 
-func update_label_enchant():
-	var lines : PackedStringArray = []
-	for s in _states.values():
-		var e := s as Enchantment
-		lines.append(e.title)
-	if lines.is_empty():
-		%LabelEnchant.text = ""
-		pass
-#		%LabelEnchant.visible = false
-	else:
-		%LabelEnchant.text = "\n".join(lines)
-#		%LabelEnchant.visible = true
 

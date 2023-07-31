@@ -167,14 +167,15 @@ enum EffectFragmentType {
 	DAMAGE,			# [unblocked_damage : int,blocked_damage : int]
 	INITIATIVE,		# initiative : bool
 	COMBAT_STATS,	# [power : int,hit : int,block : int]
+	
 	CARD_STATS,		# [card_id : int,power : int,hit : int,block : int]
 	DRAW_CARD,		# card_id : int
-	DISCARD,		# card_id : int
+	DISCARD_CARD,	# card_id : int
 	BOUNCE_CARD,	# [card_id : int,position : int]
 	
 	CREATE_STATE,	# [state_id : int,opponent_source : bool,data_id : int,param : Array]
 	UPDATE_STATE,	# [state_id : int,param : Array]
-	DELETE_STATE,	# state_id : int
+	DELETE_STATE,	# [state_id : int,expired : bool]
 	
 	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
 

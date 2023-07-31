@@ -226,8 +226,8 @@ func _discard_card(card : int,opponent : bool = false) -> IGameServer.EffectFrag
 		var passive : Array[IGameServer.PassiveLog] = []
 		passive_discarded.emit(card,
 				func (plog : IGameServer.PassiveLog): passive.append(plog))
-		return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD,opponent,card,passive)
-	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD,opponent,-1,[])
+		return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,card,passive)
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,-1,[])
 	
 func _bounce_card(card : int,position : int,opponent : bool = false) -> IGameServer.EffectFragment:
 	var index := _hand.find(card)
@@ -258,12 +258,12 @@ func _update_state(state : IState,param:Array,opponent : bool = false) -> IGameS
 			opponent,[id,param],[])
 
 #	DELETE_STATE,	# state_id : int
-func _delete_state(state : IState,opponent : bool = false) -> IGameServer.EffectFragment:
+func _delete_state(state : IState,expired : bool = true,opponent : bool = false) -> IGameServer.EffectFragment:
 	var id : int = _states[state]
 	state._term()
 	_states.erase(state)
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DELETE_STATE,
-			opponent,id,[])
+			opponent,[id,expired],[])
 	
 
 #	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]

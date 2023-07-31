@@ -3,7 +3,7 @@ class_name I_MatchPlayer
 
 signal hand_clicked(card : Card3D)
 
-
+enum EffectTiming {INITIAL,START,BEFORE,MOMENT,AFTER,END}
 
 
 func _get_field() -> Node3D:
@@ -42,9 +42,18 @@ func _perform_passive(_passive : IGameServer.PassiveLog) -> void:
 
 func _get_playing_card() -> Card3D:
 	return null
+	
 
 func _combat_end() -> void:
 	pass
 
 
+func _begin_timing(_timing : EffectTiming) -> void:
+	assert(false)
+	@warning_ignore("redundant_await")
+	await 0
 
+func _finish_timing(_timing : EffectTiming) -> void:
+	assert(false)
+	@warning_ignore("redundant_await")
+	await 0

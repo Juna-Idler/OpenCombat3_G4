@@ -2,14 +2,14 @@
 
 [ext_resource type="Script" path="res://game_client/match/player/field/skill_title.gd" id="1_aby8f"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_grfii"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nk5mb"]
 bg_color = Color(1, 1, 1, 0.878431)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="LabelSettings" id="LabelSettings_3oa71"]
+[sub_resource type="LabelSettings" id="LabelSettings_fi2y0"]
 font_size = 20
 font_color = Color(0, 0, 0, 1)
 outline_size = 2
@@ -31,7 +31,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_grfii")
+theme_override_styles/panel = SubResource("StyleBoxFlat_nk5mb")
 
 [node name="Label" type="Label" parent="SubViewport/Panel"]
 layout_mode = 1
@@ -42,7 +42,7 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(160, 16)
 text = "スキル名"
-label_settings = SubResource("LabelSettings_3oa71")
+label_settings = SubResource("LabelSettings_fi2y0")
 horizontal_alignment = 1
 vertical_alignment = 1
 

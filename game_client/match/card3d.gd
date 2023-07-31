@@ -69,6 +69,7 @@ func set_ray_pickable(enable : bool):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	$MeshInstance3D.material_override.albedo_texture = $SubViewport.get_texture()
 	tween = create_tween()
 	tween.kill()
 	pass # Replace with function body.

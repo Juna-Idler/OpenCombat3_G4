@@ -1,15 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://41vguxcbj5ix"]
+[gd_scene load_steps=10 format=3 uid="uid://41vguxcbj5ix"]
 
 [ext_resource type="Script" path="res://game_client/match/card3d.gd" id="1_gqbhw"]
 [ext_resource type="PackedScene" uid="uid://88s2fwk2lrtx" path="res://game_client/card/card_front.tscn" id="1_ircpo"]
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_63w52"]
-viewport_path = NodePath("SubViewport")
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bg7e8"]
 resource_local_to_scene = true
 shading_mode = 0
-albedo_texture = SubResource("ViewportTexture_63w52")
 
 [sub_resource type="QuadMesh" id="QuadMesh_62pkv"]
 size = Vector2(1, 1.5)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dj8urkt8drx43"]
+[gd_scene load_steps=4 format=3 uid="uid://dj8urkt8drx43"]
 
 [ext_resource type="Script" path="res://game_client/match/player/field/skill_title.gd" id="1_aby8f"]
 
@@ -13,9 +13,6 @@ corner_radius_bottom_left = 4
 font_size = 20
 font_color = Color(0, 0, 0, 1)
 outline_size = 2
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_yniqu"]
-viewport_path = NodePath("SubViewport")
 
 [node name="SkillTitle" type="Node2D"]
 script = ExtResource("1_aby8f")
@@ -72,4 +69,3 @@ grow_horizontal = 0
 grow_vertical = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("ViewportTexture_yniqu")

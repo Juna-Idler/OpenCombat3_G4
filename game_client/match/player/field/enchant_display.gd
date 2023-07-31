@@ -84,6 +84,8 @@ func delete_enchantment(id : int,expired : bool):
 	
 
 func force_delete():
+	if _deleted.is_empty():
+		return
 	var size := _enchantments.size() - _deleted.size()
 	var start := size * -20 + 20
 	var count : int = 0

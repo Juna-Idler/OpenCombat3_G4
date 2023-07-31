@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://d5p8bseji6wd"]
+[gd_scene load_steps=4 format=3 uid="uid://d5p8bseji6wd"]
 
 [ext_resource type="Script" path="res://game_client/match/player/field/enchantment_title.gd" id="1_3fjve"]
 
@@ -13,9 +13,6 @@ corner_radius_bottom_left = 4
 font_size = 20
 outline_size = 2
 outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_yniqu"]
-viewport_path = NodePath("SubViewport")
 
 [node name="enchantment_title" type="Node2D"]
 script = ExtResource("1_3fjve")
@@ -47,4 +44,3 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("ViewportTexture_yniqu")

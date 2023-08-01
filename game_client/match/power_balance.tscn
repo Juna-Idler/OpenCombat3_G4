@@ -1,0 +1,89 @@
+[gd_scene load_steps=10 format=3 uid="uid://c4s6ur61pibms"]
+
+[ext_resource type="Script" path="res://game_client/match/power_balance.gd" id="1_wlq7p"]
+
+[sub_resource type="Gradient" id="Gradient_ikdx1"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.752941, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_qykwt"]
+gradient = SubResource("Gradient_ikdx1")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="Gradient" id="Gradient_wj6qm"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.752941, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ln0h0"]
+gradient = SubResource("Gradient_wj6qm")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="Gradient" id="Gradient_6g8pv"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 0.752941, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ti208"]
+gradient = SubResource("Gradient_6g8pv")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="Gradient" id="Gradient_rejye"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.752941, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_mw6m7"]
+gradient = SubResource("Gradient_rejye")
+fill_to = Vector2(0, 1)
+
+[node name="power_balance" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_wlq7p")
+
+[node name="PowerBalanceTop" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.3
+grow_horizontal = 2
+mouse_filter = 2
+split_offset = 640
+dragger_visibility = 2
+
+[node name="LeftTop" type="TextureRect" parent="PowerBalanceTop"]
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_qykwt")
+
+[node name="RightTop" type="TextureRect" parent="PowerBalanceTop"]
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_ln0h0")
+
+[node name="PowerBalanceBottom" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.7
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+split_offset = 640
+dragger_visibility = 2
+
+[node name="LeftBottom" type="TextureRect" parent="PowerBalanceBottom"]
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_ti208")
+flip_v = true
+
+[node name="RightBottom" type="TextureRect" parent="PowerBalanceBottom"]
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_mw6m7")
+flip_v = true

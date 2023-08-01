@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dci4g4cu74w6n"]
+[gd_scene load_steps=6 format=3 uid="uid://dci4g4cu74w6n"]
 
 [ext_resource type="Script" path="res://game_client/match/match_scene.gd" id="1_jvtjj"]
+[ext_resource type="PackedScene" uid="uid://c4s6ur61pibms" path="res://game_client/match/power_balance.tscn" id="2_xh3ck"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_62qcl"]
 
 [sub_resource type="Environment" id="Environment_m7sro"]
@@ -31,6 +32,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="power_balance" parent="Control" instance=ExtResource("2_xh3ck")]
+layout_mode = 1
+pivot_offset = Vector2(640, 360)
 
 [node name="Button" type="Button" parent="Control"]
 layout_mode = 1

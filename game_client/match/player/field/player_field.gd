@@ -26,8 +26,6 @@ var _stock_count : int
 var _life : int = 0
 var _damage : int = 0
 
-var _states : Dictionary = {} # key int, value Enchantment
-
 var _playing_card : Card3D = null
 
 var _player_name : String
@@ -39,7 +37,7 @@ var _blocked_damage : int
 
 var _skill_titles : Array[Node2D] = []
 
-
+var _power_balance : CombatPowerBalance.Interface
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -47,7 +45,9 @@ func _ready():
 
 
 func initialize(hand_area : HandArea,
-		player_name:String,deck : PackedInt32Array,catalog : I_CardCatalog,opponent : bool):
+		player_name:String,deck : PackedInt32Array,
+		catalog : I_CardCatalog,opponent : bool,
+		cpbi : CombatPowerBalance.Interface):
 
 	if _hand_area:
 		remove_child(_hand_area)
@@ -88,6 +88,8 @@ func initialize(hand_area : HandArea,
 	$CanvasLayer/Control/LabelName.text = _player_name
 
 	enchant_display.initialize(opponent)
+	
+	_power_balance = cpbi
 	
 	_opponent_layout = opponent
 	if opponent:
@@ -244,7 +246,16 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var hit : int = fragment.data[1]
 			var block : int = fragment.data[2]
 			var card := get_playing_card()
+			var cpower := card.power
 			card.update_card_stats(power,hit,block)
+			if power > cpower:
+				for p in range(cpower,power + 1):
+					_power_balance.change_power(p,0.1)
+					await get_tree().create_timer(0.1).timeout
+			if power < cpower:
+				for p in range(cpower,power-1,-1):
+					_power_balance.change_power(p,0.1)
+					await get_tree().create_timer(0.1).timeout
 			pass
 		IGameServer.EffectFragmentType.CARD_STATS:
 			var card_id : int = fragment.data[0]

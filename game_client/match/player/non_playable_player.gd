@@ -20,9 +20,11 @@ func _get_field() -> Node3D:
 func _get_catalog() -> I_CardCatalog:
 	return _catalog
 
-func _initialize(player_name:String,deck : PackedInt32Array,catalog : I_CardCatalog,opponent : bool) -> void:
+func _initialize(player_name:String,deck : PackedInt32Array,
+		catalog : I_CardCatalog,opponent : bool,
+		cpbi : CombatPowerBalance.Interface) -> void:
 	_hand_area = NonPlayableHandArea.instantiate()
-	_field.initialize(_hand_area,player_name,deck,catalog,opponent)
+	_field.initialize(_hand_area,player_name,deck,catalog,opponent,cpbi)
 	_hand_area.clicked.connect(func(c):hand_clicked.emit(c))
 	_catalog = catalog
 	
@@ -59,7 +61,7 @@ func _perform_passive(passive : IGameServer.PassiveLog) -> void:
 
 
 func _get_playing_card() -> Card3D:
-	return null
+	return _field.get_playing_card()
 
 func _combat_end() -> void:
 	await _field.combat_end()

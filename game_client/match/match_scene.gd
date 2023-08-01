@@ -51,11 +51,15 @@ func initialize(server : IGameServer,
 
 	var pd := _game_server._get_primary_data()
 
-	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog,false)
-	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog,true)
+	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog,false,
+			CombatPowerBalance.Interface.new($Control/power_balance,false))
+	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog,true,
+			CombatPowerBalance.Interface.new($Control/power_balance,true))
 	_myself._set_rival(_rival)
 	_rival._set_rival(_myself)
 	
+	$Control/power_balance.visible = false
+	$Control/power_balance.modulate.a = 0
 
 func terminalize():
 	if _game_server:
@@ -99,7 +103,13 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	_performing = true
 	_myself._combat_start(data.myself.hand,data.myself.select)
 	_rival._combat_start(data.rival.hand,data.rival.select)
-	await get_tree().create_timer(0.5).timeout
+	$Control/power_balance.visible = true
+	$Control/power_balance.change_both_power(0,0,0.0)
+	var tween = create_tween()
+	tween.tween_property($Control/power_balance,"modulate:a",1.0,0.5)
+	$Control/power_balance.change_both_power(
+			_myself._get_playing_card().power,_rival._get_playing_card().power,0.5)
+	await tween.finished
 
 	await perform_effect(data.myself.before,data.rival.before,I_MatchPlayer.EffectTiming.BEFORE)
 
@@ -113,10 +123,13 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	await perform_effect(data.myself.end,data.rival.end,I_MatchPlayer.EffectTiming.END)
 	
-	
+
+	tween = create_tween()
+	tween.tween_property($Control/power_balance,"modulate:a",0.0,0.5)
+	tween.tween_callback(func():$Control/power_balance.visible = false)
 	_myself._combat_end()
 	_rival._combat_end()
-	await get_tree().create_timer(0.5).timeout
+	await tween.finished
 
 	round_count = data.round_count + (1 if data.next_phase == IGameServer.Phase.COMBAT else 0)
 	phase = data.next_phase

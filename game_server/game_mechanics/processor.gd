@@ -30,11 +30,25 @@ func _init():
 	pass
 
 
-func standby(p1 : MechanicsData.IPlayer,p2 : MechanicsData.IPlayer):
+func standby(p1 : MechanicsData.IPlayer,p2 : MechanicsData.IPlayer) -> IGameServer.FirstData:
 	round_count = 1
 	phase = IGameServer.Phase.COMBAT;
 	player1 = p1
 	player2 = p2
+	
+	#initial effect
+	var p1_initial : Array[IGameServer.EffectLog] = []
+	var p2_initial : Array[IGameServer.EffectLog] = []
+
+	player1._start_effect_log_temporary().clear()
+	player2._start_effect_log_temporary().clear()
+	_start_effect()
+	
+	return IGameServer.FirstData.new(
+			IGameServer.FirstData.PlayerData.new(player1._get_hand(),
+			player1._get_life(),-1,p1_initial,player1._start_effect_log_temporary()),
+			IGameServer.FirstData.PlayerData.new(player2._get_hand(),
+			player2._get_life(),-1,p2_initial,player2._start_effect_log_temporary()))
 
 
 func reorder_hand1(hand:PackedInt32Array):
@@ -125,20 +139,20 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 
 	return IGameServer.CombatData.new(current_round_count,phase,
 			IGameServer.CombatData.PlayerData.new(p1_hand,index1,
-					player1._before_effect_log_temporary(),
-					player1._moment_effect_log_temporary(),
+					player1._before_effect_log_temporary().duplicate(),
+					player1._moment_effect_log_temporary().duplicate(),
 					p1_result,
-					player1._after_effect_log_temporary(),
-					player1._end_effect_log_temporary(),
-					player1._start_effect_log_temporary(),
+					player1._after_effect_log_temporary().duplicate(),
+					player1._end_effect_log_temporary().duplicate(),
+					player1._start_effect_log_temporary().duplicate(),
 					player1._get_damage(),player1._get_life(),0),
 			IGameServer.CombatData.PlayerData.new(p2_hand,index2,
-					player2._before_effect_log_temporary(),
-					player2._moment_effect_log_temporary(),
+					player2._before_effect_log_temporary().duplicate(),
+					player2._moment_effect_log_temporary().duplicate(),
 					p2_result,
-					player2._after_effect_log_temporary(),
-					player2._end_effect_log_temporary(),
-					player2._start_effect_log_temporary(),
+					player2._after_effect_log_temporary().duplicate(),
+					player2._end_effect_log_temporary().duplicate(),
+					player2._start_effect_log_temporary().duplicate(),
 					player2._get_damage(),player2._get_life(),0))
 	
 
@@ -180,10 +194,10 @@ func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
 
 	return IGameServer.RecoveryData.new(current_round_count,phase,recovery_count,
 			IGameServer.RecoveryData.PlayerData.new(p1_hand,index1,
-			player1._start_effect_log_temporary(),p1_result,
+			player1._start_effect_log_temporary().duplicate(),p1_result,
 			player1._get_damage(),player1._get_life(),0),
 			IGameServer.RecoveryData.PlayerData.new(p2_hand,index2,
-			player2._start_effect_log_temporary(),p2_result,
+			player2._start_effect_log_temporary().duplicate(),p2_result,
 			player2._get_damage(),player2._get_life(),0))
 
 

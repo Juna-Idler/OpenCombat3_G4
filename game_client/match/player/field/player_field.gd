@@ -87,6 +87,10 @@ func initialize(hand_area : HandArea,
 	_player_name = player_name
 	$CanvasLayer/Control/LabelName.text = _player_name
 
+	for st in _skill_titles:
+		st.visible = false
+	%HBoxContainerDamage.visible = false
+
 	enchant_display.initialize(opponent)
 	
 	_power_balance = cpbi
@@ -168,6 +172,9 @@ func combat_start(hand : PackedInt32Array,select : int) -> void:
 
 func get_playing_card() -> Card3D:
 	return _playing_card
+func get_enchantment_data(id : int) -> CatalogData.StateData:
+	return 
+
 
 func combat_end() -> void:
 	_played.append(_playing_card.id_in_deck)

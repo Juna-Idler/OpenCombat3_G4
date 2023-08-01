@@ -71,10 +71,10 @@ func terminalize():
 		_game_server = null
 		
 	if _myself:
-		$Field.remove_child(_myself._get_scene())
+		$Field.remove_child(_myself._get_field())
 		_myself = null
 	if _rival:
-		$Field.remove_child(_rival._get_scene())
+		$Field.remove_child(_rival._get_field())
 		_rival = null
 
 
@@ -120,6 +120,13 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 #	await get_tree().create_timer(0.5).timeout
 
 	await perform_effect(data.myself.after,data.rival.after,I_MatchPlayer.EffectTiming.AFTER)
+	
+	if data.next_phase == IGameServer.Phase.GAME_END:
+		$Control/power_balance.visible = false
+		phase = data.next_phase
+		_performing = false
+		performed.emit()
+		return
 	
 	await perform_effect(data.myself.end,data.rival.end,I_MatchPlayer.EffectTiming.END)
 	

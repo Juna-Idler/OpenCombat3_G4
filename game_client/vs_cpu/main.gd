@@ -11,6 +11,15 @@ var rival := NonPlayablePlayer.new()
 func _ready():
 	myself.hand_selected.connect(on_hand_selected)
 	
+	initialize()
+
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
+	pass
+
+func initialize():
 	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]	
 	
 	var d := RegulationData.DeckRegulation.new("",27,30,2,1,"1-27")
@@ -21,10 +30,6 @@ func _ready():
 	$match_scene.performed.connect(on_match_scene_performed)
 	server._send_ready()
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass
 
 func on_hand_selected(index : int,hand : Array[Card3D]):
 	myself._hand_area.set_playable(false)
@@ -47,4 +52,12 @@ func on_match_scene_performed():
 		return
 	if $match_scene.phase != IGameServer.Phase.GAME_END:
 		myself._hand_area.set_playable(true)
+	else:
+		$CanvasLayer/Control/ButtonGameOver.show()
 	
+
+
+func _on_button_game_over_pressed():
+	initialize()
+	$CanvasLayer/Control/ButtonGameOver.hide()
+	pass # Replace with function body.

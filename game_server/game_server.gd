@@ -48,10 +48,13 @@ class FirstData:
 		var initial : Array[EffectLog]	# デッキアビリティ
 		var start : Array[EffectLog]	# 開始時効果
 		
-		func _init(h : PackedInt32Array,l : int,t : float):
+		func _init(h : PackedInt32Array,l : int,t : float,
+				i : Array[EffectLog],s : Array[EffectLog]):
 			hand = h
 			life = l
 			time = t
+			initial = i
+			start = s
 
 	var myself:PlayerData
 	var rival:PlayerData

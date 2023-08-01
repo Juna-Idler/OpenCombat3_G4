@@ -31,6 +31,9 @@ func _ready():
 	
 func initialize(opponent : bool):
 	_opponent_layout = opponent
+	
+func get_enchantment_data(id : int) -> CatalogData.StateData:
+	return _enchantments[id].data
 
 func create_enchantment(id : int,sd : CatalogData.StateData,param):
 	var n := Enchantment.new(sd,param,_opponent_layout)
@@ -62,9 +65,9 @@ func update_enchantment(id : int,param):
 
 func delete_enchantment(id : int,expired : bool):
 	var d := _enchantments[id] as Enchantment
+	_deleted.append(id)
 	if not expired:
 		d.title_object.modulate.a = 0.5
-		_deleted.append(id)
 		return
 		
 	var size := _enchantments.size() - 1
@@ -78,10 +81,8 @@ func delete_enchantment(id : int,expired : bool):
 			count += 1
 	tween.tween_property(d.title_object,"position:x",320.0,0.1)
 	await tween.finished
-	remove_child(d.title_object)
-	d.title_object.queue_free()
-	_enchantments.erase(id)
-	
+	d.title_object.visible = false
+
 
 func force_delete():
 	if _deleted.is_empty():
@@ -97,7 +98,8 @@ func force_delete():
 			count += 1
 	for d in _deleted:
 		var e := _enchantments[d] as Enchantment
-		tween.tween_property(e.title_object,"position:x",320.0,0.1)
+		if e.title_object.visible:
+			tween.tween_property(e.title_object,"position:x",320.0,0.1)
 	await tween.finished
 	for d in _deleted:
 		var e = _enchantments[d] as Enchantment

@@ -63,6 +63,10 @@ func _perform_passive(passive : IGameServer.PassiveLog) -> void:
 func _get_playing_card() -> Card3D:
 	return _field.get_playing_card()
 
+func _get_enchantment_data(id : int) -> CatalogData.StateData:
+	return _field.get_enchantment_data(id)
+
+
 func _combat_end() -> void:
 	await _field.combat_end()
 

@@ -7,3 +7,27 @@
 script = ExtResource("1_x7hgn")
 
 [node name="match_scene" parent="." instance=ExtResource("1_yn0n3")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ButtonGameOver" type="Button" parent="CanvasLayer/Control"]
+visible = false
+layout_mode = 0
+offset_left = 189.0
+offset_top = 184.0
+offset_right = 1099.0
+offset_bottom = 525.0
+theme_override_font_sizes/font_size = 100
+text = "Game Over"
+
+[connection signal="pressed" from="CanvasLayer/Control/ButtonGameOver" to="." method="_on_button_game_over_pressed"]

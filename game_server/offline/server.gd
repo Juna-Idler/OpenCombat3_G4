@@ -8,6 +8,10 @@ const RECOVER_RESULT_DELAY = 1000
 
 
 var _processor := GameProcessor.new()
+
+var _player : OfflinePlayer
+var _cpu_player : OfflinePlayer
+
 var _player_name:String
 
 var deck_regulation : RegulationData.DeckRegulation
@@ -39,32 +43,30 @@ func initialize(name:String,deck:PackedInt32Array,
 	
 	var factory := PlayerCardFactory.new(card_catalog)
 	
-	var p1 := OfflinePlayer.new(factory,deck,m_regulation.hand_count,true)
-	var p2 := OfflinePlayer.new(factory,cpu_deck,m_regulation.hand_count,true)
-# warning-ignore:return_value_discarded
-	_processor.standby(p1,p2)
+	_player = OfflinePlayer.new(factory,deck,m_regulation.hand_count,true)
+	_cpu_player = OfflinePlayer.new(factory,cpu_deck,m_regulation.hand_count,true)
+	
 
 func _get_primary_data() -> PrimaryData:
-	var my_deck_list = []
-	for c in _processor.player1._get_deck_list():
+	var my_deck_list : PackedInt32Array = []
+	for c in _player._get_deck_list():
 		my_deck_list.append(c.data.id)
-	var r_deck_list = []
-	for c in _processor.player2._get_deck_list():
+	var r_deck_list  : PackedInt32Array = []
+	for c in _cpu_player._get_deck_list():
 		r_deck_list.append(c.data.id)
 	return PrimaryData.new(_player_name,my_deck_list,
 			_commander._get_commander_name(),r_deck_list,
 			deck_regulation,match_regulation)
 
 func _send_ready():
-	var p1 := FirstData.PlayerData.new(_processor.player1._get_hand(),
-			_processor.player1._get_life(),match_regulation.thinking_time)
-	var p2 := FirstData.PlayerData.new(_processor.player2._get_hand(),
-			_processor.player2._get_life(),-1)
-	var p1first := FirstData.new(p1,p2)
-	_result = _commander._first_select(p2.hand,p1.hand)
+
+	var first := _processor.standby(_player,_cpu_player)
+	first.myself.time = match_regulation.thinking_time
+
+	_result = _commander._first_select(_cpu_player._get_hand(),_player._get_hand())
 	
 	_emit_time = Time.get_ticks_msec()
-	recieved_first_data.emit(p1first)
+	recieved_first_data.emit(first)
 	_player_time = int(match_regulation.thinking_time * 1000)
 	_delay_time = int(match_regulation.combat_time * 1000) + 1000
 

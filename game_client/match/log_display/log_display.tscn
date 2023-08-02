@@ -1,22 +1,25 @@
-[gd_scene load_steps=2 format=3 uid="uid://urb0isujicis"]
+[gd_scene load_steps=4 format=3 uid="uid://urb0isujicis"]
 
 [ext_resource type="Script" path="res://game_client/match/log_display/log_display.gd" id="1_10mym"]
+[ext_resource type="PackedScene" uid="uid://b6754xrqnks7l" path="res://game_client/match/log_display/log_item.tscn" id="2_gixxy"]
 
-[node name="ScrollContainer" type="ScrollContainer"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_25mr0"]
+bg_color = Color(0, 0, 0, 0.501961)
+
+[node name="LogDisplay" type="ScrollContainer"]
 anchors_preset = 9
 anchor_bottom = 1.0
 offset_right = 480.0
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_25mr0")
 script = ExtResource("1_10mym")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 6
+theme_override_constants/separation = 4
 alignment = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer"]
-custom_minimum_size = Vector2(400, 0)
+[node name="LogItem" parent="VBoxContainer" instance=ExtResource("2_gixxy")]
 layout_mode = 2
-text = "Round X 開始"
-fit_content = true

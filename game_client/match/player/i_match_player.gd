@@ -14,7 +14,8 @@ func _get_catalog() -> I_CardCatalog:
 
 func _initialize(_player_name:String,_deck : PackedInt32Array,
 		_catalog : I_CardCatalog,_opponent : bool,
-		_cpbi : CombatPowerBalance.Interface) -> void:
+		_cpbi : CombatPowerBalance.Interface,
+		_log_display : LogDisplay) -> void:
 	pass
 func _set_rival(_rival : I_MatchPlayer) -> void:
 	pass

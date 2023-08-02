@@ -16,9 +16,10 @@ func _init():
 	
 func _initialize(player_name:String,deck : PackedInt32Array,
 		catalog : I_CardCatalog,opponent : bool,
-		cpbi : CombatPowerBalance.Interface) -> void:
+		cpbi : CombatPowerBalance.Interface,
+		log_display : LogDisplay) -> void:
 	_hand_area = PlayableHandArea.instantiate()
-	_field.initialize(_hand_area,player_name,deck,catalog,opponent,cpbi)
+	_field.initialize(_hand_area,player_name,deck,catalog,opponent,cpbi,log_display)
 	_hand_area.clicked.connect(func(c):hand_clicked.emit(c))
 	_hand_area.selected.connect(func(c,h):hand_selected.emit(c,h))
 	_hand_area.entered_play_zone.connect(func(c):hand_entered_play_zone.emit(c))

@@ -22,9 +22,10 @@ func _get_catalog() -> I_CardCatalog:
 
 func _initialize(player_name:String,deck : PackedInt32Array,
 		catalog : I_CardCatalog,opponent : bool,
-		cpbi : CombatPowerBalance.Interface) -> void:
+		cpbi : CombatPowerBalance.Interface,
+		log_display : LogDisplay) -> void:
 	_hand_area = NonPlayableHandArea.instantiate()
-	_field.initialize(_hand_area,player_name,deck,catalog,opponent,cpbi)
+	_field.initialize(_hand_area,player_name,deck,catalog,opponent,cpbi,log_display)
 	_hand_area.clicked.connect(func(c):hand_clicked.emit(c))
 	_catalog = catalog
 	

@@ -38,6 +38,8 @@ var _blocked_damage : int
 var _skill_titles : Array[Node2D] = []
 
 var _power_balance : CombatPowerBalance.Interface
+var _log_display : LogDisplay
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -47,7 +49,8 @@ func _ready():
 func initialize(hand_area : HandArea,
 		player_name:String,deck : PackedInt32Array,
 		catalog : I_CardCatalog,opponent : bool,
-		cpbi : CombatPowerBalance.Interface):
+		cpbi : CombatPowerBalance.Interface,
+		log_display : LogDisplay):
 
 	if _hand_area:
 		remove_child(_hand_area)
@@ -91,9 +94,10 @@ func initialize(hand_area : HandArea,
 		st.visible = false
 	%HBoxContainerDamage.visible = false
 
-	enchant_display.initialize(opponent)
+	enchant_display.initialize(log_display,opponent)
 	
 	_power_balance = cpbi
+	_log_display = log_display
 	
 	_opponent_layout = opponent
 	if opponent:
@@ -200,10 +204,12 @@ func combat_end() -> void:
 func perform_effect(effect : IGameServer.EffectLog):
 	match effect.type:
 		IGameServer.EffectSourceType.SYSTEM_PROCESS:
+			_log_display.append_effect_system(_opponent_layout)
 			pass
 		IGameServer.EffectSourceType.SKILL:
 			if effect.fragment.is_empty():
 				return
+			_log_display.append_effect_skill(_playing_card.skills[effect.id].title,_opponent_layout)
 			var origin := _skill_titles[effect.id].position
 			var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 			var target := Vector2(origin.x,0.0)
@@ -226,6 +232,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 		IGameServer.EffectFragmentType.DAMAGE:
 			var unblocked_damage : int = fragment.data[0]
 			var blocked_damage : int = fragment.data[1]
+			_log_display.append_fragment_damage(unblocked_damage,blocked_damage,fragment.opponent)
 			
 			%HBoxContainerDamage.visible = true
 			if blocked_damage > 0:
@@ -252,6 +259,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var power : int = fragment.data[0]
 			var hit : int = fragment.data[1]
 			var block : int = fragment.data[2]
+			_log_display.append_fragment_combat_stats(power,hit,block,fragment.opponent)
 			var card := get_playing_card()
 			var cpower := card.power
 			card.update_card_stats(power,hit,block)
@@ -270,6 +278,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var hit : int = fragment.data[2]
 			var block : int = fragment.data[3]
 			var card := _deck[card_id]
+			_log_display.append_fragment_card_stats(card.card_name,power,hit,block,fragment.opponent)
 			card.update_card_stats(power,hit,block)
 			pass
 		IGameServer.EffectFragmentType.DRAW_CARD:
@@ -277,6 +286,8 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			if card_id < 0:
 				return
 			var card := _deck[card_id]
+			_log_display.append_fragment_draw(card.card_name,fragment.opponent)
+			
 			card.location = Card3D.CardLocation.HAND
 			_hand.append(card_id)
 			_hand_area.set_cards_in_deck(_hand,_deck)
@@ -286,6 +297,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 		IGameServer.EffectFragmentType.DISCARD_CARD:
 			var card_id : int = fragment.data
 			var card := _deck[card_id]
+			_log_display.append_fragment_discard(card.card_name,fragment.opponent)
 			if card.location == Card3D.CardLocation.HAND:
 				_hand.remove_at(_hand.find(card_id))
 				_hand_area.set_cards_in_deck(_hand,_deck)
@@ -297,8 +309,20 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			await tween.finished
 			pass
 		IGameServer.EffectFragmentType.BOUNCE_CARD:
-			var card : int = fragment.data[0]
+			var card_id : int = fragment.data[0]
 			var pos : int = fragment.data[1]
+			var card := _deck[card_id]
+			_log_display.append_fragment_bounce(card.card_name,pos,fragment.opponent)
+
+			if card.location == Card3D.CardLocation.HAND:
+				_hand.remove_at(_hand.find(card_id))
+				_hand_area.set_cards_in_deck(_hand,_deck)
+				_hand_area.move_card(0.5)
+			card.location = Card3D.CardLocation.STOCK
+			var tween := create_tween().set_parallel()
+			tween.tween_property(card,"position",deck_position.position,0.5)
+			tween.tween_property(card,"rotation:y",PI,0.5)
+			await tween.finished
 			pass
 		
 		IGameServer.EffectFragmentType.CREATE_STATE:

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://b6754xrqnks7l"]
+
+[ext_resource type="Script" path="res://game_client/match/log_display/log_item.gd" id="1_0gulq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v8g66"]
+content_margin_left = 10.0
+bg_color = Color(0, 0, 0, 0.501961)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jv5c5"]
+font_size = 20
+
+[node name="LogItem" type="Label"]
+custom_minimum_size = Vector2(400, 0)
+theme_override_styles/normal = SubResource("StyleBoxFlat_v8g66")
+text = "ログ表示"
+label_settings = SubResource("LabelSettings_jv5c5")
+vertical_alignment = 1
+script = ExtResource("1_0gulq")

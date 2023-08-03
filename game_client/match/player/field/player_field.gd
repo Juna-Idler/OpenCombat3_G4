@@ -284,6 +284,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 		IGameServer.EffectFragmentType.DRAW_CARD:
 			var card_id : int = fragment.data
 			if card_id < 0:
+				_log_display.append_fragment_no_draw(fragment.opponent)
 				return
 			var card := _deck[card_id]
 			_log_display.append_fragment_draw(card.card_name,fragment.opponent)

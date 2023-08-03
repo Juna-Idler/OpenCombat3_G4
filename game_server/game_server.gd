@@ -77,22 +77,26 @@ class CombatData:
 		var result : EffectLog
 		var after : Array[EffectLog]
 		var end : Array[EffectLog]
+		var supply : EffectLog
 		var start : Array[EffectLog]
 		
 		var damage:int
 		var life:int
 		var time:float # remain time
 		
-		func _init(h:PackedInt32Array,s:int,
-				e1: Array[EffectLog],e2: Array[EffectLog],r:EffectLog,e3: Array[EffectLog],e4: Array[EffectLog],e0: Array[EffectLog],
+		func _init(h:PackedInt32Array,sel:int,
+				e1: Array[EffectLog],e2: Array[EffectLog],r:EffectLog,
+				e3: Array[EffectLog],e4: Array[EffectLog],sup:EffectLog,
+				e0: Array[EffectLog],
 				d:int,l:int,t:float):
 			hand = h
-			select = s
+			select = sel
 			before = e1
 			moment = e2
 			result = r
 			after = e3
 			end = e4
+			supply = sup
 			start = e0
 			
 			damage = d

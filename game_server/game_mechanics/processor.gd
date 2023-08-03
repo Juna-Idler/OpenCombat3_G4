@@ -113,14 +113,18 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 	var p1fatal := player1._damage_is_fatal()
 	var p2fatal := player2._damage_is_fatal()
 
+	var p1_supply : IGameServer.EffectLog
+	var p2_supply : IGameServer.EffectLog
+
 	if p1fatal or p2fatal:
 		phase = IGameServer.Phase.GAME_END
+		p1_supply = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
+		p2_supply = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
 	else:
 		_end_effect()
-		var p1_draw := player1._draw_card()
-		var p2_draw := player2._draw_card()
-		player1._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,[p1_draw]))
-		player2._end_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,1000,[p2_draw]))
+
+		p1_supply = player1._supply()
+		p2_supply = player2._supply()
 		
 		player1._combat_end()
 		player2._combat_end()
@@ -131,11 +135,6 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 		else:
 			phase = IGameServer.Phase.RECOVERY
 			recovery_count = 0
-			if not player1._is_recovery():
-				player1._start_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player1._supply()))
-			if not player2._is_recovery():
-				player2._start_effect_log_temporary().append(IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player2._supply()))
-
 
 	return IGameServer.CombatData.new(current_round_count,phase,
 			IGameServer.CombatData.PlayerData.new(p1_hand,index1,
@@ -144,6 +143,7 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 					p1_result,
 					player1._after_effect_log_temporary().duplicate(),
 					player1._end_effect_log_temporary().duplicate(),
+					p1_supply,
 					player1._start_effect_log_temporary().duplicate(),
 					player1._get_damage(),player1._get_life(),0),
 			IGameServer.CombatData.PlayerData.new(p2_hand,index2,
@@ -152,9 +152,10 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 					p2_result,
 					player2._after_effect_log_temporary().duplicate(),
 					player2._end_effect_log_temporary().duplicate(),
+					p2_supply,
 					player2._start_effect_log_temporary().duplicate(),
 					player2._get_damage(),player2._get_life(),0))
-	
+
 
 func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
 	var current_round_count := round_count
@@ -172,14 +173,14 @@ func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
 		p1_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
 	else:
 		index1 = mini(maxi(0, index1), p1_hand.size() - 1);
-		p1_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player1._recover(index1))
+		p1_result = player1._recover(index1)
 	var p2_result : IGameServer.EffectLog
 	if player2._is_recovery():
 		index2 = -1
 		p2_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
 	else:
 		index2 = mini(maxi(0, index2), p2_hand.size() - 1);
-		p2_result = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,player2._recover(index2))
+		p2_result = player2._recover(index2)
 	
 	if player1._is_recovery() and player2._is_recovery():
 		round_count += 1

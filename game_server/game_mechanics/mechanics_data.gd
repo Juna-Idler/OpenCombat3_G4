@@ -120,13 +120,13 @@ class IPlayer:
 	func _combat_end() -> void:
 		return
 	
-	#ダメージを受けたときの回復前ドロー挙動
-	func _supply() -> Array[IGameServer.EffectFragment]:
-		return []
+	#戦闘後のドロー（＋ダメージを受けたときの先ドロー）
+	func _supply() -> IGameServer.EffectLog:
+		return null
 
 	#ダメージを受けたときの回復挙動
-	func _recover(_index : int) -> Array[IGameServer.EffectFragment]:
-		return []
+	func _recover(_index : int) -> IGameServer.EffectLog:
+		return null
 
 		
 	func _is_recovery() -> bool:

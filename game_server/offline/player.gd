@@ -109,21 +109,23 @@ func _combat_end() -> void:
 	_played.push_back(_select_card)
 	_select_card = -1
 
-func _supply() -> Array[IGameServer.EffectFragment]:
+func _supply() -> IGameServer.EffectLog:
+	var fragments : Array[IGameServer.EffectFragment] = []
+	fragments.append(_draw_card())
 	if _damage > 0:
-		return [_draw_card()]
-	return []
+		fragments.append(_draw_card())
+	return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
 
-func _recover(index : int) -> Array[IGameServer.EffectFragment]:
+func _recover(index : int) -> IGameServer.EffectLog:
 	var fragments : Array[IGameServer.EffectFragment] = []
 	_select_card = _hand[index]
 	fragments.append(_discard_card(_select_card))
 	_damage -= _deck_list[_select_card].data.level
 	if _damage <= 0:
 		_damage = 0
-		return fragments
+		return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
 	fragments.append(_draw_card())
-	return fragments
+	return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
 
 	
 func _is_recovery() -> bool:

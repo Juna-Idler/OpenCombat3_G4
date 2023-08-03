@@ -25,7 +25,10 @@ fov = 45.0
 
 [node name="AudioListener3D" type="AudioListener3D" parent="Field"]
 
-[node name="Control" type="Control" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,11 +37,13 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="power_balance" parent="Control" instance=ExtResource("2_xh3ck")]
+[node name="PowerBalance" parent="CanvasLayer/Control" instance=ExtResource("2_xh3ck")]
+unique_name_in_owner = true
 layout_mode = 1
 pivot_offset = Vector2(640, 360)
 
-[node name="Button" type="Button" parent="Control"]
+[node name="ButtonSettings" type="Button" parent="CanvasLayer/Control"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -51,7 +56,7 @@ theme_override_fonts/font = ExtResource("4_62qcl")
 theme_override_font_sizes/font_size = 20
 text = "設定"
 
-[node name="PanelContainer" type="PanelContainer" parent="Control"]
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control"]
 visible = false
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 1
@@ -63,23 +68,23 @@ offset_right = 240.0
 grow_vertical = 0
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/PanelContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="LabelName" type="Label" parent="Control/PanelContainer/VBoxContainer"]
+[node name="LabelName" type="Label" parent="CanvasLayer/Control/PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "名前"
 label_settings = SubResource("LabelSettings_k07hl")
 horizontal_alignment = 1
 
-[node name="LabelStats" type="Label" parent="Control/PanelContainer/VBoxContainer"]
+[node name="LabelStats" type="Label" parent="CanvasLayer/Control/PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "力3 打2 防1"
 label_settings = SubResource("LabelSettings_k07hl")
 horizontal_alignment = 1
 
-[node name="LabelSkill" type="Label" parent="Control/PanelContainer/VBoxContainer"]
+[node name="LabelSkill" type="Label" parent="CanvasLayer/Control/PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "スキル名（パラメータ）
 スキルの説明文"
@@ -87,5 +92,32 @@ label_settings = SubResource("LabelSettings_k07hl")
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="LogDisplay" parent="Control" instance=ExtResource("4_dw15p")]
+[node name="Control" type="Control" parent="CanvasLayer/Control"]
 layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_right = 20.0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LogDisplay" parent="CanvasLayer/Control/Control" instance=ExtResource("4_dw15p")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="ButtonLog" type="Button" parent="CanvasLayer/Control/Control"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -120.0
+offset_right = 40.0
+grow_horizontal = 0
+grow_vertical = 0
+toggle_mode = true
+
+[connection signal="toggled" from="CanvasLayer/Control/Control/ButtonLog" to="." method="_on_button_log_toggled"]

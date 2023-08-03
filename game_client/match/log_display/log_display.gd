@@ -12,54 +12,83 @@ var fragment_opponent : bool
 func _ready():
 	pass # Replace with function body.
 
+func open():
+	scroll_vertical = $VBoxContainer.size.y
+	pass
+
 func clear():
 	for c in $VBoxContainer.get_children():
 		$VBoxContainer.remove_child(c)
 		c.queue_free()
 
+
+var delayed_timing : Node = null
+var delayed_effect : Node = null
+
+
 func append_round(round_count : int):
 	var item = LogItem.instantiate()
-	item.text = "ラウンド%d" % round_count
+	item.text = "ラウンド%d 戦闘フェイズ" % round_count
 	$VBoxContainer.add_child(item)
+
+	pass
+
+func append_combat_start(my_card : String,rival_card : String):
+	var item = LogItem.instantiate()
+	item.text = """戦闘開始
+自分のカード:%s
+相手のカード:%s""" % [my_card,rival_card] 
+	$VBoxContainer.add_child(item)
+
+
+func append_enter_recovery(my_damage : int,rival_damage : int):
+	var item = LogItem.instantiate()
+	item.text = """回復フェイズ
+自分のダメージ:%d
+相手のダメージ:%d""" % [my_damage,rival_damage] 
+	$VBoxContainer.add_child(item)
+
 	pass
 
 func append_timing(timing : I_MatchPlayer.EffectTiming):
 	var text : String = ""
 	match timing:
 		I_MatchPlayer.EffectTiming.INITIAL:
-			text = "デッキ効果"
+			text = "デッキ効果タイミング"
 			pass
 		I_MatchPlayer.EffectTiming.START:
-			text = "開始時効果"
+			text = "開始時効果タイミング"
 			pass
 		I_MatchPlayer.EffectTiming.BEFORE:
-			text = "交戦前効果"
+			text = "交戦前効果タイミング"
 			pass
 		I_MatchPlayer.EffectTiming.MOMENT:
-			text = "交戦時効果"
+			text = "交戦時効果タイミング"
 			pass
 		I_MatchPlayer.EffectTiming.AFTER:
-			text = "交戦後効果"
+			text = "交戦後効果タイミング"
 			pass
 		I_MatchPlayer.EffectTiming.END:
-			text = "終了時効果"
+			text = "終了時効果タイミング"
 			pass
 	var item = LogItem.instantiate()
 	item.text = text
-	$VBoxContainer.add_child(item)
-
-func append_combat_start(my_card : String,rival_card : String):
-	var item = LogItem.instantiate()
-	item.text = """戦闘フェイズ
-自分のカード:%s
-相手のカード:%s""" % [my_card,rival_card] 
-	$VBoxContainer.add_child(item)
-	
+	if delayed_timing:
+		delayed_timing.queue_free()
+	delayed_timing = item
+#	$VBoxContainer.add_child(item)
 
 func append_combat_result_effect():
 	effect_opponent = false
 	var item = LogItem.instantiate()
 	item.text = "交戦結果"
+	$VBoxContainer.add_child(item)
+	pass
+
+func append_combat_supply_effect():
+	effect_opponent = false
+	var item = LogItem.instantiate()
+	item.text = "カード補充"
 	$VBoxContainer.add_child(item)
 	pass
 	
@@ -72,38 +101,59 @@ func append_recovery_result_effect():
 
 func append_effect_system(opponent : bool):
 	effect_opponent = opponent
-	var item = LogItem.instantiate()
-	item.text = "相手のシステム効果" if effect_opponent else "自分のシステム効果"
-	$VBoxContainer.add_child(item)
+#	var item = LogItem.instantiate()
+#	item.text = "相手のシステム効果" if effect_opponent else "自分のシステム効果"
+#	$VBoxContainer.add_child(item)
 	pass
 
 func append_effect_skill(title : String,opponent : bool):
 	effect_opponent = opponent
 	var item = LogItem.instantiate()
-	item.text = ("相手の" if effect_opponent else "自分の") + ("スキル:%sの効果" % title)
-	$VBoxContainer.add_child(item)
+	item.text = ("相手の" if effect_opponent else "自分の") + ("スキル:「%s」が発動" % title)
+	if delayed_effect:
+		delayed_effect.queue_free()
+	delayed_effect = item
+#	$VBoxContainer.add_child(item)
 	pass
 
 func append_effect_enchant(title : String,opponent : bool):
 	effect_opponent = opponent
 	var item = LogItem.instantiate()
-	item.text = ("相手の" if effect_opponent else "自分の") + ("エンチャント:%sの効果" % title)
-	$VBoxContainer.add_child(item)
+	item.text = ("相手の" if effect_opponent else "自分の") + ("エンチャント:「%s」が発動" % title)
+	if delayed_effect:
+		delayed_effect.queue_free()
+	delayed_effect = item
+#	$VBoxContainer.add_child(item)
 	pass
 
 func append_effect_ability(title : String,opponent : bool):
 	effect_opponent = opponent
 	var item = LogItem.instantiate()
-	item.text = ("相手の" if effect_opponent else "自分の") + ("アビリティ:%sの効果" % title)
-	$VBoxContainer.add_child(item)
+	item.text = ("相手の" if effect_opponent else "自分の") + ("アビリティ:「%s」が発動" % title)
+	if delayed_effect:
+		delayed_effect.queue_free()
+	delayed_effect = item
+#	$VBoxContainer.add_child(item)
 	pass
+
+
+func _append_fragment_log_item(item : Control):
+	if delayed_effect:
+		if delayed_timing:
+			$VBoxContainer.add_child(delayed_timing)
+			delayed_timing = null
+		$VBoxContainer.add_child(delayed_effect)
+		delayed_effect = null
+	$VBoxContainer.add_child(item)
+
+	
 
 func append_fragment_damage(unblocked_damage : int,blocked_damage : int,opponent : bool):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手に" if fragment_opponent else "自分に") +\
 			("%dダメージ/%dブロック" % [unblocked_damage,blocked_damage])
-	$VBoxContainer.add_child(item)
+	_append_fragment_log_item(item)
 	pass
 	
 func append_fragment_initiative():
@@ -113,58 +163,68 @@ func append_fragment_combat_stats(p,h,b,opponent):
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手の" if fragment_opponent else "自分の") +\
 			("戦闘カードが%d/%d/%dに変動" % [p,h,b])
-	$VBoxContainer.add_child(item)
+	_append_fragment_log_item(item)
 	
 	pass
 func append_fragment_card_stats(card : String,p,h,b,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手の" if fragment_opponent else "自分の") +\
-			("カード:%sが%d/%d/%dに変動" % [card,p,h,b])
-	$VBoxContainer.add_child(item)
+			("「%s」が%d/%d/%dに変動" % [card,p,h,b])
+	_append_fragment_log_item(item)
 	pass
 	
 func append_fragment_draw(card : String,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
-			("カード:%sを手札に加えた" % card)
-	$VBoxContainer.add_child(item)	
+			("「%s」をドロー" % card)
+	_append_fragment_log_item(item)
 	pass
+
+func append_fragment_no_draw(opponent):
+	fragment_opponent = effect_opponent != opponent
+	var item = LogItem.instantiate()
+	item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
+			("カードをドロー出来なかった")
+	_append_fragment_log_item(item)
+	
 func append_fragment_discard(card : String,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
-			("カード:%sを捨てた" % card)
-	$VBoxContainer.add_child(item)
+			("「%s」を捨てた" % card)
+	_append_fragment_log_item(item)
 	pass
 func append_fragment_bounce(card : String,stock_position,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
-			("カード:%sをデッキに戻した（位置:%s）" % [card,stock_position])
-	$VBoxContainer.add_child(item)	
+			("「%s」をデッキに戻した（位置:%s）" % [card,stock_position])
+	_append_fragment_log_item(item)
 	pass
 
-func append_fragment_create_enchant(title,_opponent_soucer,opponent):
+func append_fragment_create_enchant(title,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手に" if fragment_opponent else "自分に") +\
-			("エンチャント:%sが発生" % title)
-	$VBoxContainer.add_child(item)
+			("エンチャント「%s」が発生" % title)
+	_append_fragment_log_item(item)
 
 	pass
 func append_fragment_update_enchant(title,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手の" if fragment_opponent else "自分の") +\
-			("エンチャント:%sが更新" % title)
+			("エンチャント「%s」が更新" % title)
+	_append_fragment_log_item(item)
 	pass
-func append_fragment_delete_enchant(title,_expired,opponent):
+func append_fragment_delete_enchant(title,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手の" if fragment_opponent else "自分の") +\
-			("エンチャント:%sが消滅" % title)
+			("エンチャント「%s」が消滅" % title)
+	_append_fragment_log_item(item)
 	pass
 
 func append_fragment_create_card():
@@ -175,5 +235,13 @@ func append_passive(title,opponent):
 	var passive_opponent : bool = fragment_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + "　" + "パッシブ:" + ("相手の" if passive_opponent else "自分の") +\
-			("%sが変動" % title)
+			("「%s」が変動" % title)
+	$VBoxContainer.add_child(item)
 	
+
+
+func _on_v_box_container_child_entered_tree(_node):
+	var tween := create_tween()
+	tween.tween_interval(0.1)
+	tween.tween_callback(func():scroll_vertical = $VBoxContainer.size.y)
+	pass # Replace with function body.

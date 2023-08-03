@@ -15,7 +15,8 @@ var round_count : int
 var phase : IGameServer.Phase
 var recovery_repeat : int
 
-@onready var log_display : LogDisplay = $Control/LogDisplay
+@onready var power_balance = %PowerBalance
+@onready var log_display : LogDisplay  = %LogDisplay
 
 
 # Called when the node enters the scene tree for the first time.
@@ -54,19 +55,19 @@ func initialize(server : IGameServer,
 
 	var pd := _game_server._get_primary_data()
 	
-	$Control/LogDisplay.clear()
+	log_display.clear()
 
 	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog,false,
-			CombatPowerBalance.Interface.new($Control/power_balance,false),
-			$Control/LogDisplay)
+			CombatPowerBalance.Interface.new(power_balance,false),
+			log_display)
 	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog,true,
-			CombatPowerBalance.Interface.new($Control/power_balance,true),
-			$Control/LogDisplay)
+			CombatPowerBalance.Interface.new(power_balance,true),
+			log_display)
 	_myself._set_rival(_rival)
 	_rival._set_rival(_myself)
 	
-	$Control/power_balance.visible = false
-	$Control/power_balance.modulate.a = 0
+	power_balance.visible = false
+	power_balance.modulate.a = 0
 
 func terminalize():
 	if _game_server:
@@ -98,6 +99,8 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 	_rival._set_first_data(data.rival)
 	await get_tree().create_timer(1).timeout
 
+	log_display.append_round(round_count)
+
 	await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
 	
 	_performing = false
@@ -113,11 +116,11 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	log_display.append_combat_start(_myself._get_playing_card().card_name,_rival._get_playing_card().card_name)
 	
-	$Control/power_balance.visible = true
-	$Control/power_balance.change_both_power(0,0,0.0)
+	power_balance.visible = true
+	power_balance.change_both_power(0,0,0.0)
 	var tween = create_tween()
-	tween.tween_property($Control/power_balance,"modulate:a",1.0,0.5)
-	$Control/power_balance.change_both_power(
+	tween.tween_property(power_balance,"modulate:a",1.0,0.5)
+	power_balance.change_both_power(
 			_myself._get_playing_card().power,_rival._get_playing_card().power,0.5)
 	await tween.finished
 
@@ -129,12 +132,11 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 
 	await _myself._perform_effect(data.myself.result)
 	await _rival._perform_effect(data.rival.result)
-#	await get_tree().create_timer(0.5).timeout
 
 	await perform_effect(data.myself.after,data.rival.after,I_MatchPlayer.EffectTiming.AFTER)
 	
 	if data.next_phase == IGameServer.Phase.GAME_END:
-		$Control/power_balance.visible = false
+		power_balance.visible = false
 		phase = data.next_phase
 		_performing = false
 		performed.emit()
@@ -144,20 +146,27 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 
 	tween = create_tween()
-	tween.tween_property($Control/power_balance,"modulate:a",0.0,0.5)
-	tween.tween_callback(func():$Control/power_balance.visible = false)
+	tween.tween_property(power_balance,"modulate:a",0.0,0.5)
+	tween.tween_callback(func():power_balance.visible = false)
 	_myself._combat_end()
 	_rival._combat_end()
 	await tween.finished
 
+	log_display.append_combat_supply_effect()
+	await _myself._perform_effect(data.myself.supply)
+	await _rival._perform_effect(data.rival.supply)
+
+
 	if data.next_phase == IGameServer.Phase.COMBAT:
 		round_count = data.round_count + 1
 		log_display.append_round(round_count)
+		await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
 	else:
+		if data.next_phase == IGameServer.Phase.RECOVERY:
+#			player.set_damage
+			log_display.append_enter_recovery(data.myself.damage,data.rival.damage)
 		round_count = data.round_count
 	phase = data.next_phase
-	
-	await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
 	
 	_performing = false
 	performed.emit()
@@ -167,14 +176,16 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	
 	log_display.append_recovery_result_effect()
 
-	_myself._perform_effect(data.myself.result)
-	_rival._perform_effect(data.rival.result)
-	await get_tree().create_timer(0.5).timeout
+	await _myself._perform_effect(data.myself.result)
+	await _rival._perform_effect(data.rival.result)
 
 	if data.next_phase == IGameServer.Phase.COMBAT:
 		round_count = data.round_count + 1
 		log_display.append_round(round_count)
 	else:
+		if data.next_phase == IGameServer.Phase.RECOVERY:
+#			player.set_damage
+			log_display.append_enter_recovery(data.myself.damage,data.rival.damage)
 		round_count = data.round_count
 	phase = data.next_phase
 	recovery_repeat = data.repeat
@@ -223,3 +234,18 @@ func perform_effect(my_log : Array[IGameServer.EffectLog],
 	await _rival._finish_timing(timing)
 
 
+
+
+func _on_button_log_toggled(button_pressed):
+	if button_pressed:
+		%LogDisplay.visible = true
+		%LogDisplay.open.call_deferred()
+		var tween := create_tween()
+		tween.tween_property($CanvasLayer/Control/Control,"position:x",0,0.3)
+		pass
+	else:
+		var tween := create_tween()
+		tween.tween_property($CanvasLayer/Control/Control,"position:x",-480,0.2)
+		tween.tween_callback(func():%LogDisplay.visible = false)
+		pass
+	pass # Replace with function body.

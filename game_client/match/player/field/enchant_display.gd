@@ -43,8 +43,8 @@ func create_enchantment(id : int,sd : CatalogData.StateData,param):
 	var n := Enchantment.new(sd,param,_opponent_layout)
 	_enchantments[id] = n
 	add_child(n.title_object)
-	
-	_log_display.append_effect_enchant(n.title,_opponent_layout)
+
+	_log_display.append_fragment_create_enchant(n.title,_opponent_layout)
 
 	var size := _enchantments.size()
 	var start := size * -20 + 20
@@ -62,7 +62,7 @@ func create_enchantment(id : int,sd : CatalogData.StateData,param):
 func update_enchantment(id : int,param):
 	var e := _enchantments[id] as Enchantment
 	e.change_parameter(param)
-	_log_display.append_effect_enchant(e.title,_opponent_layout)
+	_log_display.append_fragment_update_enchant(e.title,_opponent_layout)
 	
 	var origin := e.title_object.modulate
 	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
@@ -74,7 +74,7 @@ func update_enchantment(id : int,param):
 func delete_enchantment(id : int,expired : bool):
 	var d := _enchantments[id] as Enchantment
 	_deleted.append(id)
-	_log_display.append_effect_enchant(d.title,_opponent_layout)
+	_log_display.append_fragment_delete_enchant(d.title,_opponent_layout)
 	
 	if not expired:
 		d.title_object.modulate.a = 0.5

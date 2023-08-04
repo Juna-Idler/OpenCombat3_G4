@@ -105,8 +105,9 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	_performing = true
 	_myself._combat_start(data.myself.hand,data.myself.select)
 	_rival._combat_start(data.rival.hand,data.rival.select)
-	
 	log_display.append_combat_start(_myself._get_playing_card().card_name,_rival._get_playing_card().card_name)
+	
+	await get_tree().create_timer(1.0).timeout
 	
 #	power_balance.visible = true
 	power_balance.change_both_power(0,0,0.0)

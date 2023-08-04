@@ -146,6 +146,7 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 		_skill_titles.append(title)
 		title.position.x = 230
 		title.position.y = 100 + 40 * _skill_titles.size()
+		title.visible = false
 		$CanvasLayer/Node2D.add_child(title)
 
 
@@ -158,20 +159,26 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	_blocked_damage = 0
 	%LabelBlock.text = str(0)
 	%LabelDamage.text = str(0)
-	var tween := create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(_playing_card,"position",$CombatPosition.position,0.5)
 	hand_area.move_card(0.5)
+	tween.tween_property(_playing_card,"rotation_degrees:y",180.0,0.25).set_ease(Tween.EASE_IN)
+	await tween.finished
 	
-	tween.tween_property(%CombatStats,"modulate:a",1.0,0.5)
+	_playing_card.set_picture_texture()
+	
+	tween = create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(_playing_card,"rotation_degrees:y",360.0,0.25).set_ease(Tween.EASE_OUT)
+	tween.tween_property(%CombatStats,"modulate:a",1.0,0.25)
 
 	for i in _playing_card.skills.size():
 		_skill_titles[i].initialize(_playing_card.skills[i],_opponent_layout)
 		_skill_titles[i].visible = true
 		_skill_titles[i].modulate.a = 0.0
-		tween.tween_property(_skill_titles[i],"modulate:a",1.0,0.5)
+		tween.tween_property(_skill_titles[i],"modulate:a",1.0,0.25)
 	for i in range(_playing_card.skills.size(),_skill_titles.size()):
 		_skill_titles[i].visible = false
-		
+
 	await tween.finished
 	return
 
@@ -190,13 +197,17 @@ func _combat_end() -> void:
 	_playing_card.location = Card3D.CardLocation.PLAYED
 	var pos : Vector3 = $PlayedPosition.position
 	pos.z += 0.01 * _played.size()
-	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD).set_parallel()
+	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(_playing_card,"rotation_degrees:y",180.0,0.25).set_ease(Tween.EASE_IN)
+	tween.tween_callback(func():_playing_card.set_render_texture())
+	tween.tween_property(_playing_card,"rotation_degrees:y",0.0,0.25).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_playing_card,"position",pos,0.5)
-	tween.tween_property(_playing_card,"rotation:z",-PI/2,0.5)
-	_playing_card.tween = tween
+	tween.parallel().tween_property(_playing_card,"rotation:z",-PI/2,0.5)
+	
+	tween = create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	for i in _playing_card.skills.size():
-		tween.tween_property(_skill_titles[i],"modulate:a",0.0,0.5)
-	tween.tween_property(%CombatStats,"modulate:a",0.0,0.5)
+		tween.tween_property(_skill_titles[i],"modulate:a",0.0,1.0)
+	tween.tween_property(%CombatStats,"modulate:a",0.0,1.0)
 	
 	await tween.finished
 	

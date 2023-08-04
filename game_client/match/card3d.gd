@@ -50,6 +50,13 @@ func initialize(id : int,cn : String,
 	$SubViewport/CardFront.initialize(card_name,c,l,p,h,b,sk,pict,opponent)
 	$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
+func set_picture_texture():
+	$MeshInstance3D.material_override.albedo_texture = picture
+
+func set_render_texture():
+	$MeshInstance3D.material_override.albedo_texture = $SubViewport.get_texture()
+	$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	
 
 func update_card_stats(p:int,h:int,b:int):
 	power = p

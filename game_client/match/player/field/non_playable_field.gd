@@ -401,6 +401,44 @@ func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,dura
 			else:
 				await _perform_passive(p,p_duration)
 
+func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : float) -> float:
+	_log_display.append_effect_system(_opponent_layout)
+	for f in effect.fragment:
+		assert(f.type == IGameServer.EffectFragmentType.DRAW_CARD)
+		var card_id : int = f.data
+		if card_id < 0:
+			_log_display.append_fragment_no_draw(f.opponent)
+		else:
+			var card := _deck[card_id]
+			_log_display.append_fragment_draw(card.card_name,f.opponent)
+		for p in f.passive:
+			var title : String
+			if p.opponent:
+				title = _rival._get_enchant_title(p.state_id,p.parameter)
+			else:
+				title = _get_enchant_title(p.state_id,p.parameter)
+			_log_display.append_passive(title,p.opponent)
+	supply_coroutine(effect,duration)
+	return duration * effect.fragment.size()
+	
+func supply_coroutine(effect : IGameServer.EffectLog,duration : float):
+	if not effect.fragment.is_empty():
+		for f in effect.fragment:
+			var card_id : int = f.data
+			if card_id >= 0:
+				_deck[card_id].location = Card3D.CardLocation.HAND
+				_hand.append(card_id)
+				hand_area.set_cards_in_deck(_hand,_deck)
+				hand_area.move_card(duration)
+			if not f.passive.is_empty():
+				var p_duration := duration / f.passive.size()
+				for p in f.passive:
+					if p.opponent:
+						await _rival._perform_passive(p,p_duration)
+					else:
+						await _perform_passive(p,p_duration)
+			await get_tree().create_timer(duration).timeout
+
 #func perform_simultaneous_combat_result(fragment : IGameServer.EffectFragment,duration : float) -> void:
 #	assert(fragment.type == IGameServer.EffectFragmentType.DAMAGE)
 #	var unblocked_damage : int = fragment.data[0]

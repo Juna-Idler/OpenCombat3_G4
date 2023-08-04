@@ -93,5 +93,5 @@ func _on_area_3d_mouse_exited():
 
 func _on_area_3d_input_event(camera : Camera3D, event : InputEvent, hit_position : Vector3, _normal : Vector3, _shape_idx : int):
 	input_event.emit(self,camera,event,hit_position)
-#	print(hit_position,event.position,normal,event)
+#	print(hit_position,event.position,_normal,event)
 

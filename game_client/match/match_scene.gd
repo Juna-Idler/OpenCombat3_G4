@@ -108,7 +108,7 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	log_display.append_combat_start(_myself._get_playing_card().card_name,_rival._get_playing_card().card_name)
 	
-	power_balance.visible = true
+#	power_balance.visible = true
 	power_balance.change_both_power(0,0,0.0)
 	var tween = create_tween()
 	tween.tween_property(power_balance,"modulate:a",1.0,0.5)
@@ -150,9 +150,9 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	await tween.finished
 
 	log_display.append_combat_supply_effect()
-	await _myself._perform_effect(data.myself.supply)
-	await _rival._perform_effect(data.rival.supply)
-
+	var duration := maxf(_myself._perform_simultaneous_supply(data.myself.supply,0.5),
+			_rival._perform_simultaneous_supply(data.rival.supply,0.5))
+	await get_tree().create_timer(duration).timeout
 
 	if data.next_phase == IGameServer.Phase.COMBAT:
 		round_count = data.round_count + 1

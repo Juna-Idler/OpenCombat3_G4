@@ -3,13 +3,15 @@ extends Node
 var server := OfflineServer.new()
 var catalog := CardCatalog.new()
 
-var myself : PlayablePlayerField = preload("res://game_client/match/player/field/playable_field.tscn").instantiate()
-var rival : NonPlayablePlayerField = preload("res://game_client/match/player/field/non_playable_field.tscn").instantiate()
+const PlayablePlayerFieldScene := preload("res://game_client/match/player/field/playable_field.tscn")
+const NonPlayablePlayerFieldScene := preload("res://game_client/match/player/field/non_playable_field.tscn")
+
+
+var myself : PlayablePlayerField
+var rival : NonPlayablePlayerField
 
 
 func _ready():
-	myself.hand_selected.connect(on_hand_selected)
-	
 	initialize()
 
 
@@ -19,14 +21,21 @@ func _process(_delta):
 	pass
 
 func initialize():
-	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]	
+#	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
+	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 	
 	var d := RegulationData.DeckRegulation.new("",27,30,2,1,"1-27")
 	var m := RegulationData.MatchRegulation.new("",4,60,10,5)
 	
+	myself = PlayablePlayerFieldScene.instantiate()
+	myself.hand_selected.connect(on_hand_selected)
+	
+	rival = NonPlayablePlayerFieldScene.instantiate()
+	
 	server.initialize("",pile,ICpuCommander.ZeroCommander.new(),pile,d,m,catalog)
 	$match_scene.initialize(server,myself,rival,catalog,catalog)
-	$match_scene.performed.connect(on_match_scene_performed)
+	if not $match_scene.performed.is_connected(on_match_scene_performed):
+		$match_scene.performed.connect(on_match_scene_performed)
 	server._send_ready()
 
 

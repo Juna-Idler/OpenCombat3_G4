@@ -8,8 +8,8 @@ var _performing : bool
 
 var _game_server : IGameServer = null
 
-var _myself : I_MatchPlayer
-var _rival : I_MatchPlayer
+var _myself : I_PlayerField
+var _rival : I_PlayerField
 
 var round_count : int
 var phase : IGameServer.Phase
@@ -23,22 +23,13 @@ var recovery_repeat : int
 func _ready():
 	pass
 
-#	var catalog = CardCatalog.new()
-#	var id : int = 1
-#	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
-#
-#	playable_player.initialize("",pile,catalog)
-#	var fd := IGameServer.FirstData.PlayerData.new([1,2,3,4],20,-1)
-#	playable_player.set_first_data(fd)
-	
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
 
 func initialize(server : IGameServer,
-		myself : I_MatchPlayer,rival : I_MatchPlayer,
+		myself : I_PlayerField,rival : I_PlayerField,
 		my_catalog : I_CardCatalog,rival_catalog : I_CardCatalog):
 	terminalize()
 	_game_server = server
@@ -50,8 +41,8 @@ func initialize(server : IGameServer,
 
 	_myself = myself
 	_rival = rival
-	$Field.add_child(_myself._get_field())
-	$Field.add_child(_rival._get_field())
+	$Field.add_child(_myself)
+	$Field.add_child(_rival)
 
 	var pd := _game_server._get_primary_data()
 	
@@ -79,12 +70,13 @@ func terminalize():
 		_game_server = null
 		
 	if _myself:
-		$Field.remove_child(_myself._get_field())
+		$Field.remove_child(_myself)
+		_myself.queue_free()
 		_myself = null
 	if _rival:
-		$Field.remove_child(_rival._get_field())
+		$Field.remove_child(_rival)
+		_rival.queue_free()
 		_rival = null
-
 
 
 func _on_recieved_first_data(data : IGameServer.FirstData):
@@ -93,7 +85,7 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 	phase = IGameServer.Phase.COMBAT
 	recovery_repeat = 0
 	
-	await perform_effect(data.myself.initial,data.rival.initial,I_MatchPlayer.EffectTiming.INITIAL)
+	await perform_effect(data.myself.initial,data.rival.initial,I_PlayerField.EffectTiming.INITIAL)
 
 	_myself._set_first_data(data.myself)
 	_rival._set_first_data(data.rival)
@@ -101,7 +93,7 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 
 	log_display.append_round(round_count)
 
-	await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
+	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 	
 	_performing = false
 	performed.emit()
@@ -124,23 +116,21 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 			_myself._get_playing_card().power,_rival._get_playing_card().power,0.5)
 	await tween.finished
 
-	await perform_effect(data.myself.before,data.rival.before,I_MatchPlayer.EffectTiming.BEFORE)
+	await perform_effect(data.myself.before,data.rival.before,I_PlayerField.EffectTiming.BEFORE)
 
 	log_display.append_combat_comparison_effect()
-	log_display.append_fragment_initiative(data.myself.comparison.fragment[0].data,false)
-	log_display.append_fragment_initiative(data.rival.comparison.fragment[0].data,true)
 	_myself._perform_simultaneous_initiative(data.myself.comparison.fragment[0],0.3)
 	_rival._perform_simultaneous_initiative(data.rival.comparison.fragment[0],0.3)
 	await get_tree().create_timer(0.5).timeout
 
-	await perform_effect(data.myself.moment,data.rival.moment,I_MatchPlayer.EffectTiming.MOMENT)
+	await perform_effect(data.myself.moment,data.rival.moment,I_PlayerField.EffectTiming.MOMENT)
 
 	log_display.append_combat_result_effect()
 
 	await _myself._perform_effect(data.myself.result)
 	await _rival._perform_effect(data.rival.result)
 
-	await perform_effect(data.myself.after,data.rival.after,I_MatchPlayer.EffectTiming.AFTER)
+	await perform_effect(data.myself.after,data.rival.after,I_PlayerField.EffectTiming.AFTER)
 	
 	if data.next_phase == IGameServer.Phase.GAME_END:
 		power_balance.visible = false
@@ -149,7 +139,7 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 		performed.emit()
 		return
 	
-	await perform_effect(data.myself.end,data.rival.end,I_MatchPlayer.EffectTiming.END)
+	await perform_effect(data.myself.end,data.rival.end,I_PlayerField.EffectTiming.END)
 	
 
 	tween = create_tween()
@@ -167,7 +157,7 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	if data.next_phase == IGameServer.Phase.COMBAT:
 		round_count = data.round_count + 1
 		log_display.append_round(round_count)
-		await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
+		await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 	else:
 		if data.next_phase == IGameServer.Phase.RECOVERY:
 #			player.set_damage
@@ -197,7 +187,7 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	phase = data.next_phase
 	recovery_repeat = data.repeat
 	
-	await perform_effect(data.myself.start,data.rival.start,I_MatchPlayer.EffectTiming.START)
+	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 	
 	_performing = false
 	performed.emit()
@@ -211,12 +201,12 @@ func _on_recieved_complete_board(_data : IGameServer.CompleteData):
 
 
 func perform_effect(my_log : Array[IGameServer.EffectLog],
-		rival_log : Array[IGameServer.EffectLog],timing : I_MatchPlayer.EffectTiming):
+		rival_log : Array[IGameServer.EffectLog],timing : I_PlayerField.EffectTiming):
 	await _myself._begin_timing(timing)
 	await _rival._begin_timing(timing)
 	
 	log_display.append_timing(timing)
-	
+
 	var mi : int = 0
 	var ri : int = 0
 	while (true):

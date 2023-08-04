@@ -3,9 +3,8 @@ extends Node
 var server := OfflineServer.new()
 var catalog := CardCatalog.new()
 
-var myself := PlayablePlayer.new()
-var rival := NonPlayablePlayer.new()
-
+var myself : PlayablePlayerField = preload("res://game_client/match/player/field/playable_field.tscn").instantiate()
+var rival : NonPlayablePlayerField = preload("res://game_client/match/player/field/non_playable_field.tscn").instantiate()
 
 
 func _ready():
@@ -32,7 +31,7 @@ func initialize():
 
 
 func on_hand_selected(index : int,hand : Array[Card3D]):
-	myself._hand_area.set_playable(false)
+	myself.hand_area.set_playable(false)
 	var order : PackedInt32Array = []
 	for h in hand:
 		order.append(h.id_in_deck)
@@ -51,7 +50,7 @@ func on_match_scene_performed():
 		server._send_recovery_select($match_scene.round_count,-1)
 		return
 	if $match_scene.phase != IGameServer.Phase.GAME_END:
-		myself._hand_area.set_playable(true)
+		myself.hand_area.set_playable(true)
 	else:
 		$CanvasLayer/Control/ButtonGameOver.show()
 	

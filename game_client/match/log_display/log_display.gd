@@ -50,25 +50,25 @@ func append_enter_recovery(my_damage : int,rival_damage : int):
 
 	pass
 
-func append_timing(timing : I_MatchPlayer.EffectTiming):
+func append_timing(timing : I_PlayerField.EffectTiming):
 	var text : String = ""
 	match timing:
-		I_MatchPlayer.EffectTiming.INITIAL:
+		I_PlayerField.EffectTiming.INITIAL:
 			text = "デッキ効果タイミング"
 			pass
-		I_MatchPlayer.EffectTiming.START:
+		I_PlayerField.EffectTiming.START:
 			text = "開始時効果タイミング"
 			pass
-		I_MatchPlayer.EffectTiming.BEFORE:
+		I_PlayerField.EffectTiming.BEFORE:
 			text = "交戦前効果タイミング"
 			pass
-		I_MatchPlayer.EffectTiming.MOMENT:
+		I_PlayerField.EffectTiming.MOMENT:
 			text = "交戦時効果タイミング"
 			pass
-		I_MatchPlayer.EffectTiming.AFTER:
+		I_PlayerField.EffectTiming.AFTER:
 			text = "交戦後効果タイミング"
 			pass
-		I_MatchPlayer.EffectTiming.END:
+		I_PlayerField.EffectTiming.END:
 			text = "終了時効果タイミング"
 			pass
 	var item = LogItem.instantiate()
@@ -254,7 +254,7 @@ func append_passive(title,opponent):
 	item.text = "　" + "　" + "パッシブ:" + ("相手の" if passive_opponent else "自分の") +\
 			("「%s」が変動" % title)
 	$VBoxContainer.add_child(item)
-	
+
 
 
 func _on_v_box_container_child_entered_tree(_node):

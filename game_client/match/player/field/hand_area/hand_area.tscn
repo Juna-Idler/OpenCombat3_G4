@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c1jb7cip5c33x"]
 
-[ext_resource type="Script" path="res://game_client/match/player/field/hand_area.gd" id="1_00ie2"]
+[ext_resource type="Script" path="res://game_client/match/player/field/hand_area/hand_area.gd" id="1_00ie2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0s7bu"]
 shading_mode = 0

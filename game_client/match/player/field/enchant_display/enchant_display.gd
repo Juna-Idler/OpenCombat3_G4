@@ -1,7 +1,6 @@
 extends Node2D
 
-const EnchantmentTitleScene := preload("res://game_client/match/player/field/enchantment_title.tscn")
-
+const EnchantmentTitleScene := preload("res://game_client/match/player/field/enchant_display/enchantment_title.tscn")
 enum EnchantmentState {NORMAL,ACTIVATE,DELETE}
 
 class Enchantment:
@@ -128,3 +127,8 @@ func perform(id : int):
 	tween.tween_property(e.title_object,"position:x",0,0.3)
 	await tween.finished
 	
+
+func get_title(id : int,param) -> String:
+	var e := _enchantments[id] as Enchantment
+	var p_str := Global.card_catalog.param_to_string(e.data.param_type,param)
+	return e.data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )

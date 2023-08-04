@@ -1,5 +1,4 @@
-extends "res://game_client/match/player/field/hand_area.gd"
-
+extends "res://game_client/match/player/field/hand_area/hand_area.gd"
 
 
 signal selected(index : int,hand : Array[Card3D])

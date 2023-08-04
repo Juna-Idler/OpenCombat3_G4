@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://d5p8bseji6wd"]
 
-[ext_resource type="Script" path="res://game_client/match/player/field/enchantment_title.gd" id="1_3fjve"]
+[ext_resource type="Script" path="res://game_client/match/player/field/enchant_display/enchantment_title.gd" id="1_3fjve"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_grfii"]
 bg_color = Color(0, 0, 0, 0.501961)

@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://dtkgoinkc1ww8"]
+
+[ext_resource type="PackedScene" uid="uid://lrs3pdwt6rv7" path="res://game_client/match/player/field/non_playable_field.tscn" id="1_du82x"]
+[ext_resource type="Script" path="res://game_client/match/player/field/playable_field.gd" id="2_jrthd"]
+
+[node name="PlayerField" instance=ExtResource("1_du82x")]
+script = ExtResource("2_jrthd")

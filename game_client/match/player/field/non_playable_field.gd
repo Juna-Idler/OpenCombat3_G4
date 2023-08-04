@@ -1,9 +1,12 @@
-extends Node3D
+extends I_PlayerField
+
+class_name NonPlayablePlayerField
 
 
 const Card3D_Scene := preload("res://game_client/match/card3d.tscn")
-const EnchantmentTitleScene := preload("res://game_client/match/player/field/enchantment_title.tscn")
 const SkillTitleScene := preload("res://game_client/match/player/field/skill_title.tscn")
+
+const NonPlayableHandArea := preload("res://game_client/match/player/field/hand_area/hand_area.tscn")
 
 
 var _opponent_layout : bool
@@ -12,7 +15,7 @@ var _opponent_layout : bool
 @onready var avatar_position = $AvatarPosition
 
 @onready var card_holder = $CardHolder
-var _hand_area : HandArea = null
+var hand_area : HandArea
 
 @onready var enchant_display = $CanvasLayer/Node2D/EnchantDisplay
 
@@ -31,7 +34,6 @@ var _playing_card : Card3D = null
 var _player_name : String
 
 var _catalog : I_CardCatalog
-var _rival_catalog : I_CardCatalog
 
 var _blocked_damage : int
 
@@ -40,28 +42,26 @@ var _skill_titles : Array[Node2D] = []
 var _power_balance : CombatPowerBalance.Interface
 var _log_display : LogDisplay
 
+var _rival : I_PlayerField
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
-
-
-func initialize(hand_area : HandArea,
-		player_name:String,deck : PackedInt32Array,
-		catalog : I_CardCatalog,opponent : bool,
-		cpbi : CombatPowerBalance.Interface,
-		log_display : LogDisplay):
-
-	if _hand_area:
-		remove_child(_hand_area)
-		_hand_area.queue_free()
-		_hand_area = null
-	_hand_area = hand_area
-	_hand_area.name = &"HandArea"
+	hand_area = NonPlayableHandArea.instantiate()
 	add_child(hand_area)
+	hand_area.clicked.connect(func(c):hand_clicked.emit(c))
 	hand_area.position.y = -1.5
 	hand_area.position.z = 0.5
-	
+
+func _get_catalog() -> I_CardCatalog:
+	return _catalog
+
+
+func _initialize(player_name:String,deck : PackedInt32Array,
+		catalog : I_CardCatalog,opponent : bool,
+		cpbi : CombatPowerBalance.Interface,
+		log_display : LogDisplay) -> void:
+
 	for c in card_holder.get_children():
 		c.queue_free()
 	_deck.resize(deck.size())
@@ -111,16 +111,13 @@ func initialize(hand_area : HandArea,
 		
 	%CombatStats.initialize(opponent)
 
-
-
-
 	_catalog = catalog
 
-func set_rival_catalog(catalog : I_CardCatalog):
-	_rival_catalog = catalog
 
+func _set_rival(rival : I_PlayerField) -> void:
+	_rival = rival
 
-func set_first_data(data : IGameServer.FirstData.PlayerData):
+func _set_first_data(data : IGameServer.FirstData.PlayerData) -> void:
 	_hand = data.hand
 	_life = data.life
 	_stock_count = _hand.size()
@@ -128,19 +125,18 @@ func set_first_data(data : IGameServer.FirstData.PlayerData):
 	for h in _hand:
 		_deck[h].location = Card3D.CardLocation.HAND
 		cards.append(_deck[h])
-	_hand_area.set_cards(cards)
-	_hand_area.move_card(1)
+	hand_area.set_cards(cards)
+	hand_area.move_card(1)
 
-	pass
 
-func combat_start(hand : PackedInt32Array,select : int) -> void:
+func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	_playing_card =_deck[hand[select]]
 	hand.remove_at(select)
 	_hand = hand
 	var cards : Array[Card3D] = []
 	for h in _hand:
 		cards.append(_deck[h])
-	_hand_area.set_cards(cards)
+	hand_area.set_cards(cards)
 	
 	_playing_card.location = Card3D.CardLocation.COMBAT
 	_life -= _playing_card.level
@@ -164,7 +160,7 @@ func combat_start(hand : PackedInt32Array,select : int) -> void:
 	%LabelDamage.text = str(0)
 	var tween := create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(_playing_card,"position",$CombatPosition.position,0.5)
-	_hand_area.move_card(0.5)
+	hand_area.move_card(0.5)
 	
 	tween.tween_property(%CombatStats,"modulate:a",1.0,0.5)
 
@@ -176,17 +172,20 @@ func combat_start(hand : PackedInt32Array,select : int) -> void:
 	for i in range(_playing_card.skills.size(),_skill_titles.size()):
 		_skill_titles[i].visible = false
 		
-	
 	await tween.finished
 	return
 
-func get_playing_card() -> Card3D:
+func _get_playing_card() -> Card3D:
 	return _playing_card
-func get_enchantment_data(id : int) -> CatalogData.StateData:
-	return 
 
+func _get_enchant_data(id : int) -> CatalogData.StateData:
+	return enchant_display.get_enchantment_data(id)
 
-func combat_end() -> void:
+func _get_enchant_title(id : int,param) -> String:
+	return enchant_display.get_title(id,param)
+	
+
+func _combat_end() -> void:
 	_played.append(_playing_card.id_in_deck)
 	_playing_card.location = Card3D.CardLocation.PLAYED
 	var pos : Vector3 = $PlayedPosition.position
@@ -209,8 +208,7 @@ func combat_end() -> void:
 	_playing_card = null
 	return
 
-	
-func perform_effect(effect : IGameServer.EffectLog):
+func _perform_effect(effect : IGameServer.EffectLog) -> void:
 	match effect.type:
 		IGameServer.EffectSourceType.SYSTEM_PROCESS:
 			_log_display.append_effect_system(_opponent_layout)
@@ -232,9 +230,13 @@ func perform_effect(effect : IGameServer.EffectLog):
 			pass
 		IGameServer.EffectSourceType.ABILITY:
 			pass
+	for f in effect.fragment:
+		if f.opponent:
+			await _rival._perform_effect_fragment(f)
+		else:
+			await _perform_effect_fragment(f)
 
-
-func perform_effect_fragment(fragment : IGameServer.EffectFragment):
+func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 	match fragment.type:
 		IGameServer.EffectFragmentType.NO_EFFECT:
 			pass
@@ -271,7 +273,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var block : int = fragment.data[2]
 			_log_display.append_fragment_combat_stats(power,hit,block,fragment.opponent)
 			%CombatStats.set_stats(power,hit,block)
-			var card := get_playing_card()
+			var card := _get_playing_card()
 			var cpower := card.power
 			card.update_card_stats(power,hit,block)
 			if power > cpower:
@@ -296,15 +298,15 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var card_id : int = fragment.data
 			if card_id < 0:
 				_log_display.append_fragment_no_draw(fragment.opponent)
-				return
-			var card := _deck[card_id]
-			_log_display.append_fragment_draw(card.card_name,fragment.opponent)
-			
-			card.location = Card3D.CardLocation.HAND
-			_hand.append(card_id)
-			_hand_area.set_cards_in_deck(_hand,_deck)
-			_hand_area.move_card(0.5)
-			await get_tree().create_timer(0.5).timeout
+			else:
+				var card := _deck[card_id]
+				_log_display.append_fragment_draw(card.card_name,fragment.opponent)
+				
+				card.location = Card3D.CardLocation.HAND
+				_hand.append(card_id)
+				hand_area.set_cards_in_deck(_hand,_deck)
+				hand_area.move_card(0.5)
+				await get_tree().create_timer(0.5).timeout
 			pass
 		IGameServer.EffectFragmentType.DISCARD_CARD:
 			var card_id : int = fragment.data
@@ -312,8 +314,8 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			_log_display.append_fragment_discard(card.card_name,fragment.opponent)
 			if card.location == Card3D.CardLocation.HAND:
 				_hand.remove_at(_hand.find(card_id))
-				_hand_area.set_cards_in_deck(_hand,_deck)
-				_hand_area.move_card(0.5)
+				hand_area.set_cards_in_deck(_hand,_deck)
+				hand_area.move_card(0.5)
 			card.location = Card3D.CardLocation.DISCARD
 			var tween := create_tween().set_parallel()
 			tween.tween_property(card,"position",avatar_position.position,0.5)
@@ -328,8 +330,8 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 
 			if card.location == Card3D.CardLocation.HAND:
 				_hand.remove_at(_hand.find(card_id))
-				_hand_area.set_cards_in_deck(_hand,_deck)
-				_hand_area.move_card(0.5)
+				hand_area.set_cards_in_deck(_hand,_deck)
+				hand_area.move_card(0.5)
 			card.location = Card3D.CardLocation.STOCK
 			var tween := create_tween().set_parallel()
 			tween.tween_property(card,"position",deck_position.position,0.5)
@@ -342,7 +344,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var opponent_source : bool = fragment.data[1]
 			var data_id : int = fragment.data[2]
 			var param = fragment.data[3]
-			var sd := (_rival_catalog._get_state_data(data_id) if opponent_source
+			var sd := (_rival._get_catalog()._get_state_data(data_id) if opponent_source
 					else _catalog._get_state_data(data_id))
 			await enchant_display.create_enchantment(id,sd,param,fragment.opponent)
 			pass
@@ -363,80 +365,103 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var data_id : int = fragment.data[2]
 			var changes : Dictionary = fragment.data[3]
 			pass
-		
 		IGameServer.EffectFragmentType.PERFORMANCE:
 			pass
-	pass
+	for p in fragment.passive:
+		if p.opponent:
+			await _rival._perform_passive(p,0.2)
+		else:
+			await _perform_passive(p,0.2)
 
-func perform_passive(passive : IGameServer.PassiveLog,duration : float) -> void:
+
+func _perform_passive(passive : IGameServer.PassiveLog,duration : float) -> void:
 	await enchant_display.update_enchantment(passive.state_id,passive.parameter,duration)
 
 
-func perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,duration : float) -> void:
+func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,duration : float) -> void:
 	assert(fragment.type == IGameServer.EffectFragmentType.INITIATIVE)
 	var initiative : bool = fragment.data
+	
+	_log_display.append_effect_system(_opponent_layout)
+	_log_display.append_fragment_initiative(initiative,fragment.opponent)
+	for p in fragment.passive:
+		var title : String
+		if p.opponent:
+			title = _rival._get_enchant_title(p.state_id,p.parameter)
+		else:
+			title = _get_enchant_title(p.state_id,p.parameter)
+		_log_display.append_passive(title,p.opponent)
+	
 	%CombatStats.set_initiative_async(initiative,duration)
+	if not fragment.passive.is_empty():
+		var p_duration := duration / fragment.passive.size()
+		for p in fragment.passive:
+			if p.opponent:
+				await _rival._perform_passive(p,p_duration)
+			else:
+				await _perform_passive(p,p_duration)
 
-func perform_simultaneous_combat_result(fragment : IGameServer.EffectFragment,duration : float) -> void:
-	assert(fragment.type == IGameServer.EffectFragmentType.DAMAGE)
-	var unblocked_damage : int = fragment.data[0]
-	var blocked_damage : int = fragment.data[1]
-	_log_display.append_fragment_damage(unblocked_damage,blocked_damage,fragment.opponent)
-	%CombatDamage.visible = true
-	if blocked_damage > 0:
-		$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/剣で打ち合う4.mp3")
-	for d in blocked_damage:
-		_blocked_damage += 1
-		var number : String = str(_blocked_damage)
-		%LabelBlock.text = number
-		$CombatPosition/AudioStreamPlayer3D.play()
-		await get_tree().create_timer(0.3).timeout
-	if unblocked_damage > 0:
-		$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/小パンチ.mp3")
-	for d in unblocked_damage:
-		_damage += 1
-		var number : String = str(_damage)
-		%LabelDamage.text = number
-		$CombatPosition/AudioStreamPlayer3D.play()
-		await get_tree().create_timer(0.3).timeout
-	pass
+#func perform_simultaneous_combat_result(fragment : IGameServer.EffectFragment,duration : float) -> void:
+#	assert(fragment.type == IGameServer.EffectFragmentType.DAMAGE)
+#	var unblocked_damage : int = fragment.data[0]
+#	var blocked_damage : int = fragment.data[1]
+#	_log_display.append_fragment_damage(unblocked_damage,blocked_damage,fragment.opponent)
+#	%CombatDamage.visible = true
+#	if blocked_damage > 0:
+#		$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/剣で打ち合う4.mp3")
+#	for d in blocked_damage:
+#		_blocked_damage += 1
+#		var number : String = str(_blocked_damage)
+#		%LabelBlock.text = number
+#		$CombatPosition/AudioStreamPlayer3D.play()
+#		await get_tree().create_timer(0.3).timeout
+#	if unblocked_damage > 0:
+#		$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/小パンチ.mp3")
+#	for d in unblocked_damage:
+#		_damage += 1
+#		var number : String = str(_damage)
+#		%LabelDamage.text = number
+#		$CombatPosition/AudioStreamPlayer3D.play()
+#		await get_tree().create_timer(0.3).timeout
+#	pass
 
 
-func begin_timing(timing : I_MatchPlayer.EffectTiming) -> void:
+func _begin_timing(timing : I_PlayerField.EffectTiming) -> void:
 	match timing:
-		I_MatchPlayer.EffectTiming.INITIAL:
+		I_PlayerField.EffectTiming.INITIAL:
 			pass
-		I_MatchPlayer.EffectTiming.START:
+		I_PlayerField.EffectTiming.START:
 			pass
-		I_MatchPlayer.EffectTiming.BEFORE:
+		I_PlayerField.EffectTiming.BEFORE:
 			pass
-		I_MatchPlayer.EffectTiming.MOMENT:
+		I_PlayerField.EffectTiming.MOMENT:
 			pass
-		I_MatchPlayer.EffectTiming.AFTER:
+		I_PlayerField.EffectTiming.AFTER:
 			pass
-		I_MatchPlayer.EffectTiming.END:
+		I_PlayerField.EffectTiming.END:
 			pass
 	pass
 
-func finish_timing(timing : I_MatchPlayer.EffectTiming) -> void:
+func _finish_timing(timing : I_PlayerField.EffectTiming) -> void:
 	enchant_display.force_delete()
 	match timing:
-		I_MatchPlayer.EffectTiming.INITIAL:
+		I_PlayerField.EffectTiming.INITIAL:
 			pass
-		I_MatchPlayer.EffectTiming.START:
+		I_PlayerField.EffectTiming.START:
 			pass
-		I_MatchPlayer.EffectTiming.BEFORE:
+		I_PlayerField.EffectTiming.BEFORE:
 			pass
-		I_MatchPlayer.EffectTiming.MOMENT:
+		I_PlayerField.EffectTiming.MOMENT:
 			pass
-		I_MatchPlayer.EffectTiming.AFTER:
+		I_PlayerField.EffectTiming.AFTER:
 			pass
-		I_MatchPlayer.EffectTiming.END:
+		I_PlayerField.EffectTiming.END:
 			pass
 	pass
 
 func fix_select_card(card : Card3D):
-	await _hand_area.fix_select_card(card)
+	await hand_area.fix_select_card(card)
+
 
 
 

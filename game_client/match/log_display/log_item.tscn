@@ -10,7 +10,6 @@ bg_color = Color(0, 0, 0, 0.501961)
 font_size = 20
 
 [node name="LogItem" type="Label"]
-custom_minimum_size = Vector2(400, 0)
 theme_override_styles/normal = SubResource("StyleBoxFlat_v8g66")
 text = "ログ表示"
 label_settings = SubResource("LabelSettings_jv5c5")

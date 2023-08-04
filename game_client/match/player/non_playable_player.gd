@@ -53,13 +53,22 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 	await _field.perform_effect_fragment(fragment)
 	for p in fragment.passive:
 		if p.opponent:
-			await _rival._perform_passive(p)
+			await _rival._perform_passive(p,0.2)
 		else:
-			await _perform_passive(p)
+			await _perform_passive(p,0.2)
 
-func _perform_passive(passive : IGameServer.PassiveLog) -> void:
-	await _field.perform_passive(passive)
+func _perform_passive(passive : IGameServer.PassiveLog,duration : float) -> void:
+	await _field.perform_passive(passive,duration)
 
+func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,duration : float) -> void:
+	_field.perform_simultaneous_initiative(fragment,duration)
+	if not fragment.passive.is_empty():
+		var p_duration := duration / fragment.passive.size()
+		for p in fragment.passive:
+			if p.opponent:
+				await _rival._perform_passive(p,p_duration)
+			else:
+				await _perform_passive(p,p_duration)
 
 func _get_playing_card() -> Card3D:
 	return _field.get_playing_card()

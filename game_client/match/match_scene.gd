@@ -126,6 +126,13 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 
 	await perform_effect(data.myself.before,data.rival.before,I_MatchPlayer.EffectTiming.BEFORE)
 
+	log_display.append_combat_comparison_effect()
+	log_display.append_fragment_initiative(data.myself.comparison.fragment[0].data,false)
+	log_display.append_fragment_initiative(data.rival.comparison.fragment[0].data,true)
+	_myself._perform_simultaneous_initiative(data.myself.comparison.fragment[0],0.3)
+	_rival._perform_simultaneous_initiative(data.rival.comparison.fragment[0],0.3)
+	await get_tree().create_timer(0.5).timeout
+
 	await perform_effect(data.myself.moment,data.rival.moment,I_MatchPlayer.EffectTiming.MOMENT)
 
 	log_display.append_combat_result_effect()

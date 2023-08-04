@@ -78,6 +78,13 @@ func append_timing(timing : I_MatchPlayer.EffectTiming):
 	delayed_timing = item
 #	$VBoxContainer.add_child(item)
 
+func append_combat_comparison_effect():
+	effect_opponent = false
+	var item = LogItem.instantiate()
+	item.text = "Power比較"
+	$VBoxContainer.add_child(item)
+	pass
+
 func append_combat_result_effect():
 	effect_opponent = false
 	var item = LogItem.instantiate()
@@ -156,8 +163,18 @@ func append_fragment_damage(unblocked_damage : int,blocked_damage : int,opponent
 	_append_fragment_log_item(item)
 	pass
 	
-func append_fragment_initiative():
+func append_fragment_initiative(i : bool,opponent : bool):
+	fragment_opponent = effect_opponent != opponent
+	var item = LogItem.instantiate()
+	if i:
+		item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
+				("主導権を得た")
+	else:
+		item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
+				("主導権を失った")
+	_append_fragment_log_item(item)
 	pass
+	
 func append_fragment_combat_stats(p,h,b,opponent):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()

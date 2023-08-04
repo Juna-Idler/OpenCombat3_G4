@@ -92,7 +92,8 @@ func initialize(hand_area : HandArea,
 
 	for st in _skill_titles:
 		st.visible = false
-	%HBoxContainerDamage.visible = false
+	%CombatDamage.visible = false
+	%CombatStats.visible = false
 
 	enchant_display.initialize(log_display,opponent)
 	
@@ -104,15 +105,13 @@ func initialize(hand_area : HandArea,
 		rotation_degrees.z = 180
 		$CanvasLayer/Control/LabelName.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT,Control.PRESET_MODE_KEEP_SIZE)
 		
-		%HBoxContainerDamage.move_child(%LabelDamage,0)
-		var center : Vector2 = $CanvasLayer/Control.size / 2
-		var offset = %HBoxContainerDamage.size/2
-		var pos = %HBoxContainerDamage.global_position + offset - center
-		%HBoxContainerDamage.global_position = center - pos - offset
-		%LabelBlock.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		%LabelDamage.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-
 		$CanvasLayer/Node2D.rotation_degrees = 180
+		%LabelBlock.rotation_degrees = 180
+		%LabelDamage.rotation_degrees = 180
+		
+	%CombatStats.initialize(opponent)
+
+
 
 
 	_catalog = catalog
@@ -153,15 +152,22 @@ func combat_start(hand : PackedInt32Array,select : int) -> void:
 		title.position.y = 100 + 40 * _skill_titles.size()
 		$CanvasLayer/Node2D.add_child(title)
 
+
+	%CombatStats.set_color(CatalogData.RGB[_playing_card.color])
+	%CombatStats.set_stats(_playing_card.power,_playing_card.hit,_playing_card.block)
+	%CombatStats.visible = true
+	%CombatStats.modulate.a = 0.0
+
 	_damage = 0
 	_blocked_damage = 0
 	%LabelBlock.text = str(0)
 	%LabelDamage.text = str(0)
-	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	var tween := create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(_playing_card,"position",$CombatPosition.position,0.5)
 	_hand_area.move_card(0.5)
+	
+	tween.tween_property(%CombatStats,"modulate:a",1.0,0.5)
 
-	tween.set_parallel()
 	for i in _playing_card.skills.size():
 		_skill_titles[i].initialize(_playing_card.skills[i],_opponent_layout)
 		_skill_titles[i].visible = true
@@ -191,11 +197,14 @@ func combat_end() -> void:
 	_playing_card.tween = tween
 	for i in _playing_card.skills.size():
 		tween.tween_property(_skill_titles[i],"modulate:a",0.0,0.5)
+	tween.tween_property(%CombatStats,"modulate:a",0.0,0.5)
+	
 	await tween.finished
 	
 	for i in _playing_card.skills.size():
 		_skill_titles[i].visible = false
-	%HBoxContainerDamage.visible = false
+	%CombatDamage.visible = false
+	%CombatStats.visible = false
 	
 	_playing_card = null
 	return
@@ -233,8 +242,7 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var unblocked_damage : int = fragment.data[0]
 			var blocked_damage : int = fragment.data[1]
 			_log_display.append_fragment_damage(unblocked_damage,blocked_damage,fragment.opponent)
-			
-			%HBoxContainerDamage.visible = true
+			%CombatDamage.visible = true
 			if blocked_damage > 0:
 				$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/剣で打ち合う4.mp3")
 			for d in blocked_damage:
@@ -254,12 +262,15 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			pass
 		IGameServer.EffectFragmentType.INITIATIVE:
 			var initiative : bool = fragment.data
+			_log_display.append_fragment_initiative(initiative,fragment.opponent)
+			await %CombatStats.set_initiative_async(initiative,0.3)
 			pass
 		IGameServer.EffectFragmentType.COMBAT_STATS:
 			var power : int = fragment.data[0]
 			var hit : int = fragment.data[1]
 			var block : int = fragment.data[2]
 			_log_display.append_fragment_combat_stats(power,hit,block,fragment.opponent)
+			%CombatStats.set_stats(power,hit,block)
 			var card := get_playing_card()
 			var cpower := card.power
 			card.update_card_stats(power,hit,block)
@@ -333,17 +344,17 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 			var param = fragment.data[3]
 			var sd := (_rival_catalog._get_state_data(data_id) if opponent_source
 					else _catalog._get_state_data(data_id))
-			await enchant_display.create_enchantment(id,sd,param)
+			await enchant_display.create_enchantment(id,sd,param,fragment.opponent)
 			pass
 		IGameServer.EffectFragmentType.UPDATE_STATE:
 			var id : int = fragment.data[0]
 			var param = fragment.data[1]
-			await enchant_display.update_enchantment(id,param)
+			await enchant_display.update_enchantment(id,param,fragment.opponent)
 			pass
 		IGameServer.EffectFragmentType.DELETE_STATE:
 			var id : int = fragment.data[0]
 			var expired : bool = fragment.data[1]
-			await enchant_display.delete_enchantment(id,expired)
+			await enchant_display.delete_enchantment(id,expired,fragment.opponent)
 			pass
 		
 		IGameServer.EffectFragmentType.CREATE_CARD:
@@ -355,10 +366,39 @@ func perform_effect_fragment(fragment : IGameServer.EffectFragment):
 		
 		IGameServer.EffectFragmentType.PERFORMANCE:
 			pass
-			
 	pass
 
-func perform_passive(passive : IGameServer.PassiveLog) -> void:
+func perform_passive(passive : IGameServer.PassiveLog,duration : float) -> void:
+	await enchant_display.update_enchantment(passive.state_id,passive.parameter,duration)
+
+
+func perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,duration : float) -> void:
+	assert(fragment.type == IGameServer.EffectFragmentType.INITIATIVE)
+	var initiative : bool = fragment.data
+	%CombatStats.set_initiative_async(initiative,duration)
+
+func perform_simultaneous_combat_result(fragment : IGameServer.EffectFragment,duration : float) -> void:
+	assert(fragment.type == IGameServer.EffectFragmentType.DAMAGE)
+	var unblocked_damage : int = fragment.data[0]
+	var blocked_damage : int = fragment.data[1]
+	_log_display.append_fragment_damage(unblocked_damage,blocked_damage,fragment.opponent)
+	%CombatDamage.visible = true
+	if blocked_damage > 0:
+		$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/剣で打ち合う4.mp3")
+	for d in blocked_damage:
+		_blocked_damage += 1
+		var number : String = str(_blocked_damage)
+		%LabelBlock.text = number
+		$CombatPosition/AudioStreamPlayer3D.play()
+		await get_tree().create_timer(0.3).timeout
+	if unblocked_damage > 0:
+		$CombatPosition/AudioStreamPlayer3D.stream = preload("res://sounds/小パンチ.mp3")
+	for d in unblocked_damage:
+		_damage += 1
+		var number : String = str(_damage)
+		%LabelDamage.text = number
+		$CombatPosition/AudioStreamPlayer3D.play()
+		await get_tree().create_timer(0.3).timeout
 	pass
 
 

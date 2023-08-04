@@ -73,6 +73,7 @@ class CombatData:
 		var select : int
 		
 		var before : Array[EffectLog]
+		var comparison : EffectLog
 		var moment : Array[EffectLog]
 		var result : EffectLog
 		var after : Array[EffectLog]
@@ -85,13 +86,15 @@ class CombatData:
 		var time:float # remain time
 		
 		func _init(h:PackedInt32Array,sel:int,
-				e1: Array[EffectLog],e2: Array[EffectLog],r:EffectLog,
+				e1: Array[EffectLog],c:EffectLog,
+				e2: Array[EffectLog],r:EffectLog,
 				e3: Array[EffectLog],e4: Array[EffectLog],sup:EffectLog,
 				e0: Array[EffectLog],
 				d:int,l:int,t:float):
 			hand = h
 			select = sel
 			before = e1
+			comparison = c
 			moment = e2
 			result = r
 			after = e3

@@ -38,10 +38,14 @@ func _perform_effect_fragment(_fragment : IGameServer.EffectFragment) -> void:
 	@warning_ignore("redundant_await")
 	await 0
 
-func _perform_passive(_passive : IGameServer.PassiveLog) -> void:
+func _perform_passive(_passive : IGameServer.PassiveLog,_duration : float) -> void:
 	assert(false)
 	@warning_ignore("redundant_await")
 	await 0
+
+func _perform_simultaneous_initiative(_fragment : IGameServer.EffectFragment,_duration : float) -> void:
+	pass
+
 
 func _get_playing_card() -> Card3D:
 	return null

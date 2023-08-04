@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://8vwxugps26b7"]
+[gd_scene load_steps=12 format=3 uid="uid://8vwxugps26b7"]
 
 [ext_resource type="Script" path="res://game_client/match/player/field/player_field.gd" id="1_l8tbv"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="2_7b1gt"]
 [ext_resource type="PackedScene" uid="uid://buq07v2a7onpv" path="res://game_client/match/player/field/enchant_display.tscn" id="3_chacu"]
+[ext_resource type="PackedScene" uid="uid://bulsq8u2pvsua" path="res://game_client/match/player/field/conbat_stats.tscn" id="4_in6rt"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_omqhk"]
 size = Vector2(1, 1.5)
@@ -28,13 +29,13 @@ font = ExtResource("2_7b1gt")
 font_size = 20
 
 [sub_resource type="LabelSettings" id="LabelSettings_dkbr4"]
-font_size = 40
+font_size = 48
 font_color = Color(0, 0.360784, 1, 1)
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_70d2k"]
-font_size = 40
+font_size = 48
 font_color = Color(1, 0, 0, 1)
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
@@ -105,43 +106,55 @@ label_settings = SubResource("LabelSettings_fvrkd")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainerDamage" type="HBoxContainer" parent="CanvasLayer/Control"]
+[node name="Node2D" type="Node2D" parent="CanvasLayer"]
+position = Vector2(640, 360)
+
+[node name="EnchantDisplay" parent="CanvasLayer/Node2D" instance=ExtResource("3_chacu")]
+
+[node name="CombatStats" parent="CanvasLayer/Node2D" instance=ExtResource("4_in6rt")]
 unique_name_in_owner = true
-visible = false
-layout_mode = 1
+position = Vector2(56, 0)
+
+[node name="CombatDamage" type="Node2D" parent="CanvasLayer/Node2D"]
+unique_name_in_owner = true
+position = Vector2(110, 64)
+
+[node name="LabelBlock" type="Label" parent="CanvasLayer/Node2D/CombatDamage"]
+unique_name_in_owner = true
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 80.0
-offset_top = -30.0
-offset_right = 208.0
-offset_bottom = 34.0
+offset_left = -13.5
+offset_top = -35.0
+offset_right = 13.5
+offset_bottom = 35.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-theme_override_constants/separation = 8
-alignment = 1
-
-[node name="LabelBlock" type="Label" parent="CanvasLayer/Control/HBoxContainerDamage"]
-unique_name_in_owner = true
-layout_mode = 2
+pivot_offset = Vector2(13.5, 35)
 size_flags_horizontal = 3
 text = "0"
 label_settings = SubResource("LabelSettings_dkbr4")
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LabelDamage" type="Label" parent="CanvasLayer/Control/HBoxContainerDamage"]
+[node name="LabelDamage" type="Label" parent="CanvasLayer/Node2D/CombatDamage"]
 unique_name_in_owner = true
-layout_mode = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 45.5
+offset_top = -35.0
+offset_right = 72.5
+offset_bottom = 35.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(13.5, 35)
 size_flags_horizontal = 3
 text = "0"
 label_settings = SubResource("LabelSettings_70d2k")
+horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Node2D" type="Node2D" parent="CanvasLayer"]
-position = Vector2(640, 360)
-
-[node name="EnchantDisplay" parent="CanvasLayer/Node2D" instance=ExtResource("3_chacu")]

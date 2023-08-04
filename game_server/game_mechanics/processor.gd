@@ -87,17 +87,12 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 	player2._combat_start(index2)
 
 	_before_effect()
-
+	
 	var situation := player1._get_current_power() - player2._get_current_power();
-	if situation > 0:
-		player1._set_initiative(true)
-		player2._set_initiative(false)
-	elif situation < 0:
-		player1._set_initiative(false)
-		player2._set_initiative(true)
-	else:
-		player1._set_initiative(false)
-		player2._set_initiative(false)
+	var p1_comparison := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,
+			[player1._set_initiative(situation > 0)])
+	var p2_comparison := IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,
+			[player2._set_initiative(situation < 0)])
 
 	_moment_effect()
 
@@ -122,13 +117,10 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 		p2_supply = IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,[])
 	else:
 		_end_effect()
-
 		p1_supply = player1._supply()
 		p2_supply = player2._supply()
-		
 		player1._combat_end()
 		player2._combat_end()
-
 		if player1._is_recovery() and player2._is_recovery():
 			round_count += 1
 			_start_effect()
@@ -139,6 +131,7 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 	return IGameServer.CombatData.new(current_round_count,phase,
 			IGameServer.CombatData.PlayerData.new(p1_hand,index1,
 					player1._before_effect_log_temporary().duplicate(),
+					p1_comparison,
 					player1._moment_effect_log_temporary().duplicate(),
 					p1_result,
 					player1._after_effect_log_temporary().duplicate(),
@@ -148,6 +141,7 @@ func combat(index1 : int,index2 : int) -> IGameServer.CombatData:
 					player1._get_damage(),player1._get_life(),0),
 			IGameServer.CombatData.PlayerData.new(p2_hand,index2,
 					player2._before_effect_log_temporary().duplicate(),
+					p2_comparison,
 					player2._moment_effect_log_temporary().duplicate(),
 					p2_result,
 					player2._after_effect_log_temporary().duplicate(),

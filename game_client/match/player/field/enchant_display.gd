@@ -39,12 +39,12 @@ func initialize(log_display : LogDisplay,opponent : bool):
 func get_enchantment_data(id : int) -> CatalogData.StateData:
 	return _enchantments[id].data
 
-func create_enchantment(id : int,sd : CatalogData.StateData,param):
+func create_enchantment(id : int,sd : CatalogData.StateData,param,opponent : bool):
 	var n := Enchantment.new(sd,param,_opponent_layout)
 	_enchantments[id] = n
 	add_child(n.title_object)
 
-	_log_display.append_fragment_create_enchant(n.title,_opponent_layout)
+	_log_display.append_fragment_create_enchant(n.title,opponent)
 
 	var size := _enchantments.size()
 	var start := size * -20 + 20
@@ -59,22 +59,22 @@ func create_enchantment(id : int,sd : CatalogData.StateData,param):
 	await tween.finished
 
 
-func update_enchantment(id : int,param):
+func update_enchantment(id : int,param,opponent : bool,duration : float = 0.2):
 	var e := _enchantments[id] as Enchantment
 	e.change_parameter(param)
-	_log_display.append_fragment_update_enchant(e.title,_opponent_layout)
+	_log_display.append_fragment_update_enchant(e.title,opponent)
 	
 	var origin := e.title_object.modulate
 	var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
-	tween.tween_property(e.title_object,"modulate",Color(1,0,0,1),0.1)
-	tween.tween_property(e.title_object,"modulate",origin,0.1)
+	tween.tween_property(e.title_object,"modulate",Color(1,0,0,1),duration/2)
+	tween.tween_property(e.title_object,"modulate",origin,duration/2)
 	await tween.finished
 
 
-func delete_enchantment(id : int,expired : bool):
+func delete_enchantment(id : int,expired : bool,opponent : bool):
 	var d := _enchantments[id] as Enchantment
 	_deleted.append(id)
-	_log_display.append_fragment_delete_enchant(d.title,_opponent_layout)
+	_log_display.append_fragment_delete_enchant(d.title,opponent)
 	
 	if not expired:
 		d.title_object.modulate.a = 0.5

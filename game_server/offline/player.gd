@@ -251,8 +251,9 @@ func _create_state(factory : ICardFactory,data_id : int,param : Array,rival : Me
 	_states_counter += 1
 	var state := factory._create_state(_states_counter,data_id,param,self,rival)
 	_states[state] = _states_counter
+	var opponent_source := factory != _card_factory
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CREATE_STATE,
-			opponent,[_states_counter,opponent,data_id,param],[])
+			opponent,[_states_counter,opponent_source,data_id,param],[])
 
 func _update_state(state : IState,param:Array,opponent : bool = false) -> IGameServer.EffectFragment:
 	var id : int = _states[state]

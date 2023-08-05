@@ -57,6 +57,16 @@ func _perform_passive(_passive : IGameServer.PassiveLog,_duration : float) -> vo
 
 func _perform_simultaneous_initiative(_fragment : IGameServer.EffectFragment,_duration : float) -> void:
 	pass
+	
+func _perform_simultaneous_supply(_effect : IGameServer.EffectLog,_duration : float) -> float:
+	return 0
+
+
+func _perform_attack(_unblocked_damage : int,_blocked_damage : int) -> void:
+	pass
+func _damaged(_unblocked_damage : int,_blocked_damage : int) -> void:
+	pass
+
 
 func _begin_timing(_timing : EffectTiming) -> void:
 	assert(false)

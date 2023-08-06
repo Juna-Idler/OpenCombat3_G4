@@ -13,7 +13,6 @@ signal hand_exited_play_zone(card : Card3D)
 func _ready():
 	hand_area = PlayableHandArea.instantiate()
 	add_child(hand_area)
-	hand_area.clicked.connect(func(c):hand_clicked.emit(c))
 	hand_area.position.y = -1.5
 	hand_area.position.z = 0.5
 	hand_area.selected.connect(func(c,h):hand_selected.emit(c,h))

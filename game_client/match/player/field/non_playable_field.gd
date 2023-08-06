@@ -9,6 +9,7 @@ const SkillTitleScene := preload("res://game_client/match/player/field/skill_tit
 const NonPlayableHandArea := preload("res://game_client/match/player/field/hand_area/hand_area.tscn")
 
 
+
 var _opponent_layout : bool
 
 @onready var deck_position = $DeckPosition
@@ -39,6 +40,7 @@ var _blocked_damage : int
 
 var _skill_titles : Array[Node2D] = []
 
+var _on_card_clicked : Callable
 var _power_balance : CombatPowerBalance.Interface
 var _log_display : LogDisplay
 
@@ -49,7 +51,6 @@ var _rival : I_PlayerField
 func _ready():
 	hand_area = NonPlayableHandArea.instantiate()
 	add_child(hand_area)
-	hand_area.clicked.connect(func(c):hand_clicked.emit(c))
 	hand_area.position.y = -1.5
 	hand_area.position.z = 0.5
 
@@ -59,6 +60,7 @@ func _get_catalog() -> I_CardCatalog:
 
 func _initialize(player_name:String,deck : PackedInt32Array,
 		catalog : I_CardCatalog,opponent : bool,
+		on_card_clicked : Callable,
 		cpbi : CombatPowerBalance.Interface,
 		log_display : LogDisplay) -> void:
 
@@ -70,8 +72,9 @@ func _initialize(player_name:String,deck : PackedInt32Array,
 	for i in deck:
 		var cd :=  catalog._get_card_data(i)
 		var c := Card3D_Scene.instantiate()
+		c.clicked.connect(on_card_clicked)
 		var pict = load(cd.image)
-		c.initialize(id,cd.name,cd.color,cd.level,cd.power,cd.hit,cd.block,cd.skills,pict,opponent)
+		c.initialize(id,cd,cd.name,cd.color,cd.level,cd.power,cd.hit,cd.block,cd.skills,pict,opponent)
 		_deck[id] = c
 		c.position = deck_position.position
 		c.rotation.y = PI
@@ -98,6 +101,7 @@ func _initialize(player_name:String,deck : PackedInt32Array,
 
 	enchant_display.initialize(log_display,opponent)
 	
+	_on_card_clicked = on_card_clicked
 	_power_balance = cpbi
 	_log_display = log_display
 	
@@ -126,8 +130,10 @@ func _set_first_data(data : IGameServer.FirstData.PlayerData) -> void:
 	%LabelStockCount.text = str(_stock_count)
 	var cards : Array[Card3D] = []
 	for h in _hand:
-		_deck[h].location = Card3D.CardLocation.HAND
-		cards.append(_deck[h])
+		var card := _deck[h]
+		card.location = Card3D.CardLocation.HAND
+		card.set_ray_pickable(true)
+		cards.append(card)
 	hand_area.set_cards(cards)
 	hand_area.move_card(1)
 
@@ -141,6 +147,7 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 		cards.append(_deck[h])
 	hand_area.set_cards(cards)
 	
+	_playing_card.set_ray_pickable(false)
 	_playing_card.location = Card3D.CardLocation.COMBAT
 	_life -= _playing_card.level
 	
@@ -291,38 +298,30 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			card.update_card_stats(power,hit,block)
 			pass
 		IGameServer.EffectFragmentType.DRAW_CARD:
-			var card_id : int = fragment.data
-			if card_id < 0:
-				_log_display.append_fragment_no_draw(fragment.opponent)
-			else:
-				var card := _deck[card_id]
-				_log_display.append_fragment_draw(card.card_name,fragment.opponent)
-				_stock_count -= 1
-				%LabelStockCount.text = str(_stock_count)
-				card.location = Card3D.CardLocation.HAND
-				_hand.append(card_id)
-				hand_area.set_cards_in_deck(_hand,_deck)
-				hand_area.move_card(0.5)
-				await get_tree().create_timer(0.5).timeout
+			draw_sequence(fragment)
+			await draw_coroutine(fragment,0.5)
 			pass
 		IGameServer.EffectFragmentType.DISCARD_CARD:
 			var card_id : int = fragment.data
 			var card := _deck[card_id]
+			card.set_ray_pickable(false)
 			_log_display.append_fragment_discard(card.card_name,fragment.opponent)
 			if card.location == Card3D.CardLocation.HAND:
 				_hand.remove_at(_hand.find(card_id))
 				hand_area.set_cards_in_deck(_hand,_deck)
 				hand_area.move_card(0.5)
+			_discard.append(card_id)
 			card.location = Card3D.CardLocation.DISCARD
 			var tween := create_tween().set_parallel()
 			tween.tween_property(card,"position",avatar_position.position,0.5)
-			tween.tween_method(card.set_albedo_color,Color.WHITE,Color.BLACK,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
+#			tween.tween_method(card.set_albedo_color,Color.WHITE,Color.BLACK,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
 			await tween.finished
 			pass
 		IGameServer.EffectFragmentType.BOUNCE_CARD:
 			var card_id : int = fragment.data[0]
 			var pos : int = fragment.data[1]
 			var card := _deck[card_id]
+			card.set_ray_pickable(false)
 			_log_display.append_fragment_bounce(card.card_name,pos,fragment.opponent)
 
 			if card.location == Card3D.CardLocation.HAND:
@@ -403,15 +402,8 @@ func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : floa
 	var wait_time : float = 0.0
 	for f in effect.fragment:
 		assert(f.type == IGameServer.EffectFragmentType.DRAW_CARD)
-		var card_id : int = f.data
-		if card_id < 0:
-			_log_display.append_fragment_no_draw(f.opponent)
-		else:
+		if draw_sequence(f):
 			wait_time += duration
-			var card := _deck[card_id]
-			_log_display.append_fragment_draw(card.card_name,f.opponent)
-			_stock_count -= 1
-			%LabelStockCount.text = str(_stock_count)
 		for p in f.passive:
 			var title : String
 			if p.opponent:
@@ -423,22 +415,40 @@ func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : floa
 	return wait_time
 	
 func supply_coroutine(effect : IGameServer.EffectLog,duration : float):
-	if not effect.fragment.is_empty():
-		for f in effect.fragment:
-			var card_id : int = f.data
-			if card_id >= 0:
-				_deck[card_id].location = Card3D.CardLocation.HAND
-				_hand.append(card_id)
-				hand_area.set_cards_in_deck(_hand,_deck)
-				hand_area.move_card(duration)
-			if not f.passive.is_empty():
-				var p_duration := duration / f.passive.size()
-				for p in f.passive:
-					if p.opponent:
-						await _rival._perform_passive(p,p_duration)
-					else:
-						await _perform_passive(p,p_duration)
-			await get_tree().create_timer(duration).timeout
+	for f in effect.fragment:
+		draw_coroutine(f,duration)
+		if not f.passive.is_empty():
+			var p_duration := duration / f.passive.size()
+			for p in f.passive:
+				if p.opponent:
+					await _rival._perform_passive(p,p_duration)
+				else:
+					await _perform_passive(p,p_duration)
+		await get_tree().create_timer(duration).timeout
+
+func draw_sequence(fragment : IGameServer.EffectFragment) -> bool:
+	var card_id : int = fragment.data
+	if card_id < 0:
+		_log_display.append_fragment_no_draw(fragment.opponent)
+		return false
+	else:
+		var card := _deck[card_id]
+		_log_display.append_fragment_draw(card.card_name,fragment.opponent)
+		card.set_ray_pickable(true)
+	return true
+
+func draw_coroutine(fragment : IGameServer.EffectFragment,duration : float):
+	var card_id : int = fragment.data
+	if card_id < 0:
+		return
+	var card := _deck[card_id]
+	_stock_count -= 1
+	%LabelStockCount.text = str(_stock_count)
+	card.location = Card3D.CardLocation.HAND
+	_hand.append(card_id)
+	hand_area.set_cards_in_deck(_hand,_deck)
+	hand_area.move_card(duration)
+	await get_tree().create_timer(duration).timeout
 
 
 func perform_fragment_damage(fragment : IGameServer.EffectFragment):
@@ -524,4 +534,12 @@ func fix_select_card(card : Card3D):
 
 
 
-
+func _on_played_position_clicked():
+	var p_list : Array[Card3D]
+	for c in _played:
+		p_list.append(_deck[c])
+	var d_list : Array[Card3D]
+	for c in _discard:
+		d_list.append(_deck[c])
+	request_card_list_view.emit(p_list,d_list)
+	

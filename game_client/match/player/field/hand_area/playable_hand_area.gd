@@ -13,6 +13,7 @@ const SLIDE_NOCHANGE_DURATION := 0.1
 const CARD_PLAY_MOVE_Y := 1.0
 
 
+var _click : bool = false
 var _drag_card : Card3D = null
 var _click_relative_point : Vector3
 var _in_play_zone : bool = false
@@ -23,6 +24,29 @@ var _playable : bool = true
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
+
+func set_cards(new_cards : Array[Card3D]):
+	for c in cards:
+		if not new_cards.has(c):
+			c.input_event.disconnect(on_card3d_input_event)
+	for c in new_cards:
+		if not cards.has(c):
+			c.input_event.connect(on_card3d_input_event)
+	cards = new_cards
+	align()
+
+func set_cards_in_deck(new_hand : PackedInt32Array,deck : Array[Card3D]):
+	var new_cards : Array[Card3D] = []
+	for h in new_hand:
+		var card := deck[h]
+		new_cards.append(card)
+		if not cards.has(card):
+			card.input_event.connect(on_card3d_input_event)
+	for c in cards:
+		if not new_cards.has(c):
+			c.input_event.disconnect(on_card3d_input_event)
+	cards = new_cards
+	align()
 
 
 func set_playable(playable : bool):
@@ -51,12 +75,7 @@ func get_index_of_position(pos_x : float) -> int:
 
 func on_card3d_input_event(card : Card3D,_camera : Camera3D, event : InputEvent, hit_position : Vector3):
 	if _click:
-		if (event is InputEventMouseButton
-				and event.button_index == MOUSE_BUTTON_LEFT
-				and not event.pressed):
-			clicked.emit(card)
-			_click = false
-		elif event is InputEventMouseMotion:
+		if event is InputEventMouseMotion:
 			if _playable:
 				_drag_card = card
 				card.position.z = position.z + 0.1
@@ -64,6 +83,12 @@ func on_card3d_input_event(card : Card3D,_camera : Camera3D, event : InputEvent,
 				card.tween.kill()
 				$AllArea.input_ray_pickable = true
 			_click = false
+			card._click = false
+		else:
+			if (event is InputEventMouseButton
+					and event.button_index == MOUSE_BUTTON_LEFT
+					and not event.pressed):
+				_click = false
 	else:
 		if (event is InputEventMouseButton
 				and event.button_index == MOUSE_BUTTON_LEFT
@@ -71,7 +96,7 @@ func on_card3d_input_event(card : Card3D,_camera : Camera3D, event : InputEvent,
 			_click_relative_point = hit_position - card.global_position
 			_click_relative_point.z = 0
 			_click = true
-	pass
+
 
 func _on_all_area_input_event(_camera, event, hit_position, _normal, _shape_idx):
 	if _drag_card:

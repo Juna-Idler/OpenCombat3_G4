@@ -17,38 +17,22 @@ const CARD_SPACE := 0.1
 var _hand_positions : Array[Vector3]
 var _hand_position_distance : float
 
-var _click := false
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-
 	pass # Replace with function body.
 
 func set_cards(new_cards : Array[Card3D]):
-	for c in cards:
-		if not new_cards.has(c):
-			c.input_event.disconnect(on_card3d_input_event)
-	for c in new_cards:
-		if not cards.has(c):
-			c.input_event.connect(on_card3d_input_event)
 	cards = new_cards
 	align()
-	pass
 
 func set_cards_in_deck(new_hand : PackedInt32Array,deck : Array[Card3D]):
 	var new_cards : Array[Card3D] = []
 	for h in new_hand:
 		var card := deck[h]
 		new_cards.append(card)
-		if not cards.has(card):
-			card.input_event.connect(on_card3d_input_event)
-	for c in cards:
-		if not new_cards.has(c):
-			c.input_event.disconnect(on_card3d_input_event)
 	cards = new_cards
 	align()
-	pass
 
 func align():
 	var hand_count := cards.size()
@@ -96,20 +80,6 @@ func get_index_of_position(pos_x : float) -> int:
 func _process(_delta):
 	pass
 
-
-func on_card3d_input_event(card : Card3D,_camera : Camera3D, event : InputEvent, _hit_position : Vector3):
-	if _click:
-		if (event is InputEventMouseButton
-				and event.button_index == MOUSE_BUTTON_LEFT
-				and not event.pressed):
-			clicked.emit(card)
-			_click = false
-	else:
-		if (event is InputEventMouseButton
-				and event.button_index == MOUSE_BUTTON_LEFT
-				and event.pressed):
-			_click = true
-	pass
 
 
 func fix_select_card(card : Card3D):

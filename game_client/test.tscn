@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://dju4e56se3o1v"]
+
+[ext_resource type="PackedScene" uid="uid://41vguxcbj5ix" path="res://game_client/match/card3d.tscn" id="1_jqnet"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fnxu6"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.564706)
+
+[sub_resource type="QuadMesh" id="QuadMesh_umy86"]
+size = Vector2(10, 5)
+
+[node name="test" type="Node3D"]
+
+[node name="Node3D" parent="." instance=ExtResource("1_jqnet")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -1.98457, 0, 0.5)
+
+[node name="Node3D2" parent="." instance=ExtResource("1_jqnet")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -0.862545, 0, 0.5)
+
+[node name="Node3D3" parent="." instance=ExtResource("1_jqnet")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0.196277, 0, 0.5)
+
+[node name="Node3D4" parent="." instance=ExtResource("1_jqnet")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 1.28594, 0, 0.5)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.116)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+material_override = SubResource("StandardMaterial3D_fnxu6")
+mesh = SubResource("QuadMesh_umy86")

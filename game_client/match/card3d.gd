@@ -11,11 +11,14 @@ enum CardLocation {
 }
 
 signal input_event(card : Card3D,camera : Camera3D, event : InputEvent, position : Vector3)
+signal clicked(card : Card3D)
+
 
 var tween : Tween	#個別にキャンセル可能にするための固有Tween
 
 
 var id_in_deck : int
+var data : CatalogData.CardData
 
 var location : CardLocation
 
@@ -31,11 +34,14 @@ var skills : Array[CatalogData.CardSkill]
 
 var picture : Texture2D
 
+var _click : bool = false
 
-func initialize(id : int,cn : String,
+
+func initialize(id : int,cd : CatalogData.CardData,cn : String,
 		c : CatalogData.CardColors,l : int,p : int,h : int,b : int,
 		sk : Array[CatalogData.CardSkill],pict : Texture2D,opponent : bool = false):
 	id_in_deck = id
+	data = cd
 	location = CardLocation.STOCK
 	
 	card_name = cn
@@ -100,5 +106,15 @@ func _on_area_3d_mouse_exited():
 
 func _on_area_3d_input_event(camera : Camera3D, event : InputEvent, hit_position : Vector3, _normal : Vector3, _shape_idx : int):
 	input_event.emit(self,camera,event,hit_position)
-#	print(hit_position,event.position,_normal,event)
-
+	if _click:
+		if (event is InputEventMouseButton
+				and event.button_index == MOUSE_BUTTON_LEFT
+				and not event.pressed):
+			clicked.emit(self)
+			_click = false
+	else:
+		if (event is InputEventMouseButton
+				and event.button_index == MOUSE_BUTTON_LEFT
+				and event.pressed):
+			_click = true
+	pass

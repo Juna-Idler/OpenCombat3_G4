@@ -54,6 +54,7 @@ mesh = SubResource("QuadMesh_kqme7")
 
 [node name="Area3D" type="Area3D" parent="."]
 collision_mask = 0
+input_ray_pickable = false
 monitoring = false
 monitorable = false
 

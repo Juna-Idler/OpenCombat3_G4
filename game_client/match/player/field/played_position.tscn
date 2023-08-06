@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://bpf65cofrvm0s"]
+
+[ext_resource type="Script" path="res://game_client/match/player/field/played_position.gd" id="1_gw7ty"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_omqhk"]
+size = Vector2(1.5, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tus0e"]
+size = Vector3(1.6, 1.1, 1)
+
+[node name="PlayedPosition" type="Node3D"]
+script = ExtResource("1_gw7ty")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("QuadMesh_omqhk")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_tus0e")
+
+[connection signal="input_event" from="Area3D" to="." method="_on_area_3d_input_event"]

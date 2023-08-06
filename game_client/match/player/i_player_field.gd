@@ -3,10 +3,10 @@ extends Node3D
 class_name I_PlayerField
 
 
-signal hand_clicked(card : Card3D)
-
 enum EffectTiming {INITIAL,START,BEFORE,MOMENT,AFTER,END}
 
+
+signal request_card_list_view(p_cards : Array[Card3D],d_cards : Array[Card3D])
 
 
 func _get_catalog() -> I_CardCatalog:
@@ -14,6 +14,7 @@ func _get_catalog() -> I_CardCatalog:
 
 func _initialize(_player_name:String,_deck : PackedInt32Array,
 		_catalog : I_CardCatalog,_opponent : bool,
+		_on_card_clicked : Callable,
 		_cpbi : CombatPowerBalance.Interface,
 		_log_display : LogDisplay) -> void:
 	pass

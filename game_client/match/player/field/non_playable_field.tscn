@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://lrs3pdwt6rv7"]
+[gd_scene load_steps=14 format=3 uid="uid://lrs3pdwt6rv7"]
 
 [ext_resource type="Script" path="res://game_client/match/player/field/non_playable_field.gd" id="1_evhjw"]
+[ext_resource type="PackedScene" uid="uid://bpf65cofrvm0s" path="res://game_client/match/player/field/played_position.tscn" id="2_gpprn"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="2_mnqv3"]
 [ext_resource type="PackedScene" uid="uid://buq07v2a7onpv" path="res://game_client/match/player/field/enchant_display/enchant_display.tscn" id="3_rfeq1"]
 [ext_resource type="PackedScene" uid="uid://bulsq8u2pvsua" path="res://game_client/match/player/field/conbat_stats.tscn" id="4_2fbmp"]
@@ -64,13 +65,8 @@ mesh = SubResource("QuadMesh_omqhk")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="CombatPosition"]
 
-[node name="PlayedPosition" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.25, -0.1)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="PlayedPosition"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-visible = false
-mesh = SubResource("QuadMesh_omqhk")
+[node name="PlayedPosition" parent="." instance=ExtResource("2_gpprn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.2, 0)
 
 [node name="AvatarPosition" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -0.5)
@@ -185,3 +181,5 @@ text = "15"
 label_settings = SubResource("LabelSettings_fpaqe")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[connection signal="clicked" from="PlayedPosition" to="." method="_on_played_position_clicked"]

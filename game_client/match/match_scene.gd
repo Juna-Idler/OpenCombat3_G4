@@ -49,14 +49,20 @@ func initialize(server : IGameServer,
 	log_display.clear()
 
 	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog,false,
+			_on_card_clicked,
 			CombatPowerBalance.Interface.new(power_balance,false),
 			log_display)
 	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog,true,
+			_on_card_clicked,
 			CombatPowerBalance.Interface.new(power_balance,true),
 			log_display)
 	_myself._set_rival(_rival)
 	_rival._set_rival(_myself)
 	
+	_myself.request_card_list_view.connect(_on_request_card_list_view)
+	_rival.request_card_list_view.connect(_on_request_card_list_view)
+	
+	%CardDetailPanel.visible = false
 	power_balance.visible = false
 	power_balance.modulate.a = 0
 
@@ -239,11 +245,30 @@ func _on_button_log_toggled(button_pressed):
 		%LogDisplay.visible = true
 		%LogDisplay.open.call_deferred()
 		var tween := create_tween()
-		tween.tween_property($CanvasLayer/Control/Control,"position:x",0,0.3)
+		tween.tween_property(%LogDisplayPanel,"position:x",0,0.3)
 		pass
 	else:
 		var tween := create_tween()
-		tween.tween_property($CanvasLayer/Control/Control,"position:x",-480,0.2)
+		tween.tween_property(%LogDisplayPanel,"position:x",-480,0.2)
 		tween.tween_callback(func():%LogDisplay.visible = false)
 		pass
 	pass # Replace with function body.
+
+func _on_card_clicked(card : Card3D):
+	%CardDetailPanel.visible = true
+	%CardDetail.initialize(card.data,card.color,card.level,card.power,card.hit,card.block,card.skills,card.picture)
+	
+func _on_card_detail_panel_gui_input(event : InputEvent):
+	if (event is InputEventMouseButton
+			and event.button_index == MOUSE_BUTTON_LEFT
+			and event.pressed):
+		%CardDetailPanel.visible = false
+
+
+func _on_request_card_list_view(p_cards : Array[Card3D],d_cards : Array[Card3D]):
+	%CardList.visible = true
+	%CardList.put_cards(p_cards,d_cards,0.3)
+
+
+func _on_card_list_clicked():
+	%CardList.visible = false

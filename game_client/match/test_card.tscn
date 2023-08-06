@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://d3vqtf8tawmd"]
+[gd_scene load_steps=6 format=3 uid="uid://d3vqtf8tawmd"]
 
 [ext_resource type="Script" path="res://game_client/match/test_card.gd" id="1_au24m"]
 [ext_resource type="PackedScene" uid="uid://41vguxcbj5ix" path="res://game_client/match/card3d.tscn" id="1_guvs4"]
+[ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="3_snbho"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_uhu1q"]
 viewport_path = NodePath("Node3D/SubViewport")
@@ -22,5 +23,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.06506)
 
 [node name="MeshInstance3D" parent="Node3D" index="1"]
 material_override = SubResource("StandardMaterial3D_5xuh0")
+
+[node name="Control" parent="." instance=ExtResource("3_snbho")]
 
 [editable path="Node3D"]

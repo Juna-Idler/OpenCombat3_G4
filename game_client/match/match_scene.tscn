@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://dci4g4cu74w6n"]
+[gd_scene load_steps=9 format=3 uid="uid://dci4g4cu74w6n"]
 
 [ext_resource type="Script" path="res://game_client/match/match_scene.gd" id="1_jvtjj"]
+[ext_resource type="PackedScene" uid="uid://cx8qc3q1f3xaj" path="res://game_client/match/card_list.tscn" id="2_4fyv0"]
 [ext_resource type="PackedScene" uid="uid://c4s6ur61pibms" path="res://game_client/match/power_balance.tscn" id="2_xh3ck"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_62qcl"]
 [ext_resource type="PackedScene" uid="uid://urb0isujicis" path="res://game_client/match/log_display/log_display.tscn" id="4_dw15p"]
+[ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="5_0yt3x"]
 
 [sub_resource type="Environment" id="Environment_m7sro"]
 background_mode = 1
@@ -25,6 +27,11 @@ fov = 45.0
 
 [node name="AudioListener3D" type="AudioListener3D" parent="Field"]
 
+[node name="CardList" parent="Field" instance=ExtResource("2_4fyv0")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+visible = false
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 10
 
@@ -39,6 +46,7 @@ mouse_filter = 2
 
 [node name="PowerBalance" parent="CanvasLayer/Control" instance=ExtResource("2_xh3ck")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 pivot_offset = Vector2(640, 360)
 
@@ -92,7 +100,8 @@ label_settings = SubResource("LabelSettings_k07hl")
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Control" type="Control" parent="CanvasLayer/Control"]
+[node name="LogDisplayPanel" type="Control" parent="CanvasLayer/Control"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -101,12 +110,12 @@ offset_right = 20.0
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="LogDisplay" parent="CanvasLayer/Control/Control" instance=ExtResource("4_dw15p")]
+[node name="LogDisplay" parent="CanvasLayer/Control/LogDisplayPanel" instance=ExtResource("4_dw15p")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
-[node name="ButtonLog" type="Button" parent="CanvasLayer/Control/Control"]
+[node name="ButtonLog" type="Button" parent="CanvasLayer/Control/LogDisplayPanel"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -120,4 +129,32 @@ grow_horizontal = 0
 grow_vertical = 0
 toggle_mode = true
 
-[connection signal="toggled" from="CanvasLayer/Control/Control/ButtonLog" to="." method="_on_button_log_toggled"]
+[node name="CardDetailPanel" type="ColorRect" parent="CanvasLayer/Control"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="CardDetail" parent="CanvasLayer/Control/CardDetailPanel" instance=ExtResource("5_0yt3x")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -256.0
+offset_right = 400.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="clicked" from="Field/CardList" to="." method="_on_card_list_clicked"]
+[connection signal="toggled" from="CanvasLayer/Control/LogDisplayPanel/ButtonLog" to="." method="_on_button_log_toggled"]
+[connection signal="gui_input" from="CanvasLayer/Control/CardDetailPanel" to="." method="_on_card_detail_panel_gui_input"]

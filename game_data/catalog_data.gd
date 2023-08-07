@@ -95,13 +95,15 @@ class CardSkill:
 	var condition : int
 	var parameter : Array
 	var title : String
+	var text : String
 	
-	func _init(i:int,sd:SkillData,c:int,p : Array,t : String):
+	func _init(i:int,sd:SkillData,c:int,p : Array,t : String,txt : String):
 		index = i
 		data = sd
 		condition = c
 		parameter = p
 		title = t
+		text = txt
 
 
 	func test_condition(rival_color : int,link_color : int) -> bool :

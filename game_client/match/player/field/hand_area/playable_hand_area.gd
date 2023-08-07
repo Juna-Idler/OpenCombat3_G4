@@ -12,6 +12,7 @@ const SLIDE_NOCHANGE_DURATION := 0.1
 
 const CARD_PLAY_MOVE_Y := 1.0
 
+@onready var card_aura : CardAura = $CardAura
 
 var _click : bool = false
 var _drag_card : Card3D = null
@@ -23,6 +24,7 @@ var _playable : bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	remove_child(card_aura)
 	pass # Replace with function body.
 
 func set_cards(new_cards : Array[Card3D]):
@@ -82,6 +84,8 @@ func on_card3d_input_event(card : Card3D,_camera : Camera3D, event : InputEvent,
 				card.set_ray_pickable(false)
 				card.tween.kill()
 				$AllArea.input_ray_pickable = true
+				card.add_child(card_aura)
+				card_aura.set_aura_color(CatalogData.RGB[_drag_card.color].darkened(0.5))
 			_click = false
 			card._click = false
 		else:
@@ -110,21 +114,24 @@ func _on_all_area_input_event(_camera, event, hit_position, _normal, _shape_idx)
 			$AllArea.input_ray_pickable = false
 			if _drag_card.position.y >= position.y + CARD_PLAY_MOVE_Y:
 				_selected_card = _drag_card
+				_drag_card.remove_child(card_aura)
 				selected.emit(cards.find(_drag_card),cards)
 			return
 		if event is InputEventMouseMotion:
 			if _drag_card.position.y >= position.y + CARD_PLAY_MOVE_Y:
 				if not _in_play_zone:
 					_in_play_zone = true
+					card_aura.set_aura_color(CatalogData.RGB[_drag_card.color].lightened(0.5))
 					entered_play_zone.emit(_drag_card)
 				return
 			else:
 				if _in_play_zone:
 					_in_play_zone = false
+					card_aura.set_aura_color(CatalogData.RGB[_drag_card.color].darkened(0.5))
 					exited_play_zone.emit(_drag_card)
 			
 			var index := cards.find(_drag_card)
-			var area_index := get_index_of_position(hit_position.x)
+			var area_index := get_index_of_position(_drag_card.position.x)
 			if index != area_index and index + 1 != area_index:
 				var swap_index := index + (1 if area_index > index else -1)
 				cards[index] = cards[swap_index]
@@ -141,6 +148,8 @@ func _on_all_area_mouse_exited():
 	else:
 		move_card(0.5)
 	if _drag_card:
+		_drag_card.take_off_aura()
+		_drag_card.remove_child(card_aura)
 		_drag_card.set_ray_pickable(true)
 		_drag_card = null
 	_in_play_zone = false

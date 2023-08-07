@@ -10,12 +10,12 @@ class Enchantment:
 
 	func _init(d,p,o):
 		data = d
-		var p_str := Global.card_catalog.param_to_string(data.param_type,p)
+		var p_str := Global.card_catalog.params_to_string(data.param_type,p)
 		title = data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )
 		title_object.initialize(title,o)
 	
 	func change_parameter(p):
-		var p_str := Global.card_catalog.param_to_string(data.param_type,p)
+		var p_str := Global.card_catalog.params_to_string(data.param_type,p)
 		title = data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )
 		title_object.update(title)
 
@@ -130,5 +130,5 @@ func perform(id : int):
 
 func get_title(id : int,param) -> String:
 	var e := _enchantments[id] as Enchantment
-	var p_str := Global.card_catalog.param_to_string(e.data.param_type,param)
+	var p_str := Global.card_catalog.params_to_string(e.data.param_type,param)
 	return e.data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )

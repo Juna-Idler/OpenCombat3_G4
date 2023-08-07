@@ -66,7 +66,7 @@ func put_cards(p_cards : Array[Card3D],d_cards : Array[Card3D],duration : float)
 		tween.tween_property(c,"rotation",Vector3.ZERO,duration)
 	
 	await tween.finished
-	$Sprite3D.visible = true
+	$MeshInstance3D.visible = true
 	
 
 func restore(duration : float):
@@ -84,6 +84,6 @@ func _on_area_3d_input_event(_camera, event, _position, _normal, _shape_idx):
 	if (event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT
 			and event.pressed):
-		$Sprite3D.visible = false
+		$MeshInstance3D.visible = false
 		clicked.emit()
 		restore(0.3)

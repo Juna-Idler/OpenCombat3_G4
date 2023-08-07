@@ -1,6 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://88s2fwk2lrtx"]
+[gd_scene load_steps=10 format=3 uid="uid://88s2fwk2lrtx"]
 
 [ext_resource type="Script" path="res://game_client/card/card_front.gd" id="1_27fqa"]
+[ext_resource type="Shader" path="res://game_client/card/card_front.gdshader" id="1_affv7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6eugh"]
+shader = ExtResource("1_affv7")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_q3ike"]
 
@@ -25,6 +29,7 @@ font_color = Color(0, 0, 0, 1)
 outline_color = Color(1, 1, 1, 0.627451)
 
 [node name="CardFront" type="Control"]
+material = SubResource("ShaderMaterial_6eugh")
 layout_mode = 3
 anchors_preset = 0
 offset_right = 364.0

@@ -49,11 +49,16 @@ func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSki
 	var data := get_skill_data(int(skill[1]))
 	var params := []
 	var skill_params : PackedStringArray = skill[2].split(",")
+	var text := data.text
 	for i in data.param_type.size():
+		var param_string : String = ""
 		match data.param_type[i]:
+			CatalogData.ParamType.VOID:
+				pass
 			CatalogData.ParamType.INTEGER:
 				var integer : int = int(skill_params[i])
 				params.append(integer)
+				param_string = param_to_string(CatalogData.ParamType.INTEGER,integer)
 			CatalogData.ParamType.STATS:
 				var stats := [0,0,0]
 				for e in skill_params[i].split(" "):
@@ -64,33 +69,47 @@ func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSki
 					elif e.find("B") == 0:
 						stats[2] = int(e.substr("B".length()))
 				params.append(stats)
+				param_string = param_to_string(CatalogData.ParamType.STATS,stats)
 			CatalogData.ParamType.COLOR:
 				var color := int(skill_params[i])
 				params.append(color)
-	var param_string := param_to_string(data.param_type,params)
-	var title := data.name + ("" if param_string.is_empty() else "(" + param_string + ")")
-	return CatalogData.CardSkill.new(index,data,condition,params,title)
-		
+				param_string = param_to_string(CatalogData.ParamType.COLOR,color)
+			_:
+				assert(false)
+		if not param_string.is_empty():
+			var replace_string : String = "{" + data.param_name[i] + "}"
+			text = text.replace(replace_string,param_string)
 
-func param_to_string(param_type : PackedInt32Array,param : Array) -> String:
+	var param_string := params_to_string(data.param_type,params)
+	var title := data.name + ("" if param_string.is_empty() else "(" + param_string + ")")
+	return CatalogData.CardSkill.new(index,data,condition,params,title,text)
+
+
+func params_to_string(param_type : PackedInt32Array,param : Array) -> String:
 	var param_string : PackedStringArray = []
 	for i in param_type.size():
-		match param_type[i]:
-			CatalogData.ParamType.INTEGER:
-				var integer : int = param[i]
-				param_string.append(str(integer))
-			CatalogData.ParamType.STATS:
-				var stats : PackedInt32Array = param[i]
-				var stats_names : PackedStringArray = []
-				var stats_table := _param_names[CatalogData.ParamType.STATS].names
-				for j in 3:
-					if stats[j] != 0:
-						stats_names.append(stats_table[j] + "%+d" % stats[j])
-				param_string.append(" ".join(stats_names))
-			CatalogData.ParamType.COLOR:
-				var color : int = param[i]
-				param_string.append(_param_names[CatalogData.ParamType.COLOR].names[color])
+		var s := param_to_string(param_type[i],param[i])
+		if not s.is_empty():
+			param_string.append(s)
 	return ",".join(param_string)
+
+func param_to_string(param_type : int,param) -> String:
+	match param_type:
+		CatalogData.ParamType.INTEGER:
+			var integer : int = param
+			return str(integer)
+		CatalogData.ParamType.STATS:
+			var stats : PackedInt32Array = param
+			var stats_names : PackedStringArray = []
+			var stats_table := _param_names[CatalogData.ParamType.STATS].names
+			for j in 3:
+				if stats[j] != 0:
+					stats_names.append(stats_table[j] + "%+d" % stats[j])
+			return " ".join(stats_names)
+		CatalogData.ParamType.COLOR:
+			var color : int = param
+			return _param_names[CatalogData.ParamType.COLOR].names[color]
+	return ""
 
 
 func _load_card_data():

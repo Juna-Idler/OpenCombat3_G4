@@ -8,7 +8,7 @@ resource_local_to_scene = true
 shading_mode = 0
 
 [sub_resource type="QuadMesh" id="QuadMesh_62pkv"]
-size = Vector2(1, 1.5)
+size = Vector2(1, 1.401)
 
 [sub_resource type="Gradient" id="Gradient_ao2hn"]
 
@@ -22,7 +22,7 @@ albedo_texture = SubResource("GradientTexture2D_qs7jf")
 
 [sub_resource type="QuadMesh" id="QuadMesh_kqme7"]
 flip_faces = true
-size = Vector2(1, 1.5)
+size = Vector2(1, 1.401)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_sqqtk"]
 size = Vector3(1, 1.5, 0.01)

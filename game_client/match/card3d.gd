@@ -80,6 +80,19 @@ func set_albedo_color(c : Color):
 func set_ray_pickable(enable : bool):
 	$Area3D.input_ray_pickable = enable
 
+func put_on_aura(aura_color : Color):
+#	var particles := $GPUParticles3D as GPUParticles3D
+#	var material := particles.process_material as ParticleProcessMaterial
+#	material.color = aura_color
+#	particles.emitting = true
+	pass
+	
+func take_off_aura():
+#	var particles := $GPUParticles3D as GPUParticles3D
+#	particles.emitting = false
+	pass
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$MeshInstance3D.material_override.albedo_texture = $SubViewport.get_texture()

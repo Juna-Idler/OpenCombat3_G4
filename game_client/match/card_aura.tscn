@@ -16,6 +16,7 @@ noise = SubResource("FastNoiseLite_g153w")
 render_priority = 0
 shader = ExtResource("1_ky6q2")
 shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/intensity = 1.0
 shader_parameter/aura = ExtResource("2_ueex8")
 shader_parameter/noize = SubResource("NoiseTexture2D_n8qfm")
 

@@ -120,7 +120,7 @@ func _recover(index : int) -> IGameServer.EffectLog:
 	var fragments : Array[IGameServer.EffectFragment] = []
 	_select_card = _hand[index]
 	fragments.append(_discard_card(_select_card))
-	_damage -= _deck_list[_select_card].data.level
+	fragments.append(_recover_life(_deck_list[_select_card].data.level,false))
 	if _damage <= 0:
 		_damage = 0
 		return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
@@ -167,7 +167,17 @@ func _add_damage(damage: int,opponent : bool = true) -> IGameServer.EffectFragme
 			func (plog : IGameServer.PassiveLog): passive.append(plog))
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DAMAGE,
 			opponent,[damage,block],passive)
-	
+
+func _recover_life(recovery_point : int,opponent : bool) -> IGameServer.EffectFragment:
+	if _damage < recovery_point:
+		recovery_point = _damage
+	var passive : Array[IGameServer.PassiveLog] = []
+	passive_recovered.emit(recovery_point,
+			func (plog : IGameServer.PassiveLog): passive.append(plog))
+	_damage -= recovery_point
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.RECOVERY,
+			opponent,recovery_point,passive)
+
 func _set_initiative(initiative : bool,opponent : bool = false) -> IGameServer.EffectFragment:
 	var passive : Array[IGameServer.PassiveLog] = []
 	passive_initiative_changed.emit(initiative,_initiative,

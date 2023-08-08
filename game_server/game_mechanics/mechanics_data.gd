@@ -46,6 +46,7 @@ class IPlayer:
 #	func _add_log(log : IGameServer.PassiveLog) -> void:
 #		return
 	signal passive_damaged(damage:int,block:int,_add_log : Callable)
+	signal passive_recovered(recovery:int,_add_log : Callable)
 	signal passive_initiative_changed(new_init:bool,old_init:bool,_add_log : Callable)
 	signal passive_card_stats_changed(card : int,
 			new_power : int,new_hit : int,new_block : int,
@@ -153,6 +154,9 @@ class IPlayer:
 
 #	DAMAGE,			# [damage : int,block : int]
 	func _add_damage(_damage: int,_opponent : bool = true) -> IGameServer.EffectFragment:
+		return null
+		
+	func _recover_life(_recovery_point : int,_opponent : bool) -> IGameServer.EffectFragment:
 		return null
 		
 #	INITIATIVE,		# initiative : bool

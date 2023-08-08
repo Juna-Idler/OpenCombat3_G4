@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://dci4g4cu74w6n"]
+[gd_scene load_steps=8 format=3 uid="uid://dci4g4cu74w6n"]
 
 [ext_resource type="Script" path="res://game_client/match/match_scene.gd" id="1_jvtjj"]
 [ext_resource type="PackedScene" uid="uid://cx8qc3q1f3xaj" path="res://game_client/match/card_list.tscn" id="2_4fyv0"]
-[ext_resource type="PackedScene" uid="uid://c4s6ur61pibms" path="res://game_client/match/power_balance.tscn" id="2_xh3ck"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_62qcl"]
 [ext_resource type="PackedScene" uid="uid://urb0isujicis" path="res://game_client/match/log_display/log_display.tscn" id="4_dw15p"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="5_0yt3x"]
@@ -11,9 +10,12 @@
 background_mode = 1
 background_color = Color(0.219608, 0.219608, 0.219608, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_k07hl"]
+[sub_resource type="LabelSettings" id="LabelSettings_dw3jw"]
 font = ExtResource("4_62qcl")
-font_size = 24
+font_size = 30
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(4, 3)
 
 [node name="match_scene" type="Node"]
 script = ExtResource("1_jvtjj")
@@ -44,12 +46,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="PowerBalance" parent="CanvasLayer/Control" instance=ExtResource("2_xh3ck")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-pivot_offset = Vector2(640, 360)
-
 [node name="ButtonSettings" type="Button" parent="CanvasLayer/Control"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -63,42 +59,6 @@ grow_horizontal = 0
 theme_override_fonts/font = ExtResource("4_62qcl")
 theme_override_font_sizes/font_size = 20
 text = "設定"
-
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control"]
-visible = false
-custom_minimum_size = Vector2(240, 0)
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -130.0
-offset_right = 240.0
-grow_vertical = 0
-mouse_filter = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/PanelContainer"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="LabelName" type="Label" parent="CanvasLayer/Control/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "名前"
-label_settings = SubResource("LabelSettings_k07hl")
-horizontal_alignment = 1
-
-[node name="LabelStats" type="Label" parent="CanvasLayer/Control/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "力3 打2 防1"
-label_settings = SubResource("LabelSettings_k07hl")
-horizontal_alignment = 1
-
-[node name="LabelSkill" type="Label" parent="CanvasLayer/Control/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "スキル名（パラメータ）
-スキルの説明文"
-label_settings = SubResource("LabelSettings_k07hl")
-horizontal_alignment = 1
-autowrap_mode = 3
 
 [node name="LogDisplayPanel" type="Control" parent="CanvasLayer/Control"]
 unique_name_in_owner = true
@@ -154,6 +114,21 @@ offset_right = 400.0
 offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="LabelSituation" type="Label" parent="CanvasLayer"]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_dw3jw")
 
 [connection signal="clicked" from="Field/CardList" to="." method="_on_card_list_clicked"]
 [connection signal="toggled" from="CanvasLayer/Control/LogDisplayPanel/ButtonLog" to="." method="_on_button_log_toggled"]

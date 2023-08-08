@@ -162,6 +162,14 @@ func append_fragment_damage(unblocked_damage : int,blocked_damage : int,opponent
 			("%dダメージ/%dブロック" % [unblocked_damage,blocked_damage])
 	_append_fragment_log_item(item)
 	pass
+
+func append_fragment_recovery(recovery_point : int,remaining_damage : int,opponent : bool):
+	fragment_opponent = effect_opponent != opponent
+	var item = LogItem.instantiate()
+	item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
+			("%d回復/残り%dダメージ" % [recovery_point,remaining_damage])
+	_append_fragment_log_item(item)
+	pass
 	
 func append_fragment_initiative(i : bool,opponent : bool):
 	fragment_opponent = effect_opponent != opponent

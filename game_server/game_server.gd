@@ -175,6 +175,7 @@ class EffectLog:
 enum EffectFragmentType {
 	NO_EFFECT,		# null
 	DAMAGE,			# [unblocked_damage : int,blocked_damage : int]
+	RECOVERY,		# recovery point : int
 	INITIATIVE,		# initiative : bool
 	COMBAT_STATS,	# [power : int,hit : int,block : int]
 	

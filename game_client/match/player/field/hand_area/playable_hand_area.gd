@@ -3,6 +3,9 @@ extends "res://game_client/match/player/field/hand_area/hand_area.gd"
 
 signal selected(index : int,hand : Array[Card3D])
 
+signal drag_start(card : Card3D)
+signal drag_cancel(card : Card3D)
+
 signal entered_play_zone(card : Card3D)
 signal exited_play_zone(card : Card3D)
 
@@ -12,8 +15,6 @@ const SLIDE_NOCHANGE_DURATION := 0.1
 
 const CARD_PLAY_MOVE_Y := 1.0
 
-@onready var card_aura : CardAura = $CardAura
-
 var _click : bool = false
 var _drag_card : Card3D = null
 var _click_relative_point : Vector3
@@ -22,15 +23,9 @@ var _selected_card : Card3D = null
 
 var _playable : bool = true
 
-var _aura_tween : Tween
-
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	_aura_tween = create_tween()
-	_aura_tween.kill()
-	remove_child(card_aura)
 	pass # Replace with function body.
 
 func set_cards(new_cards : Array[Card3D]):
@@ -90,7 +85,7 @@ func on_card3d_input_event(card : Card3D,_camera : Camera3D, event : InputEvent,
 				card.set_ray_pickable(false)
 				card.tween.kill()
 				$AllArea.input_ray_pickable = true
-				put_on_aura(card)
+				drag_start.emit(_drag_card)
 			_click = false
 			card._click = false
 		else:
@@ -119,7 +114,6 @@ func _on_all_area_input_event(_camera, event, hit_position, _normal, _shape_idx)
 			$AllArea.input_ray_pickable = false
 			if _drag_card.position.y >= position.y + CARD_PLAY_MOVE_Y:
 				_selected_card = _drag_card
-				take_off_aura(_drag_card)
 				selected.emit(cards.find(_selected_card),cards)
 				_drag_card = null
 			return
@@ -127,13 +121,11 @@ func _on_all_area_input_event(_camera, event, hit_position, _normal, _shape_idx)
 			if _drag_card.position.y >= position.y + CARD_PLAY_MOVE_Y:
 				if not _in_play_zone:
 					_in_play_zone = true
-					set_playing_aura_color()
 					entered_play_zone.emit(_drag_card)
 				return
 			else:
 				if _in_play_zone:
 					_in_play_zone = false
-					set_selecting_aura_color()
 					exited_play_zone.emit(_drag_card)
 			
 			var index := cards.find(_drag_card)
@@ -154,30 +146,9 @@ func _on_all_area_mouse_exited():
 	else:
 		move_card(0.5)
 	if _drag_card:
-		take_off_aura(_drag_card)
+		drag_cancel.emit(_drag_card)
 		_drag_card.set_ray_pickable(true)
 		_drag_card = null
 	_in_play_zone = false
-
-func put_on_aura(card : Card3D):
-	_aura_tween.kill()
-	if card_aura.get_parent():
-		card_aura.get_parent().remove_child(card_aura)
-	card.add_child(card_aura)
-	_aura_tween = create_tween()
-	_aura_tween.tween_method(card_aura.set_aura_intensity,0.0,1.0,0.3)
-	set_selecting_aura_color()
-
-func take_off_aura(card : Card3D):
-	_aura_tween.kill()
-	_aura_tween = create_tween()
-	_aura_tween.tween_method(card_aura.set_aura_intensity,1.0,0.0,0.3)
-	_aura_tween.tween_callback(card.remove_child.bind(card_aura))
-
-func set_playing_aura_color():
-	card_aura.set_aura_color(Color.WHITE) #CatalogData.RGB[_drag_card.color].lightened(0.5))
-
-func set_selecting_aura_color():
-	card_aura.set_aura_color(CatalogData.RGB[_drag_card.color])
 
 

@@ -1,7 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://dtkgoinkc1ww8"]
+[gd_scene load_steps=4 format=3 uid="uid://dtkgoinkc1ww8"]
 
-[ext_resource type="PackedScene" uid="uid://lrs3pdwt6rv7" path="res://game_client/match/player/field/non_playable_field.tscn" id="1_du82x"]
+[ext_resource type="PackedScene" uid="uid://lrs3pdwt6rv7" path="res://game_client/match/player/field/base_player_field.tscn" id="1_vbh5l"]
 [ext_resource type="Script" path="res://game_client/match/player/field/playable_field.gd" id="2_jrthd"]
+[ext_resource type="PackedScene" uid="uid://bwerycwtb56bb" path="res://game_client/match/player/field/hand_area/playable_hand_area.tscn" id="3_3piin"]
 
-[node name="PlayerField" instance=ExtResource("1_du82x")]
+[node name="PlayerField" instance=ExtResource("1_vbh5l")]
 script = ExtResource("2_jrthd")
+
+[node name="HandArea" parent="." index="0" instance=ExtResource("3_3piin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0.5)
+
+[connection signal="drag_cancel" from="HandArea" to="." method="_on_hand_area_drag_cancel"]
+[connection signal="drag_start" from="HandArea" to="." method="_on_hand_area_drag_start"]
+[connection signal="entered_play_zone" from="HandArea" to="." method="_on_hand_area_entered_play_zone"]
+[connection signal="exited_play_zone" from="HandArea" to="." method="_on_hand_area_exited_play_zone"]
+[connection signal="selected" from="HandArea" to="." method="_on_hand_area_selected"]

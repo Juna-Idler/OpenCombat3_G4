@@ -1,5 +1,7 @@
 extends Node
 
+class_name MatchScene
+
 
 signal performed
 
@@ -15,9 +17,10 @@ var round_count : int
 var phase : IGameServer.Phase
 var recovery_repeat : int
 
-@onready var power_balance = %PowerBalance
-@onready var log_display : LogDisplay  = %LogDisplay
+const phase_names : PackedStringArray = ["Game End","Combat","Recovery"]
 
+@onready var log_display : LogDisplay  = %LogDisplay
+@onready var label_situation : Label = %LabelSituation
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -48,13 +51,11 @@ func initialize(server : IGameServer,
 	
 	log_display.clear()
 
-	_myself._initialize(pd.my_name,pd.my_deck_list,my_catalog,false,
+	_myself._initialize(self,pd.my_name,pd.my_deck_list,my_catalog,false,
 			_on_card_clicked,
-			CombatPowerBalance.Interface.new(power_balance,false),
 			log_display)
-	_rival._initialize(pd.rival_name,pd.rival_deck_list,rival_catalog,true,
+	_rival._initialize(self,pd.rival_name,pd.rival_deck_list,rival_catalog,true,
 			_on_card_clicked,
-			CombatPowerBalance.Interface.new(power_balance,true),
 			log_display)
 	_myself._set_rival(_rival)
 	_rival._set_rival(_myself)
@@ -63,8 +64,7 @@ func initialize(server : IGameServer,
 	_rival.request_card_list_view.connect(_on_request_card_list_view)
 	
 	%CardDetailPanel.visible = false
-	power_balance.visible = false
-	power_balance.modulate.a = 0
+
 
 func terminalize():
 	if _game_server:
@@ -100,28 +100,24 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 	log_display.append_round(round_count)
 
 	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
-	
+
+	label_situation.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
+	label_situation.visible = true
 	_performing = false
 	performed.emit()
 	pass
 
 		
 func _on_recieved_combat_result(data : IGameServer.CombatData):
-	
 	_performing = true
+	label_situation.visible = false
+	
 	_myself._combat_start(data.myself.hand,data.myself.select)
 	_rival._combat_start(data.rival.hand,data.rival.select)
 	log_display.append_combat_start(_myself._get_playing_card().card_name,_rival._get_playing_card().card_name)
 	
 	await get_tree().create_timer(1.0).timeout
 	
-#	power_balance.visible = true
-	power_balance.change_both_power(0,0,0.0)
-	var tween = create_tween()
-	tween.tween_property(power_balance,"modulate:a",1.0,0.5)
-	power_balance.change_both_power(
-			_myself._get_playing_card().power,_rival._get_playing_card().power,0.5)
-	await tween.finished
 
 	await perform_effect(data.myself.before,data.rival.before,I_PlayerField.EffectTiming.BEFORE)
 
@@ -140,7 +136,6 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	await perform_effect(data.myself.after,data.rival.after,I_PlayerField.EffectTiming.AFTER)
 	
 	if data.next_phase == IGameServer.Phase.GAME_END:
-		power_balance.visible = false
 		phase = data.next_phase
 		_performing = false
 		performed.emit()
@@ -148,13 +143,9 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	await perform_effect(data.myself.end,data.rival.end,I_PlayerField.EffectTiming.END)
 	
-
-	tween = create_tween()
-	tween.tween_property(power_balance,"modulate:a",0.0,0.5)
-	tween.tween_callback(func():power_balance.visible = false)
 	_myself._combat_end()
 	_rival._combat_end()
-	await tween.finished
+	await get_tree().create_timer(0.5).timeout
 
 	log_display.append_combat_supply_effect()
 	var duration := maxf(_myself._perform_simultaneous_supply(data.myself.supply,0.5),
@@ -172,16 +163,25 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 		round_count = data.round_count
 	phase = data.next_phase
 	
+	label_situation.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
+	label_situation.visible = true
 	_performing = false
 	performed.emit()
 	
 func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	_performing = true
+#	label_situation.visible = false
+	
+	_myself._recovery_start(data.myself.hand,data.myself.select)
+	_rival._recovery_start(data.rival.hand,data.rival.select)
 	
 	log_display.append_recovery_result_effect()
 
 	await _myself._perform_effect(data.myself.result)
 	await _rival._perform_effect(data.rival.result)
+	
+	_myself._recovery_end()
+	_rival._recovery_end()
 
 	if data.next_phase == IGameServer.Phase.COMBAT:
 		round_count = data.round_count + 1
@@ -196,6 +196,8 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	
 	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 	
+	label_situation.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
+	label_situation.visible = true
 	_performing = false
 	performed.emit()
 	

@@ -12,10 +12,10 @@ signal request_card_list_view(p_cards : Array[Card3D],d_cards : Array[Card3D])
 func _get_catalog() -> I_CardCatalog:
 	return null
 
-func _initialize(_player_name:String,_deck : PackedInt32Array,
+func _initialize(_match_scene : MatchScene,
+		_player_name:String,_deck : PackedInt32Array,
 		_catalog : I_CardCatalog,_opponent : bool,
 		_on_card_clicked : Callable,
-		_cpbi : CombatPowerBalance.Interface,
 		_log_display : LogDisplay) -> void:
 	pass
 func _set_rival(_rival : I_PlayerField) -> void:
@@ -64,7 +64,10 @@ func _perform_simultaneous_supply(_effect : IGameServer.EffectLog,_duration : fl
 
 
 func _perform_attack(_unblocked_damage : int,_blocked_damage : int) -> void:
-	pass
+	assert(false)
+	@warning_ignore("redundant_await")
+	await 0
+	
 func _damaged(_unblocked_damage : int,_blocked_damage : int) -> void:
 	pass
 

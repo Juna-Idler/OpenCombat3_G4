@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://dci4g4cu74w6n"]
+[gd_scene load_steps=11 format=3 uid="uid://dci4g4cu74w6n"]
 
 [ext_resource type="Script" path="res://game_client/match/match_scene.gd" id="1_jvtjj"]
 [ext_resource type="PackedScene" uid="uid://cx8qc3q1f3xaj" path="res://game_client/match/card_list.tscn" id="2_4fyv0"]
+[ext_resource type="PackedScene" uid="uid://cjumv2ulywgfb" path="res://game_client/match/label_board.tscn" id="3_hyybm"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_62qcl"]
 [ext_resource type="PackedScene" uid="uid://urb0isujicis" path="res://game_client/match/log_display/log_display.tscn" id="4_dw15p"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="5_0yt3x"]
@@ -10,12 +11,22 @@
 background_mode = 1
 background_color = Color(0.219608, 0.219608, 0.219608, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_dw3jw"]
-font = ExtResource("4_62qcl")
-font_size = 30
-outline_size = 5
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5c4xg"]
+resource_local_to_scene = true
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+shading_mode = 0
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_8jy3n"]
+resource_local_to_scene = true
+size = Vector2(2, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jsf2d"]
+font_size = 64
+outline_size = 8
 outline_color = Color(0, 0, 0, 1)
-shadow_offset = Vector2(4, 3)
 
 [node name="match_scene" type="Node"]
 script = ExtResource("1_jvtjj")
@@ -33,6 +44,13 @@ fov = 45.0
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 visible = false
+
+[node name="LabelBoard" parent="Field" instance=ExtResource("3_hyybm")]
+material_override = SubResource("StandardMaterial3D_5c4xg")
+mesh = SubResource("QuadMesh_8jy3n")
+label_settings = SubResource("LabelSettings_jsf2d")
+viewport_size = Vector2i(512, 256)
+board_size = Vector2(2, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 10
@@ -114,21 +132,6 @@ offset_right = 400.0
 offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="LabelSituation" type="Label" parent="CanvasLayer"]
-unique_name_in_owner = true
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-label_settings = SubResource("LabelSettings_dw3jw")
 
 [connection signal="clicked" from="Field/CardList" to="." method="_on_card_list_clicked"]
 [connection signal="toggled" from="CanvasLayer/Control/LogDisplayPanel/ButtonLog" to="." method="_on_button_log_toggled"]

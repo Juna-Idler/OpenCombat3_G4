@@ -7,6 +7,8 @@ signal performed
 
 var _performing : bool
 
+var my_game_end_point : int
+var rival_game_end_point : int
 
 var _game_server : IGameServer = null
 
@@ -20,7 +22,8 @@ var recovery_repeat : int
 const phase_names : PackedStringArray = ["Game End","Combat","Recovery"]
 
 @onready var log_display : LogDisplay  = %LogDisplay
-@onready var label_situation : Label = %LabelSituation
+@onready var label_board = $Field/LabelBoard
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -101,8 +104,8 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 
 	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 
-	label_situation.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
-	label_situation.visible = true
+	label_board.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
+	label_board.visible = true
 	_performing = false
 	performed.emit()
 	pass
@@ -110,7 +113,7 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 		
 func _on_recieved_combat_result(data : IGameServer.CombatData):
 	_performing = true
-	label_situation.visible = false
+	label_board.visible = false
 	
 	_myself._combat_start(data.myself.hand,data.myself.select)
 	_rival._combat_start(data.rival.hand,data.rival.select)
@@ -137,6 +140,8 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	if data.next_phase == IGameServer.Phase.GAME_END:
 		phase = data.next_phase
+		my_game_end_point = data.myself.life - data.myself.damage
+		rival_game_end_point = data.rival.life - data.rival.damage
 		_performing = false
 		performed.emit()
 		return
@@ -163,14 +168,14 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 		round_count = data.round_count
 	phase = data.next_phase
 	
-	label_situation.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
-	label_situation.visible = true
+	label_board.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
+	label_board.visible = true
 	_performing = false
 	performed.emit()
 	
 func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	_performing = true
-#	label_situation.visible = false
+#	label_board.visible = false
 	
 	_myself._recovery_start(data.myself.hand,data.myself.select)
 	_rival._recovery_start(data.rival.hand,data.rival.select)
@@ -196,8 +201,8 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	
 	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 	
-	label_situation.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
-	label_situation.visible = true
+	label_board.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
+	label_board.visible = true
 	_performing = false
 	performed.emit()
 	

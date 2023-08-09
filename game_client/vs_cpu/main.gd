@@ -21,6 +21,9 @@ func _process(_delta):
 	pass
 
 func initialize():
+	$CanvasLayer/Control/ButtonGameOver.hide()
+	$CanvasLayer/Control/Label.hide()
+	
 #	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
 	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 	
@@ -62,10 +65,20 @@ func on_match_scene_performed():
 		myself.hand_area.set_playable(true)
 	else:
 		$CanvasLayer/Control/ButtonGameOver.show()
+		$CanvasLayer/Control/Label.show()
+		var mp : int = $match_scene.my_game_end_point
+		var rp : int = $match_scene.rival_game_end_point
+		
+		if mp > rp:
+			$CanvasLayer/Control/Label.text = "You Win %d:%d" % [mp,rp]
+		elif mp < rp:
+			$CanvasLayer/Control/Label.text = "You Lose %d:%d" % [mp,rp]
+		else:
+			$CanvasLayer/Control/Label.text = "Draw %d:%d" % [mp,rp]
+			pass
 	
 
 
 func _on_button_game_over_pressed():
 	initialize()
-	$CanvasLayer/Control/ButtonGameOver.hide()
 	pass # Replace with function body.

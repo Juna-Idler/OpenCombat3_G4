@@ -60,14 +60,11 @@ func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSki
 				params.append(integer)
 				param_string = param_to_string(CatalogData.ParamType.INTEGER,integer)
 			CatalogData.ParamType.STATS:
-				var stats := [0,0,0]
-				for e in skill_params[i].split(" "):
-					if e.find("P") == 0:
-						stats[0] = int(e.substr("P".length()))
-					elif e.find("H") == 0:
-						stats[1] = int(e.substr("H".length()))
-					elif e.find("B") == 0:
-						stats[2] = int(e.substr("B".length()))
+				var stats : PackedInt32Array = [0,0,0]
+				var stats_strings := skill_params[i].split(" ")
+				stats[0] = int(stats_strings[0])
+				stats[1] = int(stats_strings[1])
+				stats[2] = int(stats_strings[2])
 				params.append(stats)
 				param_string = param_to_string(CatalogData.ParamType.STATS,stats)
 			CatalogData.ParamType.COLOR:
@@ -78,7 +75,7 @@ func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSki
 				assert(false)
 		if not param_string.is_empty():
 			var replace_string : String = "{" + data.param_name[i] + "}"
-			text = text.replace(replace_string,param_string)
+			text = text.replace(replace_string,"{%s}" % param_string)
 
 	var param_string := params_to_string(data.param_type,params)
 	var title := data.name + ("" if param_string.is_empty() else "(" + param_string + ")")

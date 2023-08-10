@@ -74,7 +74,7 @@ func _get_damage() -> int:
 func _combat_start(i : int) -> void:
 	_select_card = _hand[i]
 	_hand.remove_at(i)
-	_life -= _deck_list[_select_card].data.level
+	_life -= _deck_list[_select_card].level
 	return
 
 func _get_playing_card_id() -> int:
@@ -120,7 +120,7 @@ func _recover(index : int) -> IGameServer.EffectLog:
 	var fragments : Array[IGameServer.EffectFragment] = []
 	_select_card = _hand[index]
 	fragments.append(_discard_card(_select_card))
-	fragments.append(_recover_life(_deck_list[_select_card].data.level,false))
+	fragments.append(_recover_life(_deck_list[_select_card].level,false))
 	if _damage <= 0:
 		_damage = 0
 		return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
@@ -233,7 +233,7 @@ func _discard_card(card : int,opponent : bool = false) -> IGameServer.EffectFrag
 	var index := _hand.find(card)
 	if index >= 0:
 		_hand.remove_at(index)
-		_life -= _deck_list[card].data.level
+		_life -= _deck_list[card].level
 		_discard.append(card)
 		var passive : Array[IGameServer.PassiveLog] = []
 		passive_discarded.emit(card,
@@ -284,10 +284,22 @@ func _create_card(factory : ICardFactory , data_id:int,position : int,changes : 
 		opponent : bool = false) -> IGameServer.EffectFragment:
 	var index := _deck_list.size()
 	var card := factory._create(index,data_id)
+	for k in changes:
+		match k:
+			"power":
+				card.power = changes["power"]
+			"hit":
+				card.hit = changes["hit"]
+			"block":
+				card.block = changes["block"]
+			"level":
+				card.level = changes["level"]
+	
 	_deck_list.append(card)
 	if position < 0:
-		position = _stock.size() + 1 - position
+		position = _stock.size() + 1 + position
 	_stock.insert(position,card.id_in_deck)
+	_life += card.level
 	
 	var passive : Array[IGameServer.PassiveLog] = []
 	passive_card_created.emit(index,

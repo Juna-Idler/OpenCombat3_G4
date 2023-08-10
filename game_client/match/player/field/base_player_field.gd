@@ -74,7 +74,7 @@ func _initialize(match_scene : MatchScene,player_name:String,deck : PackedInt32A
 		c.position = deck_position.position
 		c.rotation.y = PI
 		card_holder.add_child(c)
-		life *= cd.level
+		life += cd.level
 		id += 1
 	_stock_count = _deck.size()
 	_hand = []
@@ -368,10 +368,42 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			pass
 		
 		IGameServer.EffectFragmentType.CREATE_CARD:
-			var card : int = fragment.data[0]
+			var card_id : int = fragment.data[0]
 			var opponent_source : bool = fragment.data[1]
 			var data_id : int = fragment.data[2]
-			var changes : Dictionary = fragment.data[3]
+			var _bounce_position : int = fragment.data[3]
+			var changes : Dictionary = fragment.data[4]
+			
+			var catalog := _rival._get_catalog() if opponent_source else _get_catalog() 
+			var cd := catalog._get_card_data(data_id)
+			var card := Card3D_Scene.instantiate()
+			card.clicked.connect(_on_card_clicked)
+			var pict = load(cd.image)
+			var stats : PackedInt32Array = [cd.power,cd.hit,cd.block]
+			var level := cd.level
+			for k in changes:
+				match k:
+					"power":
+						stats[0] = changes["power"]
+					"hit":
+						stats[1] = changes["hit"]
+					"block":
+						stats[2] = changes["block"]
+					"level":
+						level = changes["level"]
+			card.initialize(card_id,cd,cd.name,cd.color,level,stats[0],stats[1],stats[2],cd.skills,pict,_opponent_layout)
+			_deck.resize(card_id + 1)
+			_deck[card_id] = card
+			card_holder.add_child(card)
+			_life += cd.level
+			_stock_count += 1
+
+			card.position = $CombatPosition.position
+			var tween := create_tween().set_parallel()
+			tween.tween_property(card,"position",deck_position.position,0.5)
+			tween.tween_property(card,"rotation:y",PI,0.5)
+			await tween.finished
+			
 			pass
 		IGameServer.EffectFragmentType.PERFORMANCE:
 			pass

@@ -142,3 +142,29 @@ class Attract extends MechanicsData.BasicSkill:
 			fragments.append(myself._draw_card())
 		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
 
+
+class Recycle extends MechanicsData.BasicSkill:
+	const PRIORITY = 1
+	func _init(data : CatalogData.CardSkill):
+		super(data)
+		pass
+	
+	func _end_priority() -> Array:
+		return [PRIORITY]
+	func _end_effect(_priority : int,
+			myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
+		var card := myself._get_playing_card()
+		var fragments : Array[IGameServer.EffectFragment] = []
+		if card.level > 1:
+			var changes := {
+					"level":card.level - 1,
+					"power":int((card.power + 1) / 2.0),
+					"hit":int((card.hit + 1) / 2.0),
+					"block":int((card.block + 1) / 2.0),
+			}
+			fragments.append(myself._create_card(myself._get_card_factory(),card.data.id,-1,changes,false))
+			return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
+		return SkillProcessor.create_log(_skill.index,PRIORITY,[])
+		
+
+

@@ -188,7 +188,7 @@ enum EffectFragmentType {
 	UPDATE_STATE,	# [state_id : int,param : Array]
 	DELETE_STATE,	# [state_id : int,expired : bool]
 	
-	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
+	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,position : int,changes : Dictionary]
 
 	PERFORMANCE,
 }

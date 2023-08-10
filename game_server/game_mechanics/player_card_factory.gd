@@ -13,6 +13,7 @@ const skill_behaviors : Array = [
 	SkillProcessor.Absorb,
 	SkillProcessor.BlowAway,
 	SkillProcessor.Attract,
+	SkillProcessor.Recycle,
 ]
 const state_behaviors : Array = [
 	null,

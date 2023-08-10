@@ -197,8 +197,8 @@ class IPlayer:
 		return null
 
 
-#	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
-	func _create_card(_factory : ICardFactory , _data_id:int,_changes : Dictionary,_opponent : bool = false) -> IGameServer.EffectFragment:
+#	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,position : int,changes : Dictionary]
+	func _create_card(_factory : ICardFactory , _data_id:int,_position : int,_changes : Dictionary,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 
 

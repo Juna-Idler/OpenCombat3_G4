@@ -279,14 +279,19 @@ func _delete_state(state : IState,expired : bool = true,opponent : bool = false)
 			opponent,[id,expired],[])
 	
 
-#	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,changes : Dictionary]
-func _create_card(factory : ICardFactory , data_id:int,changes : Dictionary,opponent : bool = false) -> IGameServer.EffectFragment:
+#	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,position : int,changes : Dictionary]
+func _create_card(factory : ICardFactory , data_id:int,position : int,changes : Dictionary,
+		opponent : bool = false) -> IGameServer.EffectFragment:
 	var index := _deck_list.size()
 	var card := factory._create(index,data_id)
 	_deck_list.append(card)
+	if position < 0:
+		position = _stock.size() + 1 - position
+	_stock.insert(position,card.id_in_deck)
 	
 	var passive : Array[IGameServer.PassiveLog] = []
 	passive_card_created.emit(index,
 				func (plog : IGameServer.PassiveLog): passive.append(plog))
+	var opponent_source := factory != _card_factory
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CREATE_CARD,
-			opponent,[index,opponent,data_id,changes],passive)
+			opponent,[index,opponent_source,data_id,position,changes],passive)

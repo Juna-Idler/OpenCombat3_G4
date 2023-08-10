@@ -217,7 +217,7 @@ func _combat_end() -> void:
 	if _damage == 0:
 		%Damage.visible = false
 	else:
-		tween.tween_property(%Damage,"position:x",0.0,1.0)
+		tween.tween_property(%Damage,"position",Vector2(0.0,damage_combat_pos.y + 20.0),1.0)
 		
 	await tween.finished
 	
@@ -316,12 +316,12 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 		IGameServer.EffectFragmentType.DISCARD_CARD:
 			var card_id : int = fragment.data
 			var card := _deck[card_id]
+			assert (card.location == Card3D.CardLocation.HAND)
 			card.set_ray_pickable(false)
 			_log_display.append_fragment_discard(card.card_name,fragment.opponent)
-			if card.location == Card3D.CardLocation.HAND:
-				_hand.remove_at(_hand.find(card_id))
-				hand_area.set_cards_in_deck(_hand,_deck)
-				hand_area.move_card(0.5)
+			_hand.remove_at(_hand.find(card_id))
+			hand_area.set_cards_in_deck(_hand,_deck)
+			hand_area.move_card(0.5)
 			_discard.append(card_id)
 			card.location = Card3D.CardLocation.DISCARD
 			var tween := create_tween().set_parallel()
@@ -333,18 +333,18 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			var card_id : int = fragment.data[0]
 			var pos : int = fragment.data[1]
 			var card := _deck[card_id]
+			assert(card.location == Card3D.CardLocation.HAND)
 			card.set_ray_pickable(false)
 			_log_display.append_fragment_bounce(card.card_name,pos,fragment.opponent)
-
-			if card.location == Card3D.CardLocation.HAND:
-				_hand.remove_at(_hand.find(card_id))
-				hand_area.set_cards_in_deck(_hand,_deck)
-				hand_area.move_card(0.5)
+			_hand.remove_at(_hand.find(card_id))
+			hand_area.set_cards_in_deck(_hand,_deck)
+			hand_area.move_card(0.5)
 			card.location = Card3D.CardLocation.STOCK
 			var tween := create_tween().set_parallel()
 			tween.tween_property(card,"position",deck_position.position,0.5)
 			tween.tween_property(card,"rotation:y",PI,0.5)
 			await tween.finished
+			_stock_count += 1
 			pass
 		
 		IGameServer.EffectFragmentType.CREATE_STATE:
@@ -550,10 +550,10 @@ func fix_select_card(card : Card3D):
 
 
 func _on_played_position_clicked():
-	var p_list : Array[Card3D]
+	var p_list : Array[Card3D] = []
 	for c in _played:
 		p_list.append(_deck[c])
-	var d_list : Array[Card3D]
+	var d_list : Array[Card3D] = []
 	for c in _discard:
 		d_list.append(_deck[c])
 	request_card_list_view.emit(p_list,d_list)

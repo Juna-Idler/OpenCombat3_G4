@@ -152,7 +152,7 @@ class Recycle extends MechanicsData.BasicSkill:
 	func _end_priority() -> Array:
 		return [PRIORITY]
 	func _end_effect(_priority : int,
-			myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
+			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 		var card := myself._get_playing_card()
 		var fragments : Array[IGameServer.EffectFragment] = []
 		if card.level > 1:
@@ -166,5 +166,22 @@ class Recycle extends MechanicsData.BasicSkill:
 			return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
 		return SkillProcessor.create_log(_skill.index,PRIORITY,[])
 		
+class AngerBlow extends MechanicsData.BasicSkill:
+	const PRIORITY = 1
+	func _init(data : CatalogData.CardSkill):
+		super(data)
+		pass
+	
+	func _before_priority() -> Array:
+		return [PRIORITY]
+	func _before_effect(_priority : int,
+			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 
+		var stats := myself._get_card_stats(myself._get_playing_card_id())
+		for e in myself._get_enchants():
+			var enc := e as MechanicsData.IEnchantment
+			if enc._get_data_id() == EnchantmentProcessor.AngerCounter.DATA_ID:
+				stats[1] += (enc as EnchantmentProcessor.AngerCounter)._counter
+		var fragment := myself._change_combat_card_stats(stats,false)
+		return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
 

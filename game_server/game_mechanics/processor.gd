@@ -37,16 +37,29 @@ func standby(p1 : MechanicsData.IPlayer,p2 : MechanicsData.IPlayer) -> IGameServ
 	player2 = p2
 	
 	#initial effect
-	var p1_initial : Array[IGameServer.EffectLog] = []
-	var p2_initial : Array[IGameServer.EffectLog] = []
+	var p1_initial : Array[IGameServer.AbilityLog] = []
+	var p2_initial : Array[IGameServer.AbilityLog] = []
+	var p1_abilities : Dictionary = {}
+	var p2_abilities : Dictionary = {}
 	for c in player1._get_deck_list():
-		for a in c.abilities:
-			if a._get_type() == CatalogData.AbilityType.DECK:
-				p1_initial.append(a._effect(player1,player2))
+		for a in c.data.abilities:
+			if p1_abilities.has(a):
+				p1_abilities[a].append(c.id_in_deck)
+			else:
+				p1_abilities[a] = PackedInt32Array([c.id_in_deck])
 	for c in player2._get_deck_list():
-		for a in c.abilities:
-			if a._get_type() == CatalogData.AbilityType.DECK:
-				p2_initial.append(a._effect(player2,player1))
+		for a in c.data.abilities:
+			if p2_abilities.has(a):
+				p2_abilities[a].append(c.id_in_deck)
+			else:
+				p2_abilities[a] = PackedInt32Array([c.id_in_deck])
+	for a in p1_abilities:
+		var fragments := player1._get_card_factory()._ability_behavior(a.id,player1,player2)
+		p1_initial.append(IGameServer.AbilityLog.new(a.id,p1_abilities[a],fragments))
+	for a in p2_abilities:
+		var fragments := player2._get_card_factory()._ability_behavior(a.id,player2,player1)
+		p2_initial.append(IGameServer.AbilityLog.new(a.id,p2_abilities[a],fragments))
+		
 
 	player1._start_effect_log_temporary().clear()
 	player2._start_effect_log_temporary().clear()
@@ -314,17 +327,6 @@ func _end_effect():
 
 
 func _start_effect():
-	for h in player1._get_hand():
-		var card := player1._get_deck_list()[h]
-		for a in card.abilities:
-			if a._get_type() == CatalogData.AbilityType.HAND:
-				player1._start_effect_log_temporary().append(a._effect(player1,player2))
-	for h in player2._get_hand():
-		var card := player2._get_deck_list()[h]
-		for a in card.abilities:
-			if a._get_type() == CatalogData.AbilityType.HAND:
-				player2._start_effect_log_temporary().append(a._effect(player2,player1))
-	
 	var effect_order : Array[EffectOrder] = []
 	for s in player1._get_enchants():
 		for p in s._start_priority():

@@ -45,11 +45,11 @@ class FirstData:
 		var hand : PackedInt32Array # of int
 		var life : int
 		var time : float # thinking time
-		var initial : Array[EffectLog]	# デッキアビリティ
+		var initial : Array[AbilityLog]	# デッキアビリティ
 		var start : Array[EffectLog]	# 開始時効果
 		
 		func _init(h : PackedInt32Array,l : int,t : float,
-				i : Array[EffectLog],s : Array[EffectLog]):
+				i : Array[AbilityLog],s : Array[EffectLog]):
 			hand = h
 			life = l
 			time = t
@@ -172,13 +172,14 @@ class EffectLog:
 		fragment = f
 
 
-class DeckAbilityLog:
+class AbilityLog:
 	var ability_id : int
 	var card_id : PackedInt32Array
 	var fragment : Array[EffectFragment]
 	
-	func _init(i : PackedInt32Array,f: Array[EffectFragment]):
-		card_id = i
+	func _init(ai : int,ci : PackedInt32Array,f: Array[EffectFragment]):
+		ability_id = ai
+		card_id = ci
 		fragment = f
 	
 	

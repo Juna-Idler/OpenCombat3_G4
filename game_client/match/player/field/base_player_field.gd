@@ -241,7 +241,16 @@ func _recovery_end():
 		%Damage.visible = false
 		%Damage.position = damage_combat_pos
 		
-	
+
+func _perform_ability(ability : IGameServer.AbilityLog) -> void:
+	var a := _catalog._get_ability_data(ability.ability_id)
+	_log_display.append_ability(a.name,_opponent_layout)
+	for f in ability.fragment:
+		if f.opponent:
+			await _rival._perform_effect_fragment(f)
+		else:
+			await _perform_effect_fragment(f)
+
 
 func _perform_effect(effect : IGameServer.EffectLog) -> void:
 	match effect.type:

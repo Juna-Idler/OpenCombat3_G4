@@ -94,18 +94,23 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 	phase = IGameServer.Phase.COMBAT
 	recovery_repeat = 0
 	
-	await perform_effect(data.myself.initial,data.rival.initial,I_PlayerField.EffectTiming.INITIAL)
+	label_board.text = "Ability"
+	label_board.visible = true
+
+	for l in data.myself.initial:
+		await _myself._perform_ability(l)
+	for l in data.rival.initial:
+		await _rival._perform_ability(l)
 
 	_myself._set_first_data(data.myself)
 	_rival._set_first_data(data.rival)
 	await get_tree().create_timer(1).timeout
 
+	label_board.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
 	log_display.append_round(round_count)
 
 	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 
-	label_board.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
-	label_board.visible = true
 	_performing = false
 	performed.emit()
 	pass

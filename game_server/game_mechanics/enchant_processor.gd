@@ -29,3 +29,26 @@ class Reinforce extends MechanicsData.BasicEnchantment:
 		var fragment2 := myself._delete_enchant(self,false)
 		return EnchantmentProcessor.create_log(_match_id,PRIORITY,[fragment,fragment2])
 
+
+class AngerCounter extends MechanicsData.BasicEnchantment:
+	const DATA_ID = 2
+	var _counter : int
+	var _attached : IPlayer
+	
+	func _get_data_id() -> int:
+		return DATA_ID
+	
+	func _init(match_id:int,param : Array,attached : IPlayer,_opponent : IPlayer):
+		super(match_id)
+		_counter = param[0]
+		_attached = attached
+		_attached.passive_discarded.connect(on_passive_discarded)
+
+	func _term() -> void:
+		_attached.passive_discarded.disconnect(on_passive_discarded)
+
+	func on_passive_discarded(_card:int,add_log : Callable):
+		_counter += 1
+		var plog := IGameServer.PassiveLog.new(false,_match_id,[_counter])
+		add_log.call(plog)
+

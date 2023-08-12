@@ -13,13 +13,11 @@ class Card:
 	var level : int
 	var color : CatalogData.CardColors
 	var skills : Array[ISkill]
-	var abilities : Array[IAbility]
 
-	func _init(iid : int,cd : CatalogData.CardData,s : Array[ISkill],a : Array[IAbility]):
+	func _init(iid : int,cd : CatalogData.CardData,s : Array[ISkill]):
 		data = cd
 		id_in_deck = iid
 		skills = s
-		abilities = a
 		power = cd.power
 		hit = cd.hit
 		block = cd.block
@@ -39,10 +37,11 @@ class ICardFactory:
 		return null
 	func _create_skill(_skill : CatalogData.CardSkill) -> ISkill:
 		return null
-	func _create_ability(_ability : CatalogData.CardAbility) -> IAbility:
-		return null
 	func _create_enchant(_enchant_id : int,_data_id : int,_param : Array,_attached : IPlayer,_opponent : IPlayer) -> IEnchantment:
 		return null
+	
+	func _ability_behavior(_data_id : int,_myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> Array[IGameServer.EffectFragment]:
+		return []
 
 
 class IPlayer:
@@ -272,10 +271,3 @@ class BasicEnchantment extends IEnchantment:
 	func _get_match_id() -> int:
 		return _match_id
 
-
-class IAbility:
-	func _get_type() -> CatalogData.AbilityType:
-		return CatalogData.AbilityType.VOID
-
-	func _effect(_myself : IPlayer,_rival : IPlayer) -> IGameServer.EffectLog:
-		return null

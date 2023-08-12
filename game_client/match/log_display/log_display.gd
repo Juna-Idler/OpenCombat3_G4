@@ -106,6 +106,15 @@ func append_recovery_result_effect():
 	$VBoxContainer.add_child(item)
 	pass
 
+func append_ability(title : String,opponent : bool):
+	effect_opponent = opponent
+	var item = LogItem.instantiate()
+	item.text = ("相手の" if effect_opponent else "自分の") + ("アビリティ：「%s」が発動" % title)
+	if delayed_effect:
+		delayed_effect.queue_free()
+	delayed_effect = item
+	
+
 func append_effect_system(opponent : bool):
 	effect_opponent = opponent
 #	var item = LogItem.instantiate()
@@ -252,11 +261,11 @@ func append_fragment_delete_enchant(title,opponent):
 	_append_fragment_log_item(item)
 	pass
 
-func append_fragment_create_card(card : Card3D,position : int,opponent : bool):
+func append_fragment_create_card(card : Card3D,deck_position : int,opponent : bool):
 	fragment_opponent = effect_opponent != opponent
 	var item = LogItem.instantiate()
 	item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
-			("カード「%s」(%d/%d/%d:%d)を位置%dに生成" % [card.card_name,card.power,card.hit,card.block,card.level,position])
+			("カード「%s」(%d/%d/%d:%d)を位置%dに生成" % [card.card_name,card.power,card.hit,card.block,card.level,deck_position])
 	_append_fragment_log_item(item)
 	pass
 

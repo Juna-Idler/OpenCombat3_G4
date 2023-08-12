@@ -23,11 +23,6 @@ enum ParamType {
 	STATS = 2,		# [p:int,h:int,b:int]
 	COLOR = 3,		# int as CardColors
 }
-enum AbilityType {
-	VOID = 0,
-	DECK = 1,
-	HAND = 2,
-}
 
 class CardData:
 	var id : int
@@ -40,13 +35,14 @@ class CardData:
 	var hit : int
 	var block : int
 	var skills : Array[CardSkill]
+	var abilities : Array[AbilityData]
 	var text : String
 	var image : String 
 
 
 	func _init(i : int,n : String,rn : String,
 			c : CardColors,l : int,p : int,h : int,b : int,
-			s : Array[CardSkill],t : String,im : String):
+			s : Array[CardSkill],a : Array[AbilityData],t : String,im : String):
 		id = i
 		name = n
 		ruby_name = rn
@@ -57,6 +53,7 @@ class CardData:
 		block = b
 		
 		skills = s
+		abilities = a
 		text = t
 		image = im
 
@@ -122,34 +119,14 @@ class AbilityData:
 	var id : int
 	var name : String
 	var ruby_name : String
-	var type : AbilityType
-	var param_type : PackedInt32Array # of ParamType
-	var param_name : PackedStringArray
 	var enchants : Array[EnchantmentData]
 	var text : String
 	
-	func _init(i:int,n:String,rn:String,t:AbilityType,pt:PackedInt32Array,pn:PackedStringArray,e:Array[EnchantmentData],txt:String):
+	func _init(i:int,n:String,rn:String,e:Array[EnchantmentData],txt:String):
 		id = i
 		name = n
 		ruby_name = rn
-		type = t
-		param_type = pt
-		param_name = pn
 		enchants = e
-		text = txt
-
-class CardAbility:
-	var index : int
-	var data : AbilityData
-	var parameter : Array
-	var title : String
-	var text : String
-	
-	func _init(i:int,sd:AbilityData,p : Array,t : String,txt : String):
-		index = i
-		data = sd
-		parameter = p
-		title = t
 		text = txt
 
 

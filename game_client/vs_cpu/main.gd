@@ -25,8 +25,8 @@ func initialize():
 	$CanvasLayer/Control/Label.hide()
 	
 #	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
-#	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,28,29,30,32,33,34]
-	var pile : Array[int] = [34,34,34,34]
+	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,28,29,30,32,33,34,35,35]
+#	var pile : Array[int] = [35,34,34,34]
 	
 	var d := RegulationData.DeckRegulation.new("",27,30,2,1,"1-27")
 	var m := RegulationData.MatchRegulation.new("",4,60,10,5)

@@ -40,6 +40,10 @@ func _get_enchant_title(_id : int,_param) -> String:
 func _combat_end() -> void:
 	pass
 
+func _perform_ability(_ability : IGameServer.AbilityLog) -> void:
+	assert(false)
+	@warning_ignore("redundant_await")
+	await 0
 
 func _perform_effect(_effect : IGameServer.EffectLog) -> void:
 	assert(false)

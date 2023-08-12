@@ -13,11 +13,13 @@ class Card:
 	var level : int
 	var color : CatalogData.CardColors
 	var skills : Array[ISkill]
+	var abilities : Array[IAbility]
 
-	func _init(iid : int,cd : CatalogData.CardData,s : Array[ISkill]):
+	func _init(iid : int,cd : CatalogData.CardData,s : Array[ISkill],a : Array[IAbility]):
 		data = cd
 		id_in_deck = iid
 		skills = s
+		abilities = a
 		power = cd.power
 		hit = cd.hit
 		block = cd.block
@@ -37,7 +39,9 @@ class ICardFactory:
 		return null
 	func _create_skill(_skill : CatalogData.CardSkill) -> ISkill:
 		return null
-	func _create_state(_state_id : int,_data_id : int,_param : Array,_attached : IPlayer,_opponent : IPlayer) -> IState:
+	func _create_ability(_ability : CatalogData.CardAbility) -> IAbility:
+		return null
+	func _create_enchant(_enchant_id : int,_data_id : int,_param : Array,_attached : IPlayer,_opponent : IPlayer) -> IEnchantment:
 		return null
 
 
@@ -57,7 +61,8 @@ class IPlayer:
 	signal passive_discarded(card:int,_add_log : Callable)
 	signal passive_bounced(card:int,position:int,_add_log : Callable)
 	
-	signal passive_card_created(card:int,_add_log : Callable)
+	signal passive_card_created(factory : ICardFactory, data_id : int,
+			position : int,changes : Dictionary,_add_log : Callable)
 
 
 	
@@ -80,7 +85,7 @@ class IPlayer:
 	func _get_life() -> int:
 		return 0
 
-	func _get_states() -> Dictionary:
+	func _get_enchants() -> Dictionary:
 		return {}
 
 
@@ -184,16 +189,16 @@ class IPlayer:
 		return null
 
 
-#	CREATE_STATE,	# [state_id : int,opponent_source : bool,data_id : int,param : Array]
-	func _create_state(_factory : ICardFactory,_data_id : int,_param : Array,_rival : IPlayer,_opponent : bool = false) -> IGameServer.EffectFragment:
+#	CREATE_ENCHANTMENT,	# [enchant_id : int,opponent_source : bool,data_id : int,param : Array]
+	func _create_enchant(_factory : ICardFactory,_data_id : int,_param : Array,_rival : IPlayer,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	
-#	UPDATE_STATE,	# [state_id : int,param : Array]
-	func _update_state(_state : IState,_param:Array,_opponent : bool = false) -> IGameServer.EffectFragment:
+#	UPDATE_ENCHANTMENT,	# [enchant_id : int,param : Array]
+	func _update_enchant(_enchant : IEnchantment,_param:Array,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	
-#	DELETE_STATE,	# state_id : int
-	func _delete_state(_state : IState,_expired : bool = true,_opponent : bool = false) -> IGameServer.EffectFragment:
+#	DELETE_ENCHANTMENT,	# enchant_id : int
+	func _delete_enchant(_enchant : IEnchantment,_expired : bool = true,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 
 
@@ -244,7 +249,7 @@ class BasicSkill extends ISkill:
 		return _skill
 
 
-class IState extends IEffect:
+class IEnchantment extends IEffect:
 	func _get_data_id() -> int:
 		return -1
 	
@@ -258,7 +263,7 @@ class IState extends IEffect:
 		return null
 		
 
-class BasicState extends IState:
+class BasicEnchantment extends IEnchantment:
 	var _match_id : int
 	
 	func _init(mid : int):
@@ -267,3 +272,10 @@ class BasicState extends IState:
 	func _get_match_id() -> int:
 		return _match_id
 
+
+class IAbility:
+	func _get_type() -> CatalogData.AbilityType:
+		return CatalogData.AbilityType.VOID
+
+	func _effect(_myself : IPlayer,_rival : IPlayer) -> IGameServer.EffectLog:
+		return null

@@ -56,7 +56,7 @@ class Charge extends MechanicsData.BasicSkill:
 			myself : MechanicsData.IPlayer,rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 		if myself._get_damage() == 0:
 			var effect := _skill.parameter[0] as PackedInt32Array
-			var fragment := myself._create_state(myself._get_card_factory(),StateProcessor.Reinforce.DATA_ID,[effect],rival,false)
+			var fragment := myself._create_enchant(myself._get_card_factory(),EnchantmentProcessor.Reinforce.DATA_ID,[effect],rival,false)
 			return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
 		return SkillProcessor.create_log(_skill.index,PRIORITY,[])
 

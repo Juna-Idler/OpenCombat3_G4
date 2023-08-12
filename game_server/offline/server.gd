@@ -122,7 +122,7 @@ static func count_effect(pd : IGameServer.CombatData.PlayerData) -> int:
 static func create_commander_player(player : MechanicsData.IPlayer) -> ICpuCommander.Player:
 	return ICpuCommander.Player.new(player._get_hand(),player._get_played(),
 			player._get_discard(),player._get_stock_count(),player._get_life(),
-			player._get_states())
+			player._get_enchants())
 	
 
 

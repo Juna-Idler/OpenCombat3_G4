@@ -155,7 +155,7 @@ class RecoveryData:
 enum EffectSourceType {
 	SYSTEM_PROCESS = 0,
 	SKILL = 1,
-	STATE = 2,
+	ENCHANTMENT = 2,
 	ABILITY = 3,
 }
 
@@ -172,6 +172,17 @@ class EffectLog:
 		fragment = f
 
 
+class DeckAbilityLog:
+	var ability_id : int
+	var card_id : PackedInt32Array
+	var fragment : Array[EffectFragment]
+	
+	func _init(i : PackedInt32Array,f: Array[EffectFragment]):
+		card_id = i
+		fragment = f
+	
+	
+
 enum EffectFragmentType {
 	NO_EFFECT,		# null
 	DAMAGE,			# [unblocked_damage : int,blocked_damage : int]
@@ -184,9 +195,9 @@ enum EffectFragmentType {
 	DISCARD_CARD,	# card_id : int
 	BOUNCE_CARD,	# [card_id : int,position : int]
 	
-	CREATE_STATE,	# [state_id : int,opponent_source : bool,data_id : int,param : Array]
-	UPDATE_STATE,	# [state_id : int,param : Array]
-	DELETE_STATE,	# [state_id : int,expired : bool]
+	CREATE_ENCHANTMENT,	# [enchant_id : int,opponent_source : bool,data_id : int,param : Array]
+	UPDATE_ENCHANTMENT,	# [enchant_id : int,param : Array]
+	DELETE_ENCHANTMENT,	# [enchant_id : int,expired : bool]
 	
 	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,position : int,changes : Dictionary]
 
@@ -208,12 +219,12 @@ class EffectFragment:
 
 class PassiveLog:
 	var opponent : bool
-	var state_id : int
+	var enchant_id : int
 	var parameter : Array
 	
 	func _init(o,sid,p):
 		opponent = o
-		state_id = sid
+		enchant_id = sid
 		parameter = p
 
 
@@ -254,7 +265,7 @@ class CompleteData:
 		var stock:int
 		var life:int
 		var damage:int
-		var states:Array # of Array [id,data]
+		var enchants:Array # of Array [id,data]
 		var affected_list:Array # CardData.Stats
 		var additional_deck:PackedInt32Array
 		
@@ -265,7 +276,7 @@ class CompleteData:
 			stock = s
 			life = l
 			damage = d
-			states = st
+			enchants = st
 			affected_list = al
 			additional_deck = ad
 

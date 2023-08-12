@@ -190,7 +190,7 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 func _get_playing_card() -> Card3D:
 	return _playing_card
 
-func _get_enchant_data(id : int) -> CatalogData.StateData:
+func _get_enchant_data(id : int) -> CatalogData.EnchantmentData:
 	return enchant_display.get_enchantment_data(id)
 
 func _get_enchant_title(id : int,param) -> String:
@@ -260,7 +260,7 @@ func _perform_effect(effect : IGameServer.EffectLog) -> void:
 			tween.tween_property(_skill_titles[effect.id],"position",origin,0.3)
 			await tween.finished
 			pass
-		IGameServer.EffectSourceType.STATE:
+		IGameServer.EffectSourceType.ENCHANTMENT:
 			await enchant_display.perform(effect.id)
 			pass
 		IGameServer.EffectSourceType.ABILITY:
@@ -347,21 +347,21 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			_stock_count += 1
 			pass
 		
-		IGameServer.EffectFragmentType.CREATE_STATE:
+		IGameServer.EffectFragmentType.CREATE_ENCHANTMENT:
 			var id : int = fragment.data[0]
 			var opponent_source : bool = fragment.data[1]
 			var data_id : int = fragment.data[2]
 			var param = fragment.data[3]
-			var sd := (_rival._get_catalog()._get_state_data(data_id) if opponent_source
-					else _catalog._get_state_data(data_id))
+			var sd : CatalogData.EnchantmentData = (_rival._get_catalog()._get_enchant_data(data_id) if opponent_source
+					else _catalog._get_enchant_data(data_id))
 			await enchant_display.create_enchantment(id,sd,param,fragment.opponent)
 			pass
-		IGameServer.EffectFragmentType.UPDATE_STATE:
+		IGameServer.EffectFragmentType.UPDATE_ENCHANTMENT:
 			var id : int = fragment.data[0]
 			var param = fragment.data[1]
 			await enchant_display.update_enchantment(id,param,fragment.opponent)
 			pass
-		IGameServer.EffectFragmentType.DELETE_STATE:
+		IGameServer.EffectFragmentType.DELETE_ENCHANTMENT:
 			var id : int = fragment.data[0]
 			var expired : bool = fragment.data[1]
 			await enchant_display.delete_enchantment(id,expired,fragment.opponent)
@@ -371,7 +371,7 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			var card_id : int = fragment.data[0]
 			var opponent_source : bool = fragment.data[1]
 			var data_id : int = fragment.data[2]
-			var _bounce_position : int = fragment.data[3]
+			var bounce_position : int = fragment.data[3]
 			var changes : Dictionary = fragment.data[4]
 			
 			var catalog := _rival._get_catalog() if opponent_source else _get_catalog() 
@@ -398,6 +398,8 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			_life += cd.level
 			_stock_count += 1
 
+			_log_display.append_fragment_create_card(card,bounce_position,fragment.opponent)
+
 			card.position = $CombatPosition.position
 			var tween := create_tween().set_parallel()
 			tween.tween_property(card,"position",deck_position.position,0.5)
@@ -415,7 +417,7 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 
 
 func _perform_passive(passive : IGameServer.PassiveLog,duration : float) -> void:
-	await enchant_display.update_enchantment(passive.state_id,passive.parameter,duration)
+	await enchant_display.update_enchantment(passive.enchant_id,passive.parameter,duration)
 
 
 func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,duration : float) -> void:
@@ -427,9 +429,9 @@ func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,dura
 	for p in fragment.passive:
 		var title : String
 		if p.opponent:
-			title = _rival._get_enchant_title(p.state_id,p.parameter)
+			title = _rival._get_enchant_title(p.enchant_id,p.parameter)
 		else:
-			title = _get_enchant_title(p.state_id,p.parameter)
+			title = _get_enchant_title(p.enchant_id,p.parameter)
 		_log_display.append_passive(title,p.opponent)
 	
 	%CombatStats.set_initiative_async(initiative,duration)
@@ -451,9 +453,9 @@ func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : floa
 		for p in f.passive:
 			var title : String
 			if p.opponent:
-				title = _rival._get_enchant_title(p.state_id,p.parameter)
+				title = _rival._get_enchant_title(p.enchant_id,p.parameter)
 			else:
-				title = _get_enchant_title(p.state_id,p.parameter)
+				title = _get_enchant_title(p.enchant_id,p.parameter)
 			_log_display.append_passive(title,p.opponent)
 	supply_coroutine(effect,duration)
 	return wait_time

@@ -252,7 +252,12 @@ func append_fragment_delete_enchant(title,opponent):
 	_append_fragment_log_item(item)
 	pass
 
-func append_fragment_create_card():
+func append_fragment_create_card(card : Card3D,position : int,opponent : bool):
+	fragment_opponent = effect_opponent != opponent
+	var item = LogItem.instantiate()
+	item.text = "　" + ("相手は" if fragment_opponent else "自分は") +\
+			("カード「%s」(%d/%d/%d:%d)を位置%dに生成" % [card.card_name,card.power,card.hit,card.block,card.level,position])
+	_append_fragment_log_item(item)
 	pass
 
 

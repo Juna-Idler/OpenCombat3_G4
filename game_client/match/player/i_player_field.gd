@@ -31,7 +31,7 @@ func _combat_start(_hand : PackedInt32Array,_select : int) -> void:
 func _get_playing_card() -> Card3D:
 	return null
 
-func _get_enchant_data(_id : int) -> CatalogData.StateData:
+func _get_enchant_data(_id : int) -> CatalogData.EnchantmentData:
 	return null
 
 func _get_enchant_title(_id : int,_param) -> String:

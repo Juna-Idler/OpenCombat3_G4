@@ -7,7 +7,8 @@ class_name CardCatalog
 
 var _card_catalog : Dictionary = {}
 var _skill_catalog : Dictionary = {}
-var _state_catalog : Dictionary = {}
+var _ability_catalog : Dictionary = {}
+var _enchant_catalog : Dictionary = {}
 
 var _param_names : Array[CatalogData.ParameterName] = []
 
@@ -22,7 +23,7 @@ func _init():
 
 func load_catalog():
 	_load_param_names()
-	_load_state_data()
+	_load_enchant_data()
 	_load_skill_data()
 	_load_card_data()
 	
@@ -33,12 +34,16 @@ func get_max_card_id() -> int:
 func _get_card_data(id : int) -> CatalogData.CardData:
 	return _card_catalog[id]
 
-func _get_state_data(id : int) -> CatalogData.StateData:
-	return _state_catalog[id]
+func _get_enchant_data(id : int) -> CatalogData.EnchantmentData:
+	return _enchant_catalog[id]
 
 
 func get_skill_data(id : int) -> CatalogData.SkillData:
 	return _skill_catalog[id]
+	
+func get_ability_data(id : int) -> CatalogData.AbilityData:
+	return _ability_catalog[id]
+
 
 func get_param_name(param_type : int) -> CatalogData.ParameterName:
 	return _param_names[param_type]
@@ -110,21 +115,23 @@ func param_to_string(param_type : int,param) -> String:
 
 
 func _load_card_data():
-	var carddata_resource := load("res://card_data/card_data_catalog.txt")
-	var cards = carddata_resource.text.split("\n")
+	var carddata_resource := load("res://card_data/card_catalog.txt")
+	var cards := (carddata_resource.text as String).split("\n")
 	for c in cards:
-		var tsv = c.split("\t")
+		var tsv := c.split("\t")
+		var id := int(tsv[0])
+		var name := tsv[1]
+		var rname := tsv[2]
 		var skills : Array[CatalogData.CardSkill] = []
-		var skill_texts = tsv[9].split(";")
+		var skill_texts = tsv[8].split(";")
 		if skill_texts.size() == 1 and skill_texts[0] == "":
 			skill_texts.resize(0)
 		for i in skill_texts.size():
 			skills.append(_parse_card_skill(skill_texts[i],i))
-		var id := int(tsv[0])
 		var text = tsv[10].replace("\\n","\n")
 		var image = "res://card_images/"+ tsv[11] +".png"
-		_card_catalog[id] = CatalogData.CardData.new(id,tsv[1],tsv[3],
-				int(tsv[4]),int(tsv[5]),int(tsv[6]),int(tsv[7]),int(tsv[8]),
+		_card_catalog[id] = CatalogData.CardData.new(id,name,rname,
+				int(tsv[3]),int(tsv[4]),int(tsv[5]),int(tsv[6]),int(tsv[7]),
 				skills,text,image)
 	version = (_card_catalog[0] as CatalogData.CardData).name
 # warning-ignore:return_value_discarded
@@ -132,89 +139,126 @@ func _load_card_data():
 
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/card_data_" + translation + ".txt")
+		var trans_res = load("res://card_data/card_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/card_data_en.txt")
+			trans_res = load("res://card_data/card_en.txt")
 		var trans = trans_res.text.split("\n")
 		for i in trans.size():
 			var tsv = trans[i].split("\t")
 			var id := int(tsv[0])
 			var data = _card_catalog[id] as CatalogData.CardData
 			data.name = tsv[1]
-			data.short_name = tsv[2]
-			data.ruby_name = ""
-			data.text = tsv[3].replace("\\n","\n")
+			data.ruby_name = data.name
+			data.text = tsv[2].replace("\\n","\n")
 
 
 func _load_skill_data():
-	var namedskill_resource := load("res://card_data/named_skill_catalog.txt")
-	var namedskills = namedskill_resource.text.split("\n")
+	var namedskill_resource := load("res://card_data/skill_catalog.txt")
+	var namedskills := (namedskill_resource.text as String).split("\n")
 	for s in namedskills:
-		var tsv = s.split("\t")
+		var tsv := s.split("\t")
 		var id := int(tsv[0])
-		var text = tsv[7].replace("\\n","\n")
-
-		var states_strings : PackedStringArray = tsv[6].split(",")
-		var states : Array[CatalogData.StateData] = []
-		if not (states_strings.size() == 1 and states_strings[0].is_empty()):
-			for i in states_strings:
-				states.append(_state_catalog[int(i)])
-		
-		var param_type : PackedInt32Array = Array(tsv[4].split(","))
+		var name := tsv[1]
+		var rname := tsv[2]
+		var param_type : PackedInt32Array = Array(tsv[3].split(","))
 		var param_name : PackedStringArray = []
 		if param_type.size() == 1 and param_type[0] == CatalogData.ParamType.VOID:
 			param_type = []
 		else:
-			param_name = tsv[5].split(",")
-		_skill_catalog[id] = CatalogData.SkillData.new(id,tsv[1],tsv[3],param_type,param_name,states,text)
+			param_name = tsv[4].split(",")
+		var enchants_strings : PackedStringArray = tsv[5].split(",")
+		var enchants : Array[CatalogData.EnchantmentData] = []
+		if not (enchants_strings.size() == 1 and enchants_strings[0].is_empty()):
+			for i in enchants_strings:
+				enchants.append(_enchant_catalog[int(i)])
+		var text = tsv[6].replace("\\n","\n")
+		_skill_catalog[id] = CatalogData.SkillData.new(id,name,rname,param_type,param_name,enchants,text)
 
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/named_skill_" + translation + ".txt")
+		var trans_res = load("res://card_data/skill_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/named_skill_en.txt")
+			trans_res = load("res://card_data/skill_en.txt")
 		var trans = trans_res.text.split("\n")
 		for i in trans.size():
 			var tsv = trans[i].split("\t")
 			var id := int(tsv[0])
 			var data = _skill_catalog[id] as CatalogData.SkillData
 			data.name = tsv[1]
-			data.short_name = tsv[2]
-			data.ruby_name = ""
+			data.ruby_name = data.name
 			if not data.parameter.empty():
-				data.parameter = tsv[3].split(",")
-			data.text = tsv[4].replace("\\n","\n")
+				data.parameter = tsv[2].split(",")
+			data.text = tsv[3].replace("\\n","\n")
 
-
-func _load_state_data():
-	var state_resource := load("res://card_data/state_catalog.txt")
-	var states = state_resource.text.split("\n")
-	for s in states:
-		var tsv = s.split("\t")
+func _load_ability_data():
+	var namedskill_resource := load("res://card_data/ability_catalog.txt")
+	var namedskills := (namedskill_resource.text as String).split("\n")
+	for s in namedskills:
+		var tsv := s.split("\t")
 		var id := int(tsv[0])
-		var param_type : PackedInt32Array = Array(tsv[4].split(","))
+		var name := tsv[1]
+		var rname := tsv[2]
+		var param_type : PackedInt32Array = Array(tsv[3].split(","))
 		var param_name : PackedStringArray = []
-		if not tsv[5].is_empty():
-			param_name = tsv[5].split(",")
+		if param_type.size() == 1 and param_type[0] == CatalogData.ParamType.VOID:
+			param_type = []
+		else:
+			param_name = tsv[4].split(",")
+		var enchants_strings : PackedStringArray = tsv[5].split(",")
+		var enchants : Array[CatalogData.EnchantmentData] = []
+		if not (enchants_strings.size() == 1 and enchants_strings[0].is_empty()):
+			for i in enchants_strings:
+				enchants.append(_enchant_catalog[int(i)])
 		var text = tsv[6].replace("\\n","\n")
-		_state_catalog[id] = CatalogData.StateData.new(id,tsv[1],tsv[3],param_type,param_name,text)
-	
+		_skill_catalog[id] = CatalogData.SkillData.new(id,name,rname,param_type,param_name,enchants,text)
+
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/state_" + translation + ".txt")
+		var trans_res = load("res://card_data/skill_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/state_en.txt")
+			trans_res = load("res://card_data/skill_en.txt")
 		var trans = trans_res.text.split("\n")
 		for i in trans.size():
 			var tsv = trans[i].split("\t")
 			var id := int(tsv[0])
-			var data = _state_catalog[id] as CatalogData.StateData
+			var data = _skill_catalog[id] as CatalogData.SkillData
 			data.name = tsv[1]
-			data.short_name = tsv[2]
-			data.ruby_name = ""
+			data.ruby_name = data.name
 			if not data.parameter.empty():
-				data.parameter = tsv[3].split(",")
-			data.text = tsv[4].replace("\\n","\n")
+				data.parameter = tsv[2].split(",")
+			data.text = tsv[3].replace("\\n","\n")
+
+
+func _load_enchant_data():
+	var enchant_resource := load("res://card_data/enchant_catalog.txt")
+	var enchants := (enchant_resource.text as String).split("\n")
+	for s in enchants:
+		var tsv := s.split("\t")
+		var id := int(tsv[0])
+		var name := tsv[1]
+		var rname := tsv[2]
+		var param_type : PackedInt32Array = Array(tsv[3].split(","))
+		var param_name : PackedStringArray = []
+		if not tsv[5].is_empty():
+			param_name = tsv[4].split(",")
+		var text = tsv[5].replace("\\n","\n")
+		_enchant_catalog[id] = CatalogData.EnchantmentData.new(id,name,rname,param_type,param_name,text)
+	
+	var translation := TranslationServer.get_locale()
+	if translation.find("ja") != 0:
+		var trans_res = load("res://card_data/enchant_" + translation + ".txt")
+		if not trans_res:
+			trans_res = load("res://card_data/enchant_en.txt")
+		var trans = trans_res.text.split("\n")
+		for i in trans.size():
+			var tsv = trans[i].split("\t")
+			var id := int(tsv[0])
+			var data = _enchant_catalog[id] as CatalogData.EnchantmentData
+			data.name = tsv[1]
+			data.ruby_name = data.name
+			if not data.parameter.empty():
+				data.parameter = tsv[2].split(",")
+			data.text = tsv[3].replace("\\n","\n")
 
 
 
@@ -231,9 +275,9 @@ func _load_param_names():
 		
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/attribute_" + translation + ".txt")
+		var trans_res = load("res://card_data/param_name_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/attribute_en.txt")
+			trans_res = load("res://card_data/param_name_en.txt")
 		var trans = trans_res.text.split("\n")
 		for i in trans.size():
 			var tsv = trans[i].split("\t")

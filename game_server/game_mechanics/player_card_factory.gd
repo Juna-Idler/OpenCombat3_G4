@@ -15,9 +15,9 @@ const skill_behaviors : Array = [
 	SkillProcessor.Attract,
 	SkillProcessor.Recycle,
 ]
-const state_behaviors : Array = [
+const enchant_behaviors : Array = [
 	null,
-	StateProcessor.Reinforce,
+	EnchantmentProcessor.Reinforce,
 ]
 
 var _card_catalog : CardCatalog
@@ -30,11 +30,11 @@ func _create(iid : int,data_id : int) -> MechanicsData.Card:
 	var skills : Array[MechanicsData.ISkill] = []
 	for s in card_data.skills:
 		skills.append(_create_skill(s))
-	return MechanicsData.Card.new(iid,card_data,skills)
+	return MechanicsData.Card.new(iid,card_data,skills,[])
 	
 func _create_skill(skill : CatalogData.CardSkill) -> MechanicsData.ISkill:
 	return skill_behaviors[skill.data.id].new(skill)
 	
-func _create_state(match_id:int,data_id : int,param : Array,
-		attached : MechanicsData.IPlayer,opponent : MechanicsData.IPlayer) -> MechanicsData.IState:
-	return state_behaviors[data_id].new(match_id,param,attached,opponent)
+func _create_enchant(match_id:int,data_id : int,param : Array,
+		attached : MechanicsData.IPlayer,opponent : MechanicsData.IPlayer) -> MechanicsData.IEnchantment:
+	return enchant_behaviors[data_id].new(match_id,param,attached,opponent)

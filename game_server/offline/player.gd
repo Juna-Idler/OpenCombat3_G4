@@ -15,8 +15,8 @@ var _played : PackedInt32Array = []
 var _discard : PackedInt32Array = []
 var _life : int = 0
 
-var _states : Dictionary = {}
-var _states_counter : int = 0
+var _enchants : Dictionary = {}
+var _enchants_counter : int = 0
 
 var _damage : int = 0
 var _select_card : int = -1
@@ -62,8 +62,8 @@ func _get_stock_count() -> int:
 func _get_life() -> int:
 	return _life
 
-func _get_states() -> Dictionary:
-	return _states
+func _get_enchants() -> Dictionary:
+	return _enchants
 
 
 func _get_damage() -> int:
@@ -257,25 +257,25 @@ func _bounce_card(card : int,position : int,opponent : bool = false) -> IGameSer
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.BOUNCE_CARD,opponent,[-1,0],[])
 
 
-func _create_state(factory : ICardFactory,data_id : int,param : Array,rival : MechanicsData.IPlayer,opponent : bool = false) -> IGameServer.EffectFragment:
-	_states_counter += 1
-	var state := factory._create_state(_states_counter,data_id,param,self,rival)
-	_states[state] = _states_counter
+func _create_enchant(factory : ICardFactory,data_id : int,param : Array,rival : MechanicsData.IPlayer,opponent : bool = false) -> IGameServer.EffectFragment:
+	_enchants_counter += 1
+	var enchant := factory._create_enchant(_enchants_counter,data_id,param,self,rival)
+	_enchants[enchant] = _enchants_counter
 	var opponent_source := factory != _card_factory
-	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CREATE_STATE,
-			opponent,[_states_counter,opponent_source,data_id,param],[])
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CREATE_ENCHANTMENT,
+			opponent,[_enchants_counter,opponent_source,data_id,param],[])
 
-func _update_state(state : IState,param:Array,opponent : bool = false) -> IGameServer.EffectFragment:
-	var id : int = _states[state]
-	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.UPDATE_STATE,
+func _update_enchant(enchant : IEnchantment,param:Array,opponent : bool = false) -> IGameServer.EffectFragment:
+	var id : int = _enchants[enchant]
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.UPDATE_ENCHANTMENT,
 			opponent,[id,param],[])
 
-#	DELETE_STATE,	# state_id : int
-func _delete_state(state : IState,expired : bool = true,opponent : bool = false) -> IGameServer.EffectFragment:
-	var id : int = _states[state]
-	state._term()
-	_states.erase(state)
-	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DELETE_STATE,
+#	DELETE_ENCHANTMENT,	# enchant_id : int
+func _delete_enchant(enchant : IEnchantment,expired : bool = true,opponent : bool = false) -> IGameServer.EffectFragment:
+	var id : int = _enchants[enchant]
+	enchant._term()
+	_enchants.erase(enchant)
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DELETE_ENCHANTMENT,
 			opponent,[id,expired],[])
 	
 
@@ -297,8 +297,9 @@ func _create_card(factory : ICardFactory , data_id:int,position : int,changes : 
 	
 	_deck_list.append(card)
 	if position < 0:
-		position = _stock.size() + 1 + position
-	_stock.insert(position,card.id_in_deck)
+		_stock.insert(_stock.size() + 1 + position,card.id_in_deck)
+	else:
+		_stock.insert(position,card.id_in_deck)
 	_life += card.level
 	
 	var passive : Array[IGameServer.PassiveLog] = []

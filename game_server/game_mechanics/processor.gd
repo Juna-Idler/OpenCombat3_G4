@@ -39,6 +39,14 @@ func standby(p1 : MechanicsData.IPlayer,p2 : MechanicsData.IPlayer) -> IGameServ
 	#initial effect
 	var p1_initial : Array[IGameServer.EffectLog] = []
 	var p2_initial : Array[IGameServer.EffectLog] = []
+	for c in player1._get_deck_list():
+		for a in c.abilities:
+			if a._get_type() == CatalogData.AbilityType.DECK:
+				p1_initial.append(a._effect(player1,player2))
+	for c in player2._get_deck_list():
+		for a in c.abilities:
+			if a._get_type() == CatalogData.AbilityType.DECK:
+				p2_initial.append(a._effect(player2,player1))
 
 	player1._start_effect_log_temporary().clear()
 	player2._start_effect_log_temporary().clear()
@@ -198,10 +206,10 @@ func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
 
 func _before_effect():
 	var effect_order : Array[EffectOrder] = []
-	for s in player1._get_states():
+	for s in player1._get_enchants():
 		for p in s._before_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for s in player2._get_states():
+	for s in player2._get_enchants():
 		for p in s._before_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 	
@@ -226,10 +234,10 @@ func _before_effect():
 
 func _moment_effect():
 	var effect_order : Array[EffectOrder] = []
-	for s in player1._get_states():
+	for s in player1._get_enchants():
 		for p in s._moment_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for s in player2._get_states():
+	for s in player2._get_enchants():
 		for p in s._moment_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 	
@@ -253,10 +261,10 @@ func _moment_effect():
 
 func _after_effect():
 	var effect_order : Array[EffectOrder] = []
-	for s in player1._get_states():
+	for s in player1._get_enchants():
 		for p in s._after_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for s in player2._get_states():
+	for s in player2._get_enchants():
 		for p in s._after_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 
@@ -280,10 +288,10 @@ func _after_effect():
 
 func _end_effect():
 	var effect_order : Array[EffectOrder] = []
-	for s in player1._get_states():
+	for s in player1._get_enchants():
 		for p in s._end_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for s in player2._get_states():
+	for s in player2._get_enchants():
 		for p in s._end_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 	
@@ -306,14 +314,26 @@ func _end_effect():
 
 
 func _start_effect():
+	for h in player1._get_hand():
+		var card := player1._get_deck_list()[h]
+		for a in card.abilities:
+			if a._get_type() == CatalogData.AbilityType.HAND:
+				player1._start_effect_log_temporary().append(a._effect(player1,player2))
+	for h in player2._get_hand():
+		var card := player2._get_deck_list()[h]
+		for a in card.abilities:
+			if a._get_type() == CatalogData.AbilityType.HAND:
+				player2._start_effect_log_temporary().append(a._effect(player2,player1))
+	
 	var effect_order : Array[EffectOrder] = []
-	for s in player1._get_states():
+	for s in player1._get_enchants():
 		for p in s._start_priority():
 			effect_order.append(EffectOrder.new(s,p,player1,player2))
-	for s in player2._get_states():
+	for s in player2._get_enchants():
 		for p in s._start_priority():
 			effect_order.append(EffectOrder.new(s,p,player2,player1))
 	effect_order.sort_custom(EffectOrder.custom_compare)
 	for s in effect_order:
 		s.myself._start_effect_log_temporary().append(
 				s.effect._start_effect(s.priority,s.myself,s.rival))
+

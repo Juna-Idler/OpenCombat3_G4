@@ -8,7 +8,7 @@ class Player:
 	
 	var stock_count : int
 	var life : int
-	var states : Dictionary
+	var enchants : Dictionary
 	
 	func _init(h,p,d,s,l,st):
 		hand = h
@@ -16,7 +16,7 @@ class Player:
 		discard = d
 		stock_count = s
 		life = l
-		states = st
+		enchants = st
 
 
 func _get_commander_name()-> String:

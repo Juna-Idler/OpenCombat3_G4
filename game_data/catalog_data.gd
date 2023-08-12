@@ -23,6 +23,11 @@ enum ParamType {
 	STATS = 2,		# [p:int,h:int,b:int]
 	COLOR = 3,		# int as CardColors
 }
+enum AbilityType {
+	VOID = 0,
+	DECK = 1,
+	HAND = 2,
+}
 
 class CardData:
 	var id : int
@@ -76,18 +81,17 @@ class SkillData:
 	var ruby_name : String
 	var param_type : PackedInt32Array # of ParamType
 	var param_name : PackedStringArray
-	var states : Array[StateData] # of StateData
+	var enchants : Array[EnchantmentData]
 	var text : String
 	
-	func _init(i:int,n:String,rn:String,pt:PackedInt32Array,pn:PackedStringArray,st:Array[StateData],t:String):
+	func _init(i:int,n:String,rn:String,pt:PackedInt32Array,pn:PackedStringArray,e:Array[EnchantmentData],t:String):
 		id = i
 		name = n
 		ruby_name = rn
 		param_type = pt
 		param_name = pn
-		states = st
+		enchants = e
 		text = t
-
 
 class CardSkill:
 	var index : int
@@ -105,7 +109,6 @@ class CardSkill:
 		title = t
 		text = txt
 
-
 	func test_condition(rival_color : int,link_color : int) -> bool :
 		if condition & ColorCondition.VS_FLAG:
 			return (condition & ColorCondition.COLOR_BITS) == rival_color
@@ -115,8 +118,42 @@ class CardSkill:
 			return true
 		return false
 
+class AbilityData:
+	var id : int
+	var name : String
+	var ruby_name : String
+	var type : AbilityType
+	var param_type : PackedInt32Array # of ParamType
+	var param_name : PackedStringArray
+	var enchants : Array[EnchantmentData]
+	var text : String
+	
+	func _init(i:int,n:String,rn:String,t:AbilityType,pt:PackedInt32Array,pn:PackedStringArray,e:Array[EnchantmentData],txt:String):
+		id = i
+		name = n
+		ruby_name = rn
+		type = t
+		param_type = pt
+		param_name = pn
+		enchants = e
+		text = txt
 
-class StateData:
+class CardAbility:
+	var index : int
+	var data : AbilityData
+	var parameter : Array
+	var title : String
+	var text : String
+	
+	func _init(i:int,sd:AbilityData,p : Array,t : String,txt : String):
+		index = i
+		data = sd
+		parameter = p
+		title = t
+		text = txt
+
+
+class EnchantmentData:
 	var id : int
 	var name : String
 	var ruby_name : String

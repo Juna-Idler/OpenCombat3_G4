@@ -1,11 +1,11 @@
 
-class_name StateProcessor
+class_name EnchantmentProcessor
 
 static func create_log(id : int, priority:int,fragments :Array[IGameServer.EffectFragment]) -> IGameServer.EffectLog:
-		return IGameServer.EffectLog.new(IGameServer.EffectSourceType.STATE,id,priority,fragments)
+		return IGameServer.EffectLog.new(IGameServer.EffectSourceType.ENCHANTMENT,id,priority,fragments)
 
 
-class Reinforce extends MechanicsData.BasicState:
+class Reinforce extends MechanicsData.BasicEnchantment:
 	const DATA_ID = 1
 	const PRIORITY = 1
 	var _stats : PackedInt32Array
@@ -26,6 +26,6 @@ class Reinforce extends MechanicsData.BasicState:
 		stats[1] += _stats[1]
 		stats[2] += _stats[2]
 		var fragment := myself._change_combat_card_stats(stats,false)
-		var fragment2 := myself._delete_state(self,false)
-		return StateProcessor.create_log(_match_id,PRIORITY,[fragment,fragment2])
+		var fragment2 := myself._delete_enchant(self,false)
+		return EnchantmentProcessor.create_log(_match_id,PRIORITY,[fragment,fragment2])
 

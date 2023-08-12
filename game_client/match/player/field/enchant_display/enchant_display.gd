@@ -4,7 +4,7 @@ const EnchantmentTitleScene := preload("res://game_client/match/player/field/enc
 enum EnchantmentState {NORMAL,ACTIVATE,DELETE}
 
 class Enchantment:
-	var data : CatalogData.StateData
+	var data : CatalogData.EnchantmentData
 	var title : String
 	var title_object : EnchantmentTitle = EnchantmentTitleScene.instantiate()
 
@@ -35,10 +35,10 @@ func initialize(log_display : LogDisplay,opponent : bool):
 	_log_display = log_display
 	_opponent_layout = opponent
 	
-func get_enchantment_data(id : int) -> CatalogData.StateData:
+func get_enchantment_data(id : int) -> CatalogData.EnchantmentData:
 	return _enchantments[id].data
 
-func create_enchantment(id : int,sd : CatalogData.StateData,param,opponent : bool):
+func create_enchantment(id : int,sd : CatalogData.EnchantmentData,param,opponent : bool):
 	var n := Enchantment.new(sd,param,_opponent_layout)
 	_enchantments[id] = n
 	add_child(n.title_object)

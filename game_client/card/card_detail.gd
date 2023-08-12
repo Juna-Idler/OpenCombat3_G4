@@ -19,7 +19,7 @@ func initialize(cd : CatalogData.CardData,
 		var skill_detail := CardDetailSkill.instantiate()
 		skill_detail.initialize(s)
 		$ScrollContainer/VBoxContainer.add_child(skill_detail)
-		for st in s.data.states:
+		for st in s.data.enchants:
 			var st_label : RichTextLabel = CardDetailSkillEnchant.instantiate()
 			var st_param := "" if st.param_name.is_empty() else ("(" + ",".join(st.param_name) + ")")
 			st_label.text = st.name + st_param + "\n" + st.text

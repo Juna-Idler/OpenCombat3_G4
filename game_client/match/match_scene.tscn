@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dci4g4cu74w6n"]
+[gd_scene load_steps=12 format=3 uid="uid://dci4g4cu74w6n"]
 
 [ext_resource type="Script" path="res://game_client/match/match_scene.gd" id="1_jvtjj"]
 [ext_resource type="PackedScene" uid="uid://cx8qc3q1f3xaj" path="res://game_client/match/card_list.tscn" id="2_4fyv0"]
@@ -6,12 +6,13 @@
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_62qcl"]
 [ext_resource type="PackedScene" uid="uid://urb0isujicis" path="res://game_client/match/log_display/log_display.tscn" id="4_dw15p"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="5_0yt3x"]
+[ext_resource type="PackedScene" uid="uid://baq8u4hrojdij" path="res://game_client/match/enchant_list_panel.tscn" id="7_vhnd4"]
 
 [sub_resource type="Environment" id="Environment_m7sro"]
 background_mode = 1
 background_color = Color(0.219608, 0.219608, 0.219608, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_35ybj"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nvj80"]
 resource_local_to_scene = true
 transparency = 2
 alpha_scissor_threshold = 0.5
@@ -19,7 +20,7 @@ alpha_antialiasing_mode = 0
 shading_mode = 0
 billboard_mode = 1
 
-[sub_resource type="QuadMesh" id="QuadMesh_8jdmu"]
+[sub_resource type="QuadMesh" id="QuadMesh_2ltnw"]
 resource_local_to_scene = true
 size = Vector2(2, 1)
 
@@ -46,8 +47,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 visible = false
 
 [node name="LabelBoard" parent="Field" instance=ExtResource("3_hyybm")]
-material_override = SubResource("StandardMaterial3D_35ybj")
-mesh = SubResource("QuadMesh_8jdmu")
+material_override = SubResource("StandardMaterial3D_nvj80")
+mesh = SubResource("QuadMesh_2ltnw")
 label_settings = SubResource("LabelSettings_jsf2d")
 viewport_size = Vector2i(512, 256)
 board_size = Vector2(2, 1)
@@ -132,6 +133,10 @@ offset_right = 400.0
 offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="EnchantListPanel" parent="CanvasLayer/Control" instance=ExtResource("7_vhnd4")]
+unique_name_in_owner = true
+layout_mode = 1
 
 [connection signal="clicked" from="Field/CardList" to="." method="_on_card_list_clicked"]
 [connection signal="toggled" from="CanvasLayer/Control/LogDisplayPanel/ButtonLog" to="." method="_on_button_log_toggled"]

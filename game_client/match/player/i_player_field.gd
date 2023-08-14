@@ -8,6 +8,8 @@ enum EffectTiming {INITIAL,START,BEFORE,MOMENT,AFTER,END}
 
 signal request_card_list_view(p_cards : Array[Card3D],d_cards : Array[Card3D])
 
+signal request_enchant_list_view(enchantments : Dictionary)
+
 
 func _get_catalog() -> I_CardCatalog:
 	return null
@@ -31,11 +33,15 @@ func _combat_start(_hand : PackedInt32Array,_select : int) -> void:
 func _get_playing_card() -> Card3D:
 	return null
 
-func _get_enchant_data(_id : int) -> CatalogData.EnchantmentData:
-	return null
 
-func _get_enchant_title(_id : int,_param) -> String:
-	return ""
+class Enchant:
+	var id : int
+	var data : CatalogData.EnchantmentData
+	var param : Array
+
+func _get_enchant_dictionary() -> Dictionary:	# key = id, value = Enchant
+	return {}
+	
 
 func _combat_end() -> void:
 	pass
@@ -55,10 +61,14 @@ func _perform_effect_fragment(_fragment : IGameServer.EffectFragment) -> void:
 	@warning_ignore("redundant_await")
 	await 0
 
-func _perform_passive(_passive : IGameServer.PassiveLog,_duration : float) -> void:
+func _passive_sequence(_passive : IGameServer.PassiveLog) -> void:
+	pass
+
+func _passive_coroutine(_passive : IGameServer.PassiveLog,_duration : float) -> void:
 	assert(false)
 	@warning_ignore("redundant_await")
 	await 0
+	
 
 func _perform_simultaneous_initiative(_fragment : IGameServer.EffectFragment,_duration : float) -> void:
 	pass

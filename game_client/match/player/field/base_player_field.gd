@@ -190,12 +190,9 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 func _get_playing_card() -> Card3D:
 	return _playing_card
 
-func _get_enchant_data(id : int) -> CatalogData.EnchantmentData:
-	return enchant_display.get_enchantment_data(id)
+func _get_enchant_dictionary() -> Dictionary:	# key = id, value = Enchant
+	return enchant_display.get_enchant_dictionary()
 
-func _get_enchant_title(id : int,param) -> String:
-	return enchant_display.get_title(id,param)
-	
 func _combat_end() -> void:
 	_played.append(_playing_card.id_in_deck)
 	_playing_card.location = Card3D.CardLocation.PLAYED
@@ -245,6 +242,27 @@ func _recovery_end():
 func _perform_ability(ability : IGameServer.AbilityLog) -> void:
 	var a := _catalog._get_ability_data(ability.ability_id)
 	_log_display.append_ability(a.name,_opponent_layout)
+	
+	var positions := align(ability.card_id.size(),6.0,1.0,0.1)
+	var original_pos : PackedVector3Array
+	var original_rotation : PackedVector3Array
+	original_pos.resize(positions.size())
+	original_rotation.resize(positions.size())
+	var tween := create_tween().set_parallel()
+	for i in ability.card_id.size():
+		var card := _deck[ability.card_id[i]]
+		original_pos[i] = card.position
+		original_rotation[i] = card.rotation
+		tween.tween_property(card,"position",Vector3(positions[i],0.0,1.0),0.5)
+		tween.tween_property(card,"rotation",Vector3.ZERO,0.5)
+	tween.chain().tween_interval(0.5)
+	await tween.finished
+	tween = create_tween().set_parallel()
+	for i in ability.card_id.size():
+		tween.tween_property(_deck[ability.card_id[i]],"position",original_pos[i],0.5)
+		tween.tween_property(_deck[ability.card_id[i]],"rotation",original_rotation[i],0.5)
+	await tween.finished
+	
 	for f in ability.fragment:
 		if f.opponent:
 			await _rival._perform_effect_fragment(f)
@@ -420,13 +438,18 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			pass
 	for p in fragment.passive:
 		if p.opponent:
-			await _rival._perform_passive(p,0.2)
+			_rival._passive_sequence(p)
+			await _rival._passive_coroutine(p,0.2)
 		else:
-			await _perform_passive(p,0.2)
+			_passive_sequence(p)
+			await _passive_coroutine(p,0.2)
 
 
-func _perform_passive(passive : IGameServer.PassiveLog,duration : float) -> void:
-	await enchant_display.update_enchantment(passive.enchant_id,passive.parameter,duration)
+func _passive_sequence(passive : IGameServer.PassiveLog) -> void:
+	enchant_display.update_passive_sequence(passive.enchant_id,passive.parameter,passive.opponent)
+
+func _passive_coroutine(passive : IGameServer.PassiveLog,duration : float) -> void:
+	await enchant_display.update_passive_coroutine(passive.enchant_id,passive.parameter,duration)
 
 
 func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,duration : float) -> void:
@@ -436,21 +459,19 @@ func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,dura
 	_log_display.append_effect_system(_opponent_layout)
 	_log_display.append_fragment_initiative(initiative,fragment.opponent)
 	for p in fragment.passive:
-		var title : String
 		if p.opponent:
-			title = _rival._get_enchant_title(p.enchant_id,p.parameter)
+			_rival._passive_sequence(p)
 		else:
-			title = _get_enchant_title(p.enchant_id,p.parameter)
-		_log_display.append_passive(title,p.opponent)
+			_passive_sequence(p)
 	
 	%CombatStats.set_initiative_async(initiative,duration)
 	if not fragment.passive.is_empty():
 		var p_duration := duration / fragment.passive.size()
 		for p in fragment.passive:
 			if p.opponent:
-				await _rival._perform_passive(p,p_duration)
+				await _rival._passive_coroutine(p,p_duration)
 			else:
-				await _perform_passive(p,p_duration)
+				await _passive_coroutine(p,p_duration)
 
 func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : float) -> float:
 	_log_display.append_effect_system(_opponent_layout)
@@ -460,12 +481,10 @@ func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : floa
 		if draw_sequence(f):
 			wait_time += duration
 		for p in f.passive:
-			var title : String
 			if p.opponent:
-				title = _rival._get_enchant_title(p.enchant_id,p.parameter)
+				_rival._passive_sequence(p)
 			else:
-				title = _get_enchant_title(p.enchant_id,p.parameter)
-			_log_display.append_passive(title,p.opponent)
+				_passive_sequence(p)
 	supply_coroutine(effect,duration)
 	return wait_time
 	
@@ -476,9 +495,9 @@ func supply_coroutine(effect : IGameServer.EffectLog,duration : float):
 			var p_duration := duration / f.passive.size()
 			for p in f.passive:
 				if p.opponent:
-					await _rival._perform_passive(p,p_duration)
+					await _rival._passive_coroutine(p,p_duration)
 				else:
-					await _perform_passive(p,p_duration)
+					await _passive_coroutine(p,p_duration)
 		await get_tree().create_timer(duration).timeout
 
 func draw_sequence(fragment : IGameServer.EffectFragment) -> bool:
@@ -601,3 +620,25 @@ func _on_played_position_clicked():
 		d_list.append(_deck[c])
 	request_card_list_view.emit(p_list,d_list)
 	
+
+func align(count : int,area_width : float,item_width : float,space : float) -> PackedFloat32Array:
+	var step := area_width / (count + 1)
+	var start := step - area_width/2
+	if step < item_width + space:
+		start = step / 10
+		step = (area_width - item_width - start*2) / (count - 1);
+		start -= (area_width - item_width)/2
+	var output : PackedFloat32Array = []
+	output.resize(count)
+	for i in count:
+		output[i] = start + step * i
+	return output
+
+
+func _on_area_3d_input_event(_camera, event, _position, _normal, _shape_idx):
+	if (event is InputEventMouseButton
+			and event.button_index == MOUSE_BUTTON_LEFT
+			and event.pressed):
+		request_enchant_list_view.emit(_get_enchant_dictionary())
+		pass
+

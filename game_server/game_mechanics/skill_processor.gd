@@ -178,10 +178,14 @@ class AngerBlow extends MechanicsData.BasicSkill:
 			myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> IGameServer.EffectLog:
 
 		var stats := myself._get_card_stats(myself._get_playing_card_id())
+		var fragments : Array[IGameServer.EffectFragment] = []
 		for e in myself._get_enchants():
 			var enc := e as MechanicsData.IEnchantment
 			if enc._get_data_id() == EnchantmentProcessor.AngerCounter.DATA_ID:
-				stats[1] += (enc as EnchantmentProcessor.AngerCounter)._counter
-		var fragment := myself._change_combat_card_stats(stats,false)
-		return SkillProcessor.create_log(_skill.index,PRIORITY,[fragment])
+				var ac := (enc as EnchantmentProcessor.AngerCounter)
+				stats[1] += ac._counter
+				ac._counter = 0
+				fragments.append(myself._change_combat_card_stats(stats,false))
+				fragments.append(myself._update_enchant(ac,[0],false))
+		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
 

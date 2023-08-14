@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://lrs3pdwt6rv7"]
+[gd_scene load_steps=15 format=3 uid="uid://lrs3pdwt6rv7"]
 
 [ext_resource type="Script" path="res://game_client/match/player/field/base_player_field.gd" id="1_b2wa6"]
 [ext_resource type="PackedScene" uid="uid://bpf65cofrvm0s" path="res://game_client/match/player/field/played_position.tscn" id="2_qevd1"]
@@ -13,6 +13,9 @@ size = Vector2(1, 1.5)
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rvbv3"]
 noise = SubResource("FastNoiseLite_iq1xn")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ctw2y"]
+size = Vector3(1.5, 3, 0.1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tfou3"]
 bg_color = Color(0, 0, 0, 0.752941)
@@ -66,13 +69,21 @@ mesh = SubResource("QuadMesh_omqhk")
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="CombatPosition"]
 
 [node name="PlayedPosition" parent="." instance=ExtResource("2_qevd1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, -0.2, 0)
 
 [node name="AvatarPosition" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -0.5)
 texture = SubResource("NoiseTexture2D_rvbv3")
 region_enabled = true
 region_rect = Rect2(0, 0, 150, 300)
+
+[node name="Area3D" type="Area3D" parent="AvatarPosition"]
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AvatarPosition/Area3D"]
+shape = SubResource("BoxShape3D_ctw2y")
 
 [node name="CardHolder" type="Node3D" parent="."]
 
@@ -187,3 +198,4 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [connection signal="clicked" from="PlayedPosition" to="." method="_on_played_position_clicked"]
+[connection signal="input_event" from="AvatarPosition/Area3D" to="." method="_on_area_3d_input_event"]

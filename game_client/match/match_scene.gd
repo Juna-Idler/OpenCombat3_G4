@@ -65,6 +65,8 @@ func initialize(server : IGameServer,
 	
 	_myself.request_card_list_view.connect(_on_request_card_list_view)
 	_rival.request_card_list_view.connect(_on_request_card_list_view)
+	_myself.request_enchant_list_view.connect(_on_request_enchant_list_view)
+	_rival.request_enchant_list_view.connect(_on_request_enchant_list_view)
 	
 	%CardDetailPanel.visible = false
 
@@ -79,10 +81,14 @@ func terminalize():
 		_game_server = null
 		
 	if _myself:
+		_myself.request_card_list_view.disconnect(_on_request_card_list_view)
+		_myself.request_enchant_list_view.disconnect(_on_request_enchant_list_view)
 		$Field.remove_child(_myself)
 		_myself.queue_free()
 		_myself = null
 	if _rival:
+		_rival.request_card_list_view.disconnect(_on_request_card_list_view)
+		_rival.request_enchant_list_view.disconnect(_on_request_enchant_list_view)
 		$Field.remove_child(_rival)
 		_rival.queue_free()
 		_rival = null
@@ -280,6 +286,10 @@ func _on_card_detail_panel_gui_input(event : InputEvent):
 func _on_request_card_list_view(p_cards : Array[Card3D],d_cards : Array[Card3D]):
 	%CardList.visible = true
 	%CardList.put_cards(p_cards,d_cards,0.3)
+
+func _on_request_enchant_list_view(enchantment : Dictionary):
+	%EnchantListPanel.visible = true
+	%EnchantListPanel.initialize(enchantment)
 
 
 func _on_card_list_clicked():

@@ -1,0 +1,58 @@
+[gd_scene load_steps=3 format=3 uid="uid://pgklo6gy07co"]
+
+[ext_resource type="Script" path="res://game_client/title/title_scene.gd" id="1_yo8lg"]
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="2_sye0i"]
+
+[node name="TitleScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_yo8lg")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -210.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/normal_font = ExtResource("2_sye0i")
+theme_override_font_sizes/normal_font_size = 120
+bbcode_enabled = true
+text = "[center]Open Combat 3[/center]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = 80.0
+offset_right = 160.0
+offset_bottom = 184.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_sye0i")
+theme_override_font_sizes/font_size = 64
+text = "START"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

@@ -244,8 +244,8 @@ func _perform_ability(ability : IGameServer.AbilityLog) -> void:
 	_log_display.append_ability(a.name,_opponent_layout)
 	
 	var positions := align(ability.card_id.size(),6.0,1.0,0.1)
-	var original_pos : PackedVector3Array
-	var original_rotation : PackedVector3Array
+	var original_pos := PackedVector3Array()
+	var original_rotation := PackedVector3Array()
 	original_pos.resize(positions.size())
 	original_rotation.resize(positions.size())
 	var tween := create_tween().set_parallel()

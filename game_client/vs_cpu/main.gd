@@ -1,4 +1,6 @@
-extends Node
+extends SceneChanger.IScene
+
+var _scene_changer : SceneChanger
 
 var server := OfflineServer.new()
 var catalog := CardCatalog.new()
@@ -12,7 +14,8 @@ var rival : NonPlayablePlayerField
 
 
 func _ready():
-	initialize()
+	pass
+#	initialize()
 
 
 
@@ -20,8 +23,10 @@ func _ready():
 func _process(_delta):
 	pass
 
-func initialize():
-	$CanvasLayer/Control/ButtonGameOver.hide()
+func _initialize(changer : SceneChanger,_param : Array):
+	_scene_changer = changer
+	$CanvasLayer/Control/ButtonRetry.hide()
+	$CanvasLayer/Control/ButtonGoback.hide()
 	$CanvasLayer/Control/Label.hide()
 	
 #	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
@@ -40,7 +45,10 @@ func initialize():
 	$match_scene.initialize(server,myself,rival,catalog,catalog)
 	if not $match_scene.performed.is_connected(on_match_scene_performed):
 		$match_scene.performed.connect(on_match_scene_performed)
+
+func _fade_in_finished():
 	server._send_ready()
+	pass
 
 
 func on_hand_selected(index : int,hand : Array[Card3D]):
@@ -65,7 +73,8 @@ func on_match_scene_performed():
 	if $match_scene.phase != IGameServer.Phase.GAME_END:
 		myself.hand_area.set_playable(true)
 	else:
-		$CanvasLayer/Control/ButtonGameOver.show()
+		$CanvasLayer/Control/ButtonRetry.show()
+		$CanvasLayer/Control/ButtonGoback.show()
 		$CanvasLayer/Control/Label.show()
 		var mp : int = $match_scene.my_game_end_point
 		var rp : int = $match_scene.rival_game_end_point
@@ -79,7 +88,12 @@ func on_match_scene_performed():
 			pass
 	
 
-
 func _on_button_game_over_pressed():
-	initialize()
+	_initialize(_scene_changer,[])
+	_fade_in_finished()
+	pass # Replace with function body.
+
+
+func _on_button_game_over_2_pressed():
+	_scene_changer.goto_scene("res://game_client/title/title_scene.tscn",[])
 	pass # Replace with function body.

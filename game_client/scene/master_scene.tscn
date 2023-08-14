@@ -1,0 +1,45 @@
+[gd_scene load_steps=10 format=3 uid="uid://cu3btgf0ukgd"]
+
+[ext_resource type="Script" path="res://game_client/scene/master_scene.gd" id="1_0gwhj"]
+[ext_resource type="PackedScene" uid="uid://pgklo6gy07co" path="res://game_client/title/title_scene.tscn" id="2_k7ye4"]
+[ext_resource type="Script" path="res://game_client/scene/transition_fader.gd" id="3_mbf8c"]
+[ext_resource type="Shader" path="res://game_client/scene/transition_fade.gdshader" id="3_otrr6"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sx6lv"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4xooh"]
+noise = SubResource("FastNoiseLite_sx6lv")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_scgxp"]
+shader = ExtResource("3_otrr6")
+shader_parameter/rate = null
+shader_parameter/invert = false
+shader_parameter/rule = SubResource("NoiseTexture2D_4xooh")
+
+[sub_resource type="Gradient" id="Gradient_1v3ce"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fdk4g"]
+gradient = SubResource("Gradient_1v3ce")
+
+[node name="MasterScene" type="Node"]
+script = ExtResource("1_0gwhj")
+
+[node name="TitleScene" parent="." instance=ExtResource("2_k7ye4")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="SceneFader" type="TextureRect" parent="CanvasLayer"]
+unique_name_in_owner = true
+visible = false
+material = SubResource("ShaderMaterial_scgxp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture1D_fdk4g")
+script = ExtResource("3_mbf8c")
+rule = SubResource("NoiseTexture2D_4xooh")

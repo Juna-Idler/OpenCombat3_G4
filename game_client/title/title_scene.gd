@@ -20,3 +20,17 @@ func _terminalize():
 
 func _on_button_pressed():
 	_scene_changer.goto_scene("res://game_client/vs_cpu/main.tscn",[])
+
+
+func _on_language_option_button_item_selected(index):
+	match index:
+		0:
+			if TranslationServer.get_locale() != "ja":
+				TranslationServer.set_locale("ja")
+		1:
+			if TranslationServer.get_locale() != "en":
+				TranslationServer.set_locale("en")
+	Global.card_catalog.load_catalog()
+
+	
+	pass # Replace with function body.

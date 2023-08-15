@@ -17,8 +17,6 @@ var version : String
 
 
 func _init():
-#	translation = TranslationServer.get_locale()
-	
 	load_catalog()
 
 func load_catalog():
@@ -194,8 +192,8 @@ func _load_skill_data():
 			var data := _skill_catalog[id] as CatalogData.SkillData
 			data.name = tsv[1]
 			data.ruby_name = data.name
-			if not data.parameter.empty():
-				data.parameter = tsv[2].split(",")
+			if not data.param_name.is_empty():
+				data.param_name = tsv[2].split(",")
 			data.text = tsv[3].replace("\\n","\n")
 
 func _load_ability_data():
@@ -226,9 +224,7 @@ func _load_ability_data():
 			var data := _ability_catalog[id] as CatalogData.AbilityData
 			data.name = tsv[1]
 			data.ruby_name = data.name
-			if not data.parameter.empty():
-				data.parameter = tsv[2].split(",")
-			data.text = tsv[3].replace("\\n","\n")
+			data.text = tsv[2].replace("\\n","\n")
 
 
 func _load_enchant_data():
@@ -255,11 +251,11 @@ func _load_enchant_data():
 		for i in trans.size():
 			var tsv = trans[i].split("\t")
 			var id := int(tsv[0])
-			var data = _enchant_catalog[id] as CatalogData.EnchantmentData
+			var data := _enchant_catalog[id] as CatalogData.EnchantmentData
 			data.name = tsv[1]
 			data.ruby_name = data.name
-			if not data.parameter.empty():
-				data.parameter = tsv[2].split(",")
+			if not data.param_name.is_empty():
+				data.param_name = tsv[2].split(",")
 			data.text = tsv[3].replace("\\n","\n")
 
 

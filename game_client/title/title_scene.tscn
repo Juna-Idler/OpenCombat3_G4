@@ -55,4 +55,19 @@ theme_override_fonts/font = ExtResource("2_sye0i")
 theme_override_font_sizes/font_size = 64
 text = "START"
 
+[node name="LanguageOptionButton" type="OptionButton" parent="."]
+layout_mode = 1
+offset_right = 320.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource("2_sye0i")
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 2
+selected = 0
+popup/item_0/text = "日本語"
+popup/item_0/id = 0
+popup/item_1/text = "English"
+popup/item_1/id = 1
+
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="item_selected" from="LanguageOptionButton" to="." method="_on_language_option_button_item_selected"]

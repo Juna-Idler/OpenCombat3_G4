@@ -1,0 +1,4 @@
+0	VOID	
+1	INTEGER	
+2	STATS	P,H,B
+3	COLOR	NoColor,Red,Green,Blue

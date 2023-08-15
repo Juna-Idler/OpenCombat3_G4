@@ -1,1 +1,2 @@
-1	Reinforce	Reinforce	Stats	Before.  Add {Stats} to combat card. And remove this state.
+1	Reinforce	Stats	BEFORE: Add {Stats} to your combat card. This enchantment disappears.
+2	Rage Counter	X	PASSIVE; Each time you discard a card, +1.

@@ -1,3 +1,9 @@
-1	Reinforce	Reinforce	E	before  Add {E} effect to this card
-2	Rush	Rush		after  When superior,Inflict damage equal to half (rounded up) of the opponent's block.
-3	Charge	Charge	E	end  If you haven't taken damage this phase, add {E} to the next card you play
+1	Reinforce	A	BEFORE: Add {A} effect to this card
+2	Rush		AFTER: If you were attacking during Moment,Inflict damage to your opponent equal to half (rounded up) of the opponent's card's block.
+3	Charge	A	END: If no damage was taken during this phase,Enchant "{:Enhancement} ({A})" to itself.
+4	Isolation		MOMENT: Take away the initiative from both sides. You take 1 damage.
+5	Absorb	C,A	BEFORE: Discard a card of {C} color from your hand, and add "({A}) x the level of the discarded card" to this card. Draw one card.
+6	Blow away	N	AFTER: Bounce {N} cards from opponent's hand to the bottom of deck, opponent draw {N} cards.
+7	Attract	N	AFTER: Bounce {N} cards from your hand to the bottom of deck, draw {N} cards.
+8	Recycle		END: If this card's level is 2 or higher, send a copy of this card with half the stats (rounded up) and -1 level to the top of the deck.
+9	Anger Strike		BEFORE: Add the value of your enchantment "{:Rage Counter}" to this card's Hit. Set the value of your "{:Rage Counter}" to 0.

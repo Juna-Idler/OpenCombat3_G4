@@ -5,8 +5,10 @@ var _scene_changer : SceneChanger
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
-
+	var local := TranslationServer.get_locale()
+	if local == "en":
+		%LanguageOptionButton.selected = 1
+	
 
 
 func _initialize(changer : SceneChanger,_param : Array):
@@ -34,3 +36,7 @@ func _on_language_option_button_item_selected(index):
 
 	
 	pass # Replace with function body.
+
+
+func _on_button_settings_pressed():
+	$Settings.show()

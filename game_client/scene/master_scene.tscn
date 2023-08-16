@@ -10,7 +10,7 @@
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4xooh"]
 noise = SubResource("FastNoiseLite_sx6lv")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_kockr"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_87v5i"]
 shader = ExtResource("3_otrr6")
 shader_parameter/rate = null
 shader_parameter/invert = false
@@ -34,7 +34,7 @@ layer = 128
 [node name="SceneFader" type="TextureRect" parent="CanvasLayer"]
 unique_name_in_owner = true
 visible = false
-material = SubResource("ShaderMaterial_kockr")
+material = SubResource("ShaderMaterial_87v5i")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

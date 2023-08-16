@@ -67,6 +67,7 @@ visible = false
 mesh = SubResource("QuadMesh_omqhk")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="CombatPosition"]
+bus = &"SE"
 
 [node name="PlayedPosition" parent="." instance=ExtResource("2_qevd1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, -0.2, 0)

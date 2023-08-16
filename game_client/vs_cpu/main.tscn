@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://by1tfuimby7sp"]
+[gd_scene load_steps=7 format=3 uid="uid://by1tfuimby7sp"]
 
 [ext_resource type="Script" path="res://game_client/vs_cpu/main.gd" id="1_x7hgn"]
 [ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="1_yn0n3"]
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="3_xca0b"]
+[ext_resource type="PackedScene" uid="uid://cnc6sua8jiqfa" path="res://game_client/settings/settings.tscn" id="4_okodh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yt6cf"]
 content_margin_left = 40.0
@@ -90,5 +92,41 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 100
 text = "Go back"
 
+[node name="ControlSettings" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ButtonSettings" type="Button" parent="CanvasLayer/ControlSettings"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -128.0
+offset_bottom = 64.0
+grow_horizontal = 0
+theme_override_fonts/font = ExtResource("3_xca0b")
+theme_override_font_sizes/font_size = 24
+text = "SETTINGS"
+
+[node name="Settings" parent="CanvasLayer/ControlSettings" instance=ExtResource("4_okodh")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="ButtonSurrender" type="Button" parent="CanvasLayer/ControlSettings/Settings"]
+layout_mode = 1
+offset_right = 256.0
+offset_bottom = 64.0
+text = "Surrender"
+
 [connection signal="pressed" from="CanvasLayer/Control/ButtonRetry" to="." method="_on_button_game_over_pressed"]
 [connection signal="pressed" from="CanvasLayer/Control/ButtonGoback" to="." method="_on_button_game_over_2_pressed"]
+[connection signal="pressed" from="CanvasLayer/ControlSettings/ButtonSettings" to="." method="_on_button_settings_pressed"]
+[connection signal="pressed" from="CanvasLayer/ControlSettings/Settings/ButtonSurrender" to="." method="_on_button_surrender_pressed"]
+
+[editable path="CanvasLayer/ControlSettings/Settings"]

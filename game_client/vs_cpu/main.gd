@@ -25,9 +25,8 @@ func _process(_delta):
 
 func _initialize(changer : SceneChanger,_param : Array):
 	_scene_changer = changer
-	$CanvasLayer/Control/ButtonRetry.hide()
-	$CanvasLayer/Control/ButtonGoback.hide()
-	$CanvasLayer/Control/Label.hide()
+	$CanvasLayer/Control.hide()
+	%Settings.hide()
 	
 #	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
 	var pile : Array[int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,30,34,35,35]
@@ -45,7 +44,8 @@ func _initialize(changer : SceneChanger,_param : Array):
 	$match_scene.initialize(server,myself,rival,catalog,catalog)
 	if not $match_scene.performed.is_connected(on_match_scene_performed):
 		$match_scene.performed.connect(on_match_scene_performed)
-
+	if not $match_scene.ended.is_connected(on_match_scene_ended):
+		$match_scene.ended.connect(on_match_scene_ended)
 func _fade_in_finished():
 	server._send_ready()
 	pass
@@ -73,9 +73,9 @@ func on_match_scene_performed():
 	if $match_scene.phase != IGameServer.Phase.GAME_END:
 		myself.hand_area.set_playable(true)
 	else:
-		$CanvasLayer/Control/ButtonRetry.show()
-		$CanvasLayer/Control/ButtonGoback.show()
-		$CanvasLayer/Control/Label.show()
+		if $CanvasLayer/Control.visible:
+			return
+		$CanvasLayer/Control.show()
 		var mp : int = $match_scene.my_game_end_point
 		var rp : int = $match_scene.rival_game_end_point
 		
@@ -87,6 +87,11 @@ func on_match_scene_performed():
 			$CanvasLayer/Control/Label.text = "Draw %d:%d" % [mp,rp]
 			pass
 	
+func on_match_scene_ended(msg : String):
+		$CanvasLayer/Control.show()
+		
+		$CanvasLayer/Control/Label.text = "Game End:\n" + msg
+
 
 func _on_button_game_over_pressed():
 	_initialize(_scene_changer,[])
@@ -97,3 +102,13 @@ func _on_button_game_over_pressed():
 func _on_button_game_over_2_pressed():
 	_scene_changer.goto_scene("res://game_client/title/title_scene.tscn",[])
 	pass # Replace with function body.
+
+
+func _on_button_settings_pressed():
+	%Settings.show()
+
+
+func _on_button_surrender_pressed():
+	server._send_surrender()
+	%Settings.hide()
+

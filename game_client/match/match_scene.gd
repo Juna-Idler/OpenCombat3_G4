@@ -4,6 +4,7 @@ class_name MatchScene
 
 
 signal performed
+signal ended(msg : String)
 
 var _performing : bool
 
@@ -218,8 +219,9 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	performed.emit()
 	
 	
-func _on_recieved_end(_msg:String):
-	pass
+func _on_recieved_end(msg:String):
+	phase = IGameServer.Phase.GAME_END
+	ended.emit(msg)
 	
 func _on_recieved_complete_board(_data : IGameServer.CompleteData):
 	pass

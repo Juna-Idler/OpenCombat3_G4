@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://dci4g4cu74w6n"]
+[gd_scene load_steps=11 format=3 uid="uid://dci4g4cu74w6n"]
 
 [ext_resource type="Script" path="res://game_client/match/match_scene.gd" id="1_jvtjj"]
 [ext_resource type="PackedScene" uid="uid://cx8qc3q1f3xaj" path="res://game_client/match/card_list.tscn" id="2_4fyv0"]
 [ext_resource type="PackedScene" uid="uid://cjumv2ulywgfb" path="res://game_client/match/label_board.tscn" id="3_hyybm"]
-[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_62qcl"]
 [ext_resource type="PackedScene" uid="uid://urb0isujicis" path="res://game_client/match/log_display/log_display.tscn" id="4_dw15p"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="5_0yt3x"]
 [ext_resource type="PackedScene" uid="uid://baq8u4hrojdij" path="res://game_client/match/enchant_list_panel.tscn" id="7_vhnd4"]
@@ -12,7 +11,7 @@
 background_mode = 1
 background_color = Color(0.219608, 0.219608, 0.219608, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eqtx7"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ar1yq"]
 resource_local_to_scene = true
 transparency = 2
 alpha_scissor_threshold = 0.5
@@ -20,7 +19,7 @@ alpha_antialiasing_mode = 0
 shading_mode = 0
 billboard_mode = 1
 
-[sub_resource type="QuadMesh" id="QuadMesh_x28as"]
+[sub_resource type="QuadMesh" id="QuadMesh_dmpx4"]
 resource_local_to_scene = true
 size = Vector2(2, 1)
 
@@ -47,8 +46,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 visible = false
 
 [node name="LabelBoard" parent="Field" instance=ExtResource("3_hyybm")]
-material_override = SubResource("StandardMaterial3D_eqtx7")
-mesh = SubResource("QuadMesh_x28as")
+material_override = SubResource("StandardMaterial3D_ar1yq")
+mesh = SubResource("QuadMesh_dmpx4")
 label_settings = SubResource("LabelSettings_jsf2d")
 viewport_size = Vector2i(512, 256)
 board_size = Vector2(2, 1)
@@ -64,20 +63,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="ButtonSettings" type="Button" parent="CanvasLayer/Control"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -129.0
-offset_right = -1.0
-offset_bottom = 96.0
-grow_horizontal = 0
-theme_override_fonts/font = ExtResource("4_62qcl")
-theme_override_font_sizes/font_size = 20
-text = "設定"
 
 [node name="LogDisplayPanel" type="Control" parent="CanvasLayer/Control"]
 unique_name_in_owner = true

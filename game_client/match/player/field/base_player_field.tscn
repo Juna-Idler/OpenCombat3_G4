@@ -113,6 +113,7 @@ offset_bottom = -3.0
 grow_horizontal = 0
 grow_vertical = 0
 pivot_offset = Vector2(120, 20)
+auto_translate = false
 theme_override_styles/normal = SubResource("StyleBoxFlat_tfou3")
 text = "名前"
 label_settings = SubResource("LabelSettings_fvrkd")

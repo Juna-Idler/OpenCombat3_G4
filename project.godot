@@ -32,6 +32,10 @@ enabled=PackedStringArray("res://addons/custom_resource/plugin.cfg")
 
 import/blender/enabled=false
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://translation/translation.en.translation", "res://translation/translation.ja.translation")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

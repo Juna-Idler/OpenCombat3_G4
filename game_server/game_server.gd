@@ -39,6 +39,21 @@ class PrimaryData:
 		deck_regulation = dr
 		match_regulation = mr
 
+	func serialize() -> Dictionary:
+		return {
+			"md":my_deck_list,
+			"rd":rival_deck_list,
+			"mn":my_name,
+			"rn":rival_name,
+			"dr":deck_regulation.serialize(),
+			"mr":match_regulation.serialize(),
+		}
+	static func deserialize(dic : Dictionary) -> PrimaryData:
+		return PrimaryData.new(
+			dic["mn"],dic["md"],dic["rn"],dic["rd"],
+			RegulationData.DeckRegulation.deserialize(dic["rd"]),
+			RegulationData.MatchRegulation.deserialize(dic["mr"]))
+
 
 class FirstData:
 	class PlayerData:
@@ -55,6 +70,19 @@ class FirstData:
 			time = t
 			initial = i
 			start = s
+	
+		func serialize() -> Dictionary:
+			return {
+				"h":hand,
+				"l":life,
+				"t":time,
+				"ini":initial.map(func(v):return v.serialize()),
+				"e0":start.map(func(v):return v.serialize()),
+			}
+		static func deserialize(dic : Dictionary) -> PlayerData:
+			return PlayerData.new(dic["h"],dic["l"],dic["t"],
+					dic["ini"].map(func(v):return AbilityLog.deserialize(v)),
+					dic["e0"].map(func(v):return EffectLog.deserialize(v)))
 
 	var myself:PlayerData
 	var rival:PlayerData
@@ -62,6 +90,15 @@ class FirstData:
 	func _init(p1:PlayerData,p2:PlayerData):
 		myself = p1
 		rival = p2
+
+	func serialize() -> Dictionary:
+		return {
+			"m":myself.serialize(),
+			"r":rival.serialize(),
+		}
+	static func deserialize(dic : Dictionary) -> FirstData:
+		return FirstData.new(PlayerData.deserialize(dic["m"]),
+				PlayerData.deserialize(dic["r"]))
 
 
 class CombatData:
@@ -105,6 +142,34 @@ class CombatData:
 			damage = d
 			life = l
 			time = t
+			
+		func serialize() -> Dictionary:
+			return {
+				"h":hand,
+				"s":select,
+				"e1":before.map(func(v):return v.serialize()),
+				"com":comparison.serialize(),
+				"e2":moment.map(func(v):return v.serialize()),
+				"res":result.serialize(),
+				"e3":after.map(func(v):return v.serialize()),
+				"e4":end.map(func(v):return v.serialize()),
+				"sup":supply.serialize(),
+				"e0":start.map(func(v):return v.serialize()),
+				"d":damage,
+				"l":life,
+				"t":time,
+			}
+		static func deserialize(dic : Dictionary) -> PlayerData:
+			return PlayerData.new(dic["h"],dic["s"],
+					dic["e1"].map(func(v):return EffectLog.deserialize(v)),
+					EffectLog.deserialize(dic["com"]),
+					dic["e2"].map(func(v):return EffectLog.deserialize(v)),
+					EffectLog.deserialize(dic["res"]),
+					dic["e3"].map(func(v):return EffectLog.deserialize(v)),
+					dic["e4"].map(func(v):return EffectLog.deserialize(v)),
+					EffectLog.deserialize(dic["sup"]),
+					dic["e0"].map(func(v):return EffectLog.deserialize(v)),
+					dic["d"],dic["l"],dic["t"])
 
 	var myself:PlayerData
 	var rival:PlayerData
@@ -115,6 +180,17 @@ class CombatData:
 		myself = p1
 		rival = p2
 
+	func serialize() -> Dictionary:
+		return {
+			"rc":round_count,
+			"np":next_phase,
+			"m":myself.serialize(),
+			"r":rival.serialize(),
+		}
+	static func deserialize(dic : Dictionary) -> CombatData:
+		return CombatData.new(dic["rc"],dic["np"],
+				PlayerData.deserialize(dic["m"]),
+				PlayerData.deserialize(dic["r"]))
 
 class RecoveryData:
 	var round_count : int
@@ -141,6 +217,22 @@ class RecoveryData:
 			life = l
 			time = t
 
+		func serialize() -> Dictionary:
+			return {
+				"h":hand,
+				"s":select,
+				"e0":start.map(func(v):return v.serialize()),
+				"res":result.serialize(),
+				"d":damage,
+				"l":life,
+				"t":time,
+			}
+		static func deserialize(dic : Dictionary) -> PlayerData:
+			return PlayerData.new(dic["h"],dic["s"],
+					dic["e0"].map(func(v):return EffectLog.deserialize(v)),
+					EffectLog.deserialize(dic["res"]),
+					dic["d"],dic["l"],dic["t"])
+
 	var myself:PlayerData
 	var rival:PlayerData
 	
@@ -151,6 +243,18 @@ class RecoveryData:
 		myself = p1
 		rival = p2
 
+	func serialize() -> Dictionary:
+		return {
+			"rc":round_count,
+			"np":next_phase,
+			"rp":repeat,
+			"m":myself.serialize(),
+			"r":rival.serialize(),
+		}
+	static func deserialize(dic : Dictionary) -> RecoveryData:
+		return RecoveryData.new(dic["rc"],dic["np"],dic["rp"],
+				PlayerData.deserialize(dic["m"]),
+				PlayerData.deserialize(dic["r"]))
 
 enum EffectSourceType {
 	SYSTEM_PROCESS = 0,
@@ -170,7 +274,17 @@ class EffectLog:
 		id = i
 		priority = p
 		fragment = f
-
+		
+	func serialize() -> Dictionary:
+		return {
+			"t":type,
+			"i":id,
+			"p":priority,
+			"f":fragment.map(func(v):v.serialize()),
+		}
+	static func deserialize(dic : Dictionary) -> EffectLog:
+		return EffectLog.new(dic["t"],dic["i"],dic["p"],
+				dic["f"].map(func(v):return EffectFragment.deserialize(v)))
 
 class AbilityLog:
 	var ability_id : int
@@ -181,7 +295,16 @@ class AbilityLog:
 		ability_id = ai
 		card_id = ci
 		fragment = f
-	
+
+	func serialize() -> Dictionary:
+		return {
+			"i":ability_id,
+			"c":card_id,
+			"f":fragment.map(func(v):return v.serialize()),
+		}
+	static func deserialize(dic : Dictionary) -> AbilityLog:
+		return AbilityLog.new(dic["i"],dic["c"],
+				dic["f"].map(func(v):return EffectFragment.deserialize(v)))
 	
 
 enum EffectFragmentType {
@@ -217,6 +340,17 @@ class EffectFragment:
 		data = d
 		passive = p
 
+	func serialize() -> Dictionary:
+		return {
+			"t":type,
+			"o":opponent,
+			"d":data,
+			"p":passive.map(func(v):return v.serialize()),
+		}
+	static func deserialize(dic : Dictionary) -> EffectFragment:
+		return EffectFragment.new(dic["t"],dic["o"],dic["d"],
+				dic["p"].map(func(v):return PassiveLog.deserialize(v)))
+
 
 class PassiveLog:
 	var opponent : bool
@@ -228,6 +362,14 @@ class PassiveLog:
 		enchant_id = sid
 		parameter = p
 
+	func serialize() -> Dictionary:
+		return {
+			"o":opponent,
+			"i":enchant_id,
+			"p":parameter,
+		}
+	static func deserialize(dic : Dictionary) -> PassiveLog:
+		return PassiveLog.new(dic["o"],dic["i"],dic["p"])
 
 
  # 初期データ（このゲームのルールパラメータとかマッチング時に提出したお互いのデータ）

@@ -95,3 +95,8 @@ func _finish_timing(_timing : EffectTiming) -> void:
 	assert(false)
 	@warning_ignore("redundant_await")
 	await 0
+
+
+func _set_complete_board(_data : IGameServer.CompleteData.PlayerData):
+	pass
+	

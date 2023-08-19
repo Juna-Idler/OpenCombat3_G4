@@ -3,11 +3,25 @@ extends IGameServer
 class_name ReplayServer
 
 
+class Player:
+	var _deck_list : Array[MechanicsData.Card]
+
+	var hand:PackedInt32Array
+	var played:PackedInt32Array
+	var discard:PackedInt32Array
+	var stock:int
+	var life:int
+	var damage:int
+	var enchant:Dictionary # key : id, value : [data_id,opponent_source,param]
+	var additional_deck:Array[Array] # [data_id,opponent_source]
+	var card_change:Array[Dictionary] # 	
+
+
 var match_log : MatchLog
 
 var step : int
 
-var complete_board : Array # of IGameServer.CompleteData
+var complete_board : Array[IGameServer.CompleteData]
 
 var processor := GameProcessor.new()
 var player1 : ReplayPlayer
@@ -68,9 +82,10 @@ func _get_primary_data() -> PrimaryData:
 func _send_ready():
 	emit_signal("recieved_first_data",match_log.first_data)
 	step = 0
-func _send_combat_select(_round_count:int,_index:int,_hands_order:PoolIntArray = []):
+	
+func _send_combat_select(_round_count:int,_index:int,_hands_order:PackedInt32Array = []):
 	pass
-func _send_recovery_select(_round_count:int,_index:int,_hands_order:PoolIntArray = []):
+func _send_recovery_select(_round_count:int,_index:int,_hands_order:PackedInt32Array = []):
 	pass
 func _send_surrender():
 	pass

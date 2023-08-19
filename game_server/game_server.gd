@@ -15,7 +15,7 @@ signal recieved_combat_result(data : CombatData)
 signal recieved_recovery_result(data : RecoveryData)
 # func _on_GameServer_recieved_recovery_result(data:RecoveryData)->void:
 
-signal recieved_complete_board(data)
+signal recieved_complete_board(data : CompleteData)
 # func _on_GameServer_recieved_complete_board(data:CompleteData)->void:
 
 
@@ -280,7 +280,7 @@ class EffectLog:
 			"t":type,
 			"i":id,
 			"p":priority,
-			"f":fragment.map(func(v):v.serialize()),
+			"f":fragment.map(func(v):return v.serialize()),
 		}
 	static func deserialize(dic : Dictionary) -> EffectLog:
 		return EffectLog.new(dic["t"],dic["i"],dic["p"],
@@ -399,7 +399,7 @@ func _send_surrender():
 
 class CompleteData:
 	var round_count : int
-	var next_phase : int
+	var next_phase : Phase
 
 	class PlayerData:
 		var hand:PackedInt32Array
@@ -408,20 +408,20 @@ class CompleteData:
 		var stock:int
 		var life:int
 		var damage:int
-		var enchants:Array # of Array [id,data]
-		var affected_list:Array # CardData.Stats
-		var additional_deck:PackedInt32Array
+		var enchant:Dictionary # key : id, value : [data_id,opponent_source,param]
+		var additional_deck:Array[Array] # [data_id,opponent_source]
+		var card_change:Array[Dictionary] # 
 		
-		func _init(hc,pc,dc,s,l,d,st,al,ad):
+		func _init(hc,pc,dc,s,l,d,en,ad,cc):
 			hand = hc
 			played = pc
 			discard = dc
 			stock = s
 			life = l
 			damage = d
-			enchants = st
-			affected_list = al
+			enchant = en
 			additional_deck = ad
+			card_change = cc
 
 	var myself:PlayerData
 	var rival:PlayerData

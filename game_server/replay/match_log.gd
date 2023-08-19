@@ -92,7 +92,7 @@ func serialize() -> Dictionary:
 		"end":{"msg":end_msg,"time":end_time},
 		"pd":primary_data.serialize(),
 		"fd":first_data.serialize(),
-		"ud":update_data.map(func(v):v.serialize())
+		"ud":update_data.map(func(v):return v.serialize())
 	}
 
 	

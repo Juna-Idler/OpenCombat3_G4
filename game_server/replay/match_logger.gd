@@ -13,6 +13,7 @@ func _init():
 	pass
 
 func initialize(target_server : IGameServer):
+	terminalize()
 	server = target_server
 	server.recieved_end.connect(_on_GameServer_recieved_end)
 	server.recieved_first_data.connect(_on_GameServer_recieved_first_data)

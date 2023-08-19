@@ -1,0 +1,132 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdu1ybkgt5mki"]
+
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_0m5re"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wbww6"]
+bg_color = Color(0.25098, 0.25098, 0.25098, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="Theme" id="27"]
+default_font = ExtResource("1_0m5re")
+Button/styles/normal = SubResource("StyleBoxFlat_wbww6")
+
+[node name="Panel" type="Panel"]
+offset_right = 160.0
+offset_bottom = 256.0
+theme = SubResource("27")
+
+[node name="SettingButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 41.0
+grow_horizontal = 2
+text = "SETTINGS"
+
+[node name="HSliderSpeed" type="HSlider" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -72.0
+offset_top = 72.0
+offset_right = 72.0
+offset_bottom = 104.0
+grow_horizontal = 2
+max_value = 2.0
+step = 0.25
+value = 1.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="Label" type="Label" parent="HSliderSpeed"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -24.0
+offset_bottom = 4.0
+grow_horizontal = 2
+text = "GAME_SPEED"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="ButtonPause" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -72.0
+offset_top = 112.0
+offset_right = 72.0
+offset_bottom = 145.0
+grow_horizontal = 2
+toggle_mode = true
+text = "PAUSE"
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -104.0
+offset_right = 80.0
+grow_horizontal = 2
+grow_vertical = 0
+tabs_visible = false
+
+[node name="Auto" type="Panel" parent="TabContainer"]
+layout_mode = 2
+
+[node name="ButtonNoWait" type="Button" parent="TabContainer/Auto"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -20.0
+offset_right = 64.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+text = "NO_WAIT"
+
+[node name="Step" type="Panel" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Step"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 24.0
+offset_right = -8.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ButtonStepBack" type="Button" parent="TabContainer/Step/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "<<"
+
+[node name="ButtonStep" type="Button" parent="TabContainer/Step/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = ">>"

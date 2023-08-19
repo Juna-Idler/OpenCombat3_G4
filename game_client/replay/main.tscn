@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3 uid="uid://fl3ao8ergfyo"]
+
+[ext_resource type="Script" path="res://game_client/replay/main.gd" id="1_cgplh"]
+[ext_resource type="PackedScene" uid="uid://cdu1ybkgt5mki" path="res://game_client/replay/manipulator_ui.tscn" id="2_dooik"]
+[ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="2_wfbr5"]
+[ext_resource type="PackedScene" uid="uid://cnc6sua8jiqfa" path="res://game_client/settings/settings.tscn" id="4_3gi8p"]
+
+[node name="main" type="Node"]
+script = ExtResource("1_cgplh")
+
+[node name="match_scene" parent="." instance=ExtResource("2_wfbr5")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="ControlSettings" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="UI" parent="CanvasLayer/ControlSettings" instance=ExtResource("2_dooik")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_right = 0.0
+grow_horizontal = 0
+
+[node name="Settings" parent="CanvasLayer/ControlSettings" instance=ExtResource("4_3gi8p")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1

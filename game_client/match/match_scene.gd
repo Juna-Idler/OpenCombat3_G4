@@ -223,8 +223,6 @@ func _on_recieved_end(msg:String):
 	phase = IGameServer.Phase.GAME_END
 	ended.emit(msg)
 	
-func _on_recieved_complete_board(_data : IGameServer.CompleteData):
-	pass
 
 
 func perform_effect(my_log : Array[IGameServer.EffectLog],
@@ -296,3 +294,15 @@ func _on_request_enchant_list_view(enchantment : Dictionary):
 
 func _on_card_list_clicked():
 	%CardList.visible = false
+
+
+
+
+func _on_recieved_complete_board(data : IGameServer.CompleteData):
+	round_count = data.round_count
+	phase = data.next_phase
+#	recovery_repeat
+	
+	data.myself
+	pass
+

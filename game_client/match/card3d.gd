@@ -56,6 +56,7 @@ func initialize(id : int,cd : CatalogData.CardData,cn : String,
 	$SubViewport/CardFront.initialize(card_name,c,l,p,h,b,sk,pict,opponent)
 	$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
+
 func set_picture_texture():
 	$MeshInstance3D.material_override.albedo_texture = picture
 

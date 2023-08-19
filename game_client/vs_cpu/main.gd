@@ -2,7 +2,10 @@ extends SceneChanger.IScene
 
 var _scene_changer : SceneChanger
 
-var server := OfflineServer.new()
+var offline_server := OfflineServer.new()
+var logger := MatchLogger.new()
+
+var server : IGameServer = null
 var catalog := CardCatalog.new()
 
 const PlayablePlayerFieldScene := preload("res://game_client/match/player/field/playable_field.tscn")
@@ -11,6 +14,8 @@ const NonPlayablePlayerFieldScene := preload("res://game_client/match/player/fie
 
 var myself : PlayablePlayerField
 var rival : NonPlayablePlayerField
+
+
 
 
 func _ready():
@@ -40,12 +45,15 @@ func _initialize(changer : SceneChanger,_param : Array):
 	
 	rival = NonPlayablePlayerFieldScene.instantiate()
 	
-	server.initialize("",pile,ICpuCommander.ZeroCommander.new(),pile,d,m,catalog)
+	offline_server.initialize("",pile,ICpuCommander.ZeroCommander.new(),pile,d,m,catalog)
+	logger.initialize(offline_server)
+	server = logger
 	$match_scene.initialize(server,myself,rival,catalog,catalog)
 	if not $match_scene.performed.is_connected(on_match_scene_performed):
 		$match_scene.performed.connect(on_match_scene_performed)
 	if not $match_scene.ended.is_connected(on_match_scene_ended):
 		$match_scene.ended.connect(on_match_scene_ended)
+		
 func _fade_in_finished():
 	server._send_ready()
 	pass
@@ -67,7 +75,7 @@ func on_hand_selected(index : int,hand : Array[Card3D]):
 	pass
 
 func on_match_scene_performed():
-	if server.non_playable_recovery_phase:
+	if offline_server.non_playable_recovery_phase:
 		server._send_recovery_select($match_scene.round_count,-1)
 		return
 	if $match_scene.phase != IGameServer.Phase.GAME_END:
@@ -91,6 +99,9 @@ func on_match_scene_ended(msg : String):
 		$CanvasLayer/Control.show()
 		
 		$CanvasLayer/Control/Label.text = "Game End:\n" + msg
+		
+		var dic := logger.match_log.serialize()
+		print(JSON.stringify(dic," ",false))
 
 
 func _on_button_game_over_pressed():

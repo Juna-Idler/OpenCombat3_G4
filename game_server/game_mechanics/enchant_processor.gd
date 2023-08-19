@@ -37,6 +37,8 @@ class AngerCounter extends MechanicsData.BasicEnchantment:
 	
 	func _get_data_id() -> int:
 		return DATA_ID
+	func _get_parameter() -> Array:
+		return [_counter]
 	
 	func _init(match_id:int,param : Array,attached : IPlayer,_opponent : IPlayer):
 		super(match_id)

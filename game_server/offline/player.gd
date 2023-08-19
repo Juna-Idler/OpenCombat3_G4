@@ -265,10 +265,10 @@ func _create_enchant(factory : ICardFactory,data_id : int,param : Array,rival : 
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.CREATE_ENCHANTMENT,
 			opponent,[_enchants_counter,opponent_source,data_id,param],[])
 
-func _update_enchant(enchant : IEnchantment,param:Array,opponent : bool = false) -> IGameServer.EffectFragment:
+func _update_enchant(enchant : IEnchantment,opponent : bool = false) -> IGameServer.EffectFragment:
 	var id : int = _enchants[enchant]
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.UPDATE_ENCHANTMENT,
-			opponent,[id,param],[])
+			opponent,[id,enchant._get_parameter()],[])
 
 #	DELETE_ENCHANTMENT,	# enchant_id : int
 func _delete_enchant(enchant : IEnchantment,expired : bool = true,opponent : bool = false) -> IGameServer.EffectFragment:

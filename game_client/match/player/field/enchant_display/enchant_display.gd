@@ -36,6 +36,29 @@ func _ready():
 func initialize(log_display : LogDisplay,opponent : bool):
 	_log_display = log_display
 	_opponent_layout = opponent
+	reset()
+
+func reset():
+	_enchantments = {}
+	_deleted = []
+	for c in get_children():
+		remove_child(c)
+		c.queue_free()
+
+func set_enchantment(id : int,sd : CatalogData.EnchantmentData,param : Array):
+	var n := Enchant.new(id,sd,param,_opponent_layout)
+	_enchantments[id] = n
+	add_child(n.title_object)
+
+func align():
+	var size := _enchantments.size()
+	var start := size * -20 + 20
+	var count : int = 0
+	for v in _enchantments.values():
+		var e := v as Enchant
+		e.title_object.position.y = start + count * 40
+		count += 1
+
 
 func get_enchant_dictionary() -> Dictionary:
 	return _enchantments

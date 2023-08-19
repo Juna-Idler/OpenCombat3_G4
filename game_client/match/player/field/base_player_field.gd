@@ -20,6 +20,7 @@ var hand_area : HandArea
 var _match_scene : MatchScene = null
 
 var _deck : Array[Card3D]
+var _initial_deck_size : int
 
 var _hand : PackedInt32Array = [] # of int
 var _played : PackedInt32Array = [] # of int
@@ -61,7 +62,8 @@ func _initialize(match_scene : MatchScene,player_name:String,deck : PackedInt32A
 
 	for c in card_holder.get_children():
 		c.queue_free()
-	_deck.resize(deck.size())
+	_initial_deck_size = deck.size()
+	_deck.resize(_initial_deck_size)
 	var id : int = 0
 	var life : int = 0
 	for i in deck:
@@ -80,7 +82,6 @@ func _initialize(match_scene : MatchScene,player_name:String,deck : PackedInt32A
 	_hand = []
 	_played = []
 	_discard = []
-	_stock_count = _deck.size()
 	_life = life
 	_damage = 0
 
@@ -642,3 +643,76 @@ func _on_area_3d_input_event(_camera, event, _position, _normal, _shape_idx):
 		request_enchant_list_view.emit(_get_enchant_dictionary())
 		pass
 
+
+func _set_complete_board(data : IGameServer.CompleteData.PlayerData):
+	if not data.additional_deck.is_empty():
+		if _deck.size() < _initial_deck_size + data.additional_deck.size():
+			for i in range(_deck.size(),_initial_deck_size + data.additional_deck.size()):
+				var data_id := data.additional_deck[i - _initial_deck_size][0] as int
+				var opponent_source := data.additional_deck[i - _initial_deck_size][1] as bool
+				var catalog := _rival._get_catalog() if opponent_source else _catalog
+				var cd := catalog._get_card_data(data_id)
+				var c := Card3D_Scene.instantiate()
+				c.clicked.connect(_on_card_clicked)
+				_deck.append(c)
+				c.data = cd
+				card_holder.add_child(c)
+		else:
+			for i in range(_initial_deck_size + data.additional_deck.size(),_deck.size()):
+				card_holder.remove_child(_deck[i])
+				_deck[i].queue_free()
+			_deck.resize(_initial_deck_size + data.additional_deck.size())
+			
+	for i in data.card_change.size():
+		var cd := _deck[i].data
+		var pict = load(cd.image)
+		var stats : PackedInt32Array = [cd.power,cd.hit,cd.block]
+		var level := cd.level
+		for k in data.card_change[i]:
+			match k:
+				"power":
+					stats[0] = data.card_change[i]["power"]
+				"hit":
+					stats[1] = data.card_change[i]["hit"]
+				"block":
+					stats[2] = data.card_change[i]["block"]
+				"level":
+					level = data.card_change[i]["level"]
+		_deck[i].initialize(i,cd,cd.name,cd.color,level,stats[0],stats[1],stats[2],cd.skills,pict,_opponent_layout)
+	
+	enchant_display.reset()
+	for k in data.enchant:
+		var value := data.enchant[k] as Array
+		var d_id := value[0] as int
+		var opponent_source := value[1] as bool
+		var param := value[2] as Array
+		var catalog := _rival._get_catalog() if opponent_source else _catalog
+		enchant_display.set_enchant(k,catalog._get_enchantment_data(d_id),param)
+	enchant_display.align()
+
+	for c in _deck:
+		c.location = Card3D.CardLocation.STOCK
+		c.rotation.z = 0
+		c.set_ray_pickable(false)
+
+	_hand = data.hand.duplicate()
+	for i in data.hand:
+		var card := _deck[i]
+		card.location = Card3D.CardLocation.HAND
+		card.set_ray_pickable(true)
+	hand_area.set_cards_in_deck(data.hand,_deck)
+	
+	_played = data.played.duplicate()
+	for i in data.played.size():
+		var card := _deck[data.played[i]]
+		card.location = Card3D.CardLocation.PLAYED
+		var pos : Vector3 = $PlayedPosition.position
+		pos.z += 0.01 * i
+		card.position = pos
+		card.rotation.z = -PI/2
+		
+	_discard = data.discard.duplicate()
+	for i in data.discard:
+		var card := _deck[i]
+		card.location = Card3D.CardLocation.DISCARD
+		card.position = avatar_position.position

@@ -193,7 +193,7 @@ class IPlayer:
 		return null
 	
 #	UPDATE_ENCHANTMENT,	# [enchant_id : int,param : Array]
-	func _update_enchant(_enchant : IEnchantment,_param:Array,_opponent : bool = false) -> IGameServer.EffectFragment:
+	func _update_enchant(_enchant : IEnchantment,_opponent : bool = false) -> IGameServer.EffectFragment:
 		return null
 	
 #	DELETE_ENCHANTMENT,	# enchant_id : int
@@ -251,6 +251,8 @@ class BasicSkill extends ISkill:
 class IEnchantment extends IEffect:
 	func _get_data_id() -> int:
 		return -1
+	func _get_parameter() -> Array:
+		return []
 	
 	func _term() -> void:
 		return

@@ -186,6 +186,6 @@ class AngerBlow extends MechanicsData.BasicSkill:
 				stats[1] += ac._counter
 				ac._counter = 0
 				fragments.append(myself._change_combat_card_stats(stats,false))
-				fragments.append(myself._update_enchant(ac,[0],false))
+				fragments.append(myself._update_enchant(ac,false))
 		return SkillProcessor.create_log(_skill.index,PRIORITY,fragments)
 

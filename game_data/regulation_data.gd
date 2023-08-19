@@ -38,7 +38,17 @@ class DeckRegulation:
 		if p.size() != 5:
 			return null
 		return DeckRegulation.new(n,int(p[0]),int(p[1]),int(p[2]),int(p[3]),p[4])
-		
+	
+	func serialize() -> Dictionary:
+		return {
+			"n":name,
+			"cc":card_count,
+			"tc":total_cost,
+			"l2":level2_limit,
+			"l3":level3_limit,
+			"cp":card_pool_string(),
+		}
+	
 	func to_regulation_string() -> String:
 		return "%s/%s/%s/%s/%s" % [card_count,total_cost,level2_limit,level3_limit,card_pool_string()]
 
@@ -128,6 +138,15 @@ class MatchRegulation:
 	
 	func to_regulation_string() -> String:
 		return "%s/%s/%s/%s" % [hand_count,thinking_time,combat_time,recovery_time]
+
+	func serialize() -> Dictionary:
+		return {
+			"n":name,
+			"hc":hand_count,
+			"tt":thinking_time,
+			"ct":combat_time,
+			"rt":recovery_time
+		}
 
 	
 

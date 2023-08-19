@@ -42,9 +42,10 @@ func initialize(name:String,deck:PackedInt32Array,
 	match_regulation = m_regulation
 	
 	var factory := PlayerCardFactory.new(card_catalog)
+	var cpu_factory := PlayerCardFactory.new(card_catalog)
 	
 	_player = OfflinePlayer.new(factory,deck,m_regulation.hand_count,true)
-	_cpu_player = OfflinePlayer.new(factory,cpu_deck,m_regulation.hand_count,true)
+	_cpu_player = OfflinePlayer.new(cpu_factory,cpu_deck,m_regulation.hand_count,true)
 	
 
 func _get_primary_data() -> PrimaryData:

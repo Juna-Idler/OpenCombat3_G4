@@ -120,7 +120,7 @@ func _set_rival(rival : I_PlayerField) -> void:
 	_rival = rival
 
 func _set_first_data(data : IGameServer.FirstData.PlayerData) -> void:
-	_hand = data.hand
+	_hand = data.hand.duplicate()
 	_life = data.life
 	_stock_count -= _hand.size()
 	%LabelStockCount.text = str(_stock_count)
@@ -136,12 +136,9 @@ func _set_first_data(data : IGameServer.FirstData.PlayerData) -> void:
 
 func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	_playing_card =_deck[hand[select]]
-	hand.remove_at(select)
-	_hand = hand
-	var cards : Array[Card3D] = []
-	for h in _hand:
-		cards.append(_deck[h])
-	hand_area.set_cards(cards)
+	_hand = hand.duplicate()
+	_hand.remove_at(select)
+	hand_area.set_cards_in_deck(_hand,_deck)
 	
 	_playing_card.set_ray_pickable(false)
 	_playing_card.location = Card3D.CardLocation.COMBAT
@@ -228,11 +225,8 @@ func _combat_end() -> void:
 func _recovery_start(hand : PackedInt32Array,select : int) -> void:
 	if select < 0:
 		return
-	_hand = hand
-	var cards : Array[Card3D] = []
-	for h in _hand:
-		cards.append(_deck[h])
-	hand_area.set_cards(cards)
+	_hand = hand.duplicate()
+	hand_area.set_cards_in_deck(_hand,_deck)
 
 func _recovery_end():
 	if _damage <= 0:
@@ -644,7 +638,7 @@ func _on_area_3d_input_event(_camera, event, _position, _normal, _shape_idx):
 		pass
 
 
-func _set_complete_board(data : IGameServer.CompleteData.PlayerData):
+func deserialize(data : IGameServer.CompleteData.PlayerData):
 	if not data.additional_deck.is_empty():
 		if _deck.size() < _initial_deck_size + data.additional_deck.size():
 			for i in range(_deck.size(),_initial_deck_size + data.additional_deck.size()):
@@ -681,13 +675,13 @@ func _set_complete_board(data : IGameServer.CompleteData.PlayerData):
 		_deck[i].initialize(i,cd,cd.name,cd.color,level,stats[0],stats[1],stats[2],cd.skills,pict,_opponent_layout)
 	
 	enchant_display.reset()
-	for k in data.enchant:
-		var value := data.enchant[k] as Array
-		var d_id := value[0] as int
-		var opponent_source := value[1] as bool
-		var param := value[2] as Array
+	for e in data.enchant:
+		var id := e[0] as int
+		var d_id := e[1] as int
+		var opponent_source := e[2] as bool
+		var param := e[3] as Array
 		var catalog := _rival._get_catalog() if opponent_source else _catalog
-		enchant_display.set_enchant(k,catalog._get_enchantment_data(d_id),param)
+		enchant_display.set_enchant(id,catalog._get_enchantment_data(d_id),param)
 	enchant_display.align()
 
 	for c in _deck:
@@ -716,3 +710,36 @@ func _set_complete_board(data : IGameServer.CompleteData.PlayerData):
 		var card := _deck[i]
 		card.location = Card3D.CardLocation.DISCARD
 		card.position = avatar_position.position
+
+
+func serialize() -> IGameServer.CompleteData.PlayerData:
+	
+	var enchant_dictionary := _get_enchant_dictionary()
+	var enchant : Array[Array] = []
+	for k in enchant_dictionary:
+		var e := enchant_dictionary[k] as Enchant
+		enchant.append([k,e.data.id,e.from_opponent,e.param])
+	
+	var additional_deck : Array[Array] = []
+	if _deck.size() > _initial_deck_size:
+		for i in (_deck.size() - _initial_deck_size):
+			var card := _deck[_initial_deck_size + i]
+			additional_deck.append([card.data.id,card.from_opponent])
+
+	var card_change : Array[Dictionary] = []
+	for c in _deck:
+		var dic := {}
+		if c.power != c.data.power:
+			dic["power"] = c.power
+		if c.hit != c.data.hit:
+			dic["hit"] = c.hit
+		if c.block != c.data.block:
+			dic["block"] = c.block
+		if c.level != c.data.level:
+			dic["level"] = c.level
+		card_change.append(dic)
+	
+	return IGameServer.CompleteData.PlayerData.new(
+		_hand,_played,_discard,_stock_count,_life,_damage,enchant,additional_deck,card_change
+	)
+

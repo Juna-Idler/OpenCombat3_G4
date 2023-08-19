@@ -408,7 +408,7 @@ class CompleteData:
 		var stock:int
 		var life:int
 		var damage:int
-		var enchant:Dictionary # key : id, value : [data_id,opponent_source,param]
+		var enchant:Array[Array] # [id,data_id,opponent_source,param]
 		var additional_deck:Array[Array] # [data_id,opponent_source]
 		var card_change:Array[Dictionary] # 
 		

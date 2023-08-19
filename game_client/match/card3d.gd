@@ -19,6 +19,7 @@ var tween : Tween	#個別にキャンセル可能にするための固有Tween
 
 var id_in_deck : int
 var data : CatalogData.CardData
+var from_opponent : bool = false
 
 var location : CardLocation
 
@@ -39,9 +40,10 @@ var _click : bool = false
 
 func initialize(id : int,cd : CatalogData.CardData,cn : String,
 		c : CatalogData.CardColors,l : int,p : int,h : int,b : int,
-		sk : Array[CatalogData.CardSkill],pict : Texture2D,opponent : bool = false):
+		sk : Array[CatalogData.CardSkill],pict : Texture2D,opponent : bool = false,from_o : bool = false):
 	id_in_deck = id
 	data = cd
+	from_opponent = from_o
 	location = CardLocation.STOCK
 	
 	card_name = cn

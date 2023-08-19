@@ -66,9 +66,9 @@ func standby(p1 : MechanicsData.IPlayer,p2 : MechanicsData.IPlayer) -> IGameServ
 	_start_effect()
 	
 	return IGameServer.FirstData.new(
-			IGameServer.FirstData.PlayerData.new(player1._get_hand(),
+			IGameServer.FirstData.PlayerData.new(player1._get_hand().duplicate(),
 			player1._get_life(),-1,p1_initial,player1._start_effect_log_temporary()),
-			IGameServer.FirstData.PlayerData.new(player2._get_hand(),
+			IGameServer.FirstData.PlayerData.new(player2._get_hand().duplicate(),
 			player2._get_life(),-1,p2_initial,player2._start_effect_log_temporary()))
 
 

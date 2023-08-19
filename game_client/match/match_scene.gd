@@ -26,6 +26,9 @@ const phase_names : PackedStringArray = ["Game End","Combat","Recovery"]
 @onready var label_board = $Field/LabelBoard
 
 
+func is_performing() -> bool:
+	return _performing
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass

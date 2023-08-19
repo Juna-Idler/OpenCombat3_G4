@@ -21,6 +21,8 @@ func initialize(target_server : IGameServer):
 	server.recieved_recovery_result.connect(_on_GameServer_recieved_recovery_result)
 
 	match_log = MatchLog.new()
+	match_log.set_primary_data(server._get_primary_data())
+	
 
 func terminalize():
 	if server:
@@ -31,8 +33,6 @@ func terminalize():
 		server = null
 	
 
-
-#
 
 
 func _get_primary_data() -> PrimaryData:

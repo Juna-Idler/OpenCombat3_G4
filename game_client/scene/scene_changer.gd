@@ -12,8 +12,7 @@ func _init(master : MasterScene,f : ISceneFader,c : IScene):
 	_fader = f
 	_current_scene = c
 	
-	randomize()
-		
+
 
 func goto_scene(tscn_path : String,param : Array):
 	_fader.show()

@@ -7,13 +7,14 @@ class Enchant extends I_PlayerField.Enchant:
 	var title : String
 	var title_object : EnchantmentTitle = EnchantmentTitleScene.instantiate()
 
-	func _init(i,d,p,o):
+	func _init(i : int, d : CatalogData.EnchantmentData, p : Array, from_o : bool, ol : bool):
 		id = i
 		data = d
 		param = p
+		from_opponent = from_o
 		var p_str := Global.card_catalog.params_to_string(data.param_type,p)
 		title = data.name + ("" if p_str.is_empty() else "(" + p_str + ")" )
-		title_object.initialize(title,o)
+		title_object.initialize(title,ol)
 	
 	func change_parameter(p):
 		param = p
@@ -45,8 +46,8 @@ func reset():
 		remove_child(c)
 		c.queue_free()
 
-func set_enchantment(id : int,sd : CatalogData.EnchantmentData,param : Array):
-	var n := Enchant.new(id,sd,param,_opponent_layout)
+func set_enchantment(id : int,sd : CatalogData.EnchantmentData,param : Array,os : bool):
+	var n := Enchant.new(id,sd,param,os,_opponent_layout)
 	_enchantments[id] = n
 	add_child(n.title_object)
 
@@ -65,7 +66,7 @@ func get_enchant_dictionary() -> Dictionary:
 
 
 func create_enchantment(id : int,sd : CatalogData.EnchantmentData,param : Array,opponent : bool):
-	var n := Enchant.new(id,sd,param,_opponent_layout)
+	var n := Enchant.new(id,sd,param,opponent,_opponent_layout)
 	_enchantments[id] = n
 	add_child(n.title_object)
 

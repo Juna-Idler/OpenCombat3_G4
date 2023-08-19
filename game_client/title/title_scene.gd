@@ -40,3 +40,8 @@ func _on_language_option_button_item_selected(index):
 
 func _on_button_settings_pressed():
 	$Settings.show()
+
+
+func _on_button_2_pressed():
+	_scene_changer.goto_scene("res://game_client/replay/main.tscn",[])
+	pass # Replace with function body.

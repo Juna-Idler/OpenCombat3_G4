@@ -29,6 +29,7 @@ func _process(_delta):
 	pass
 
 func _initialize(changer : SceneChanger,_param : Array):
+#	seed(0)
 	_scene_changer = changer
 	$CanvasLayer/Control.hide()
 	%Settings.hide()
@@ -94,14 +95,15 @@ func on_match_scene_performed():
 		else:
 			$CanvasLayer/Control/Label.text = "Draw %d:%d" % [mp,rp]
 			pass
+		Global.replay_log.append(logger.match_log)
 	
 func on_match_scene_ended(msg : String):
 		$CanvasLayer/Control.show()
 		
 		$CanvasLayer/Control/Label.text = "Game End:\n" + msg
 		
-		var dic := logger.match_log.serialize()
-		print(JSON.stringify(dic," ",false))
+		Global.replay_log.append(logger.match_log)
+		
 
 
 func _on_button_game_over_pressed():

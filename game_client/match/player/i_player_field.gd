@@ -38,6 +38,7 @@ class Enchant:
 	var id : int
 	var data : CatalogData.EnchantmentData
 	var param : Array
+	var from_opponent : bool
 
 func _get_enchant_dictionary() -> Dictionary:	# key = id, value = Enchant
 	return {}

@@ -15,7 +15,7 @@ var _opponent_layout : bool
 @onready var card_holder = $CardHolder
 var hand_area : HandArea
 
-@onready var enchant_display = $CanvasLayer/Node2D/EnchantDisplay
+@onready var enchant_display := $CanvasLayer/Node2D/EnchantDisplay
 
 var _match_scene : MatchScene = null
 
@@ -374,8 +374,8 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			var opponent_source : bool = fragment.data[1]
 			var data_id : int = fragment.data[2]
 			var param = fragment.data[3]
-			var sd : CatalogData.EnchantmentData = (_rival._get_catalog()._get_enchant_data(data_id) if opponent_source
-					else _catalog._get_enchant_data(data_id))
+			var catalog := _rival._get_catalog() if opponent_source else _catalog
+			var sd : CatalogData.EnchantmentData = catalog._get_enchantment_data(data_id)
 			await enchant_display.create_enchantment(id,sd,param,fragment.opponent)
 			pass
 		IGameServer.EffectFragmentType.UPDATE_ENCHANTMENT:
@@ -637,8 +637,18 @@ func _on_area_3d_input_event(_camera, event, _position, _normal, _shape_idx):
 		request_enchant_list_view.emit(_get_enchant_dictionary())
 		pass
 
+func _set_complete_board(data : IGameServer.CompleteData.PlayerData):
+	deserialize(data)
+
 
 func deserialize(data : IGameServer.CompleteData.PlayerData):
+	_stock_count = data.stock
+	_life = data.life
+	_damage = data.damage
+	%LabelStockCount.text = str(_stock_count)
+	%Damage.visible = _damage > 0
+	%LabelDamage.text = str(_damage)
+	
 	if not data.additional_deck.is_empty():
 		if _deck.size() < _initial_deck_size + data.additional_deck.size():
 			for i in range(_deck.size(),_initial_deck_size + data.additional_deck.size()):
@@ -681,7 +691,7 @@ func deserialize(data : IGameServer.CompleteData.PlayerData):
 		var opponent_source := e[2] as bool
 		var param := e[3] as Array
 		var catalog := _rival._get_catalog() if opponent_source else _catalog
-		enchant_display.set_enchant(id,catalog._get_enchantment_data(d_id),param)
+		enchant_display.set_enchantment(id,catalog._get_enchantment_data(d_id),param,opponent_source)
 	enchant_display.align()
 
 	for c in _deck:
@@ -695,6 +705,7 @@ func deserialize(data : IGameServer.CompleteData.PlayerData):
 		card.location = Card3D.CardLocation.HAND
 		card.set_ray_pickable(true)
 	hand_area.set_cards_in_deck(data.hand,_deck)
+	hand_area.move_card(0.0)
 	
 	_played = data.played.duplicate()
 	for i in data.played.size():
@@ -710,6 +721,11 @@ func deserialize(data : IGameServer.CompleteData.PlayerData):
 		var card := _deck[i]
 		card.location = Card3D.CardLocation.DISCARD
 		card.position = avatar_position.position
+	
+	for c in _deck:
+		if c.location == Card3D.CardLocation.STOCK:
+			c.position = deck_position.position
+			c.rotation.y = PI
 
 
 func serialize() -> IGameServer.CompleteData.PlayerData:
@@ -740,6 +756,8 @@ func serialize() -> IGameServer.CompleteData.PlayerData:
 		card_change.append(dic)
 	
 	return IGameServer.CompleteData.PlayerData.new(
-		_hand,_played,_discard,_stock_count,_life,_damage,enchant,additional_deck,card_change
+		_hand.duplicate(),_played.duplicate(),_discard.duplicate(),
+		_stock_count,_life,_damage,
+		enchant,additional_deck,card_change
 	)
 

@@ -27,6 +27,13 @@ func step_forward() -> int:
 	step += 1
 	return step
 
+func step_backward() -> int:
+	if step <= 0:
+		step = 0
+		return 0
+	step -= 1
+	return step
+
 
 func emit_end_signal():
 	emit_signal("recieved_end",match_log.end_msg)

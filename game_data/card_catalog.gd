@@ -33,7 +33,7 @@ func get_max_card_id() -> int:
 func _get_card_data(id : int) -> CatalogData.CardData:
 	return _card_catalog[id]
 
-func _get_enchant_data(id : int) -> CatalogData.EnchantmentData:
+func _get_enchantment_data(id : int) -> CatalogData.EnchantmentData:
 	return _enchant_catalog[id]
 
 

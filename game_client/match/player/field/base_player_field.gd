@@ -641,7 +641,7 @@ func _set_complete_board(data : IGameServer.CompleteData.PlayerData):
 	deserialize(data)
 
 
-func deserialize(data : IGameServer.CompleteData.PlayerData):
+func deserialize(data : IGameServer.CompleteData.PlayerData,duration : float = 0.0):
 	_stock_count = data.stock
 	_life = data.life
 	_damage = data.damage
@@ -694,9 +694,10 @@ func deserialize(data : IGameServer.CompleteData.PlayerData):
 		enchant_display.set_enchantment(id,catalog._get_enchantment_data(d_id),param,opponent_source)
 	enchant_display.align()
 
+	var tween := create_tween().set_parallel()
+
 	for c in _deck:
 		c.location = Card3D.CardLocation.STOCK
-		c.rotation.z = 0
 		c.set_ray_pickable(false)
 
 	_hand = data.hand.duplicate()
@@ -705,7 +706,7 @@ func deserialize(data : IGameServer.CompleteData.PlayerData):
 		card.location = Card3D.CardLocation.HAND
 		card.set_ray_pickable(true)
 	hand_area.set_cards_in_deck(data.hand,_deck)
-	hand_area.move_card(0.0)
+	hand_area.move_card(duration)
 	
 	_played = data.played.duplicate()
 	for i in data.played.size():
@@ -713,20 +714,22 @@ func deserialize(data : IGameServer.CompleteData.PlayerData):
 		card.location = Card3D.CardLocation.PLAYED
 		var pos : Vector3 = $PlayedPosition.position
 		pos.z += 0.01 * i
-		card.position = pos
-		card.rotation.z = -PI/2
+		tween.tween_property(card,"position",pos,duration)
+		tween.tween_property(card,"rotation:z",-PI/2,duration)
 		
 	_discard = data.discard.duplicate()
 	for i in data.discard:
 		var card := _deck[i]
 		card.location = Card3D.CardLocation.DISCARD
-		card.position = avatar_position.position
+		tween.tween_property(card,"position",avatar_position.position,duration)
+		tween.tween_property(card,"rotation",Vector3.ZERO,duration)
 	
 	for c in _deck:
 		if c.location == Card3D.CardLocation.STOCK:
-			c.position = deck_position.position
-			c.rotation.y = PI
+			tween.tween_property(c,"position",deck_position.position,duration)
+			tween.tween_property(c,"rotation:y",PI,duration)
 
+	
 
 func serialize() -> IGameServer.CompleteData.PlayerData:
 	

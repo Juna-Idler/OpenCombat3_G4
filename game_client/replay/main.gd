@@ -159,15 +159,19 @@ func _on_button_no_wait_toggled(button_pressed):
 
 
 func _on_button_step_back_pressed():
-	var step := replay_server.step_backward()
-	_complete_board[step]
-	myself.deserialize(_complete_board[step].myself)
-	rival.deserialize(_complete_board[step].rival)
-	match_scene.round_count = _complete_board[step].round_count
-	match_scene.phase = _complete_board[step].next_phase
+	if not match_scene.is_performing():
+		match_scene._performing = true
+		var step := replay_server.step_backward()
+		_complete_board[step]
+		myself.deserialize(_complete_board[step].myself,0.5)
+		rival.deserialize(_complete_board[step].rival,0.5)
+		match_scene.round_count = _complete_board[step].round_count
+		match_scene.phase = _complete_board[step].next_phase
+		await get_tree().create_timer(0.5).timeout
+		match_scene._performing = false
 
 
 func _on_button_step_pressed():
-	performing_counter.start()
-	replay_server.step_forward()
-	pass # Replace with function body.
+	if not match_scene.is_performing():
+		performing_counter.start()
+		replay_server.step_forward()

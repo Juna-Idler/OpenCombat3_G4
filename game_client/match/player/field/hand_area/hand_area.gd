@@ -52,7 +52,7 @@ func move_card(sec : float):
 		var tween = create_tween()
 		tween.set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 		tween.tween_property(cards[i],"position",_hand_positions[i],sec)
-		tween.tween_property(cards[i],"rotation_degrees:y",0,sec)
+		tween.tween_property(cards[i],"rotation",Vector3.ZERO,sec)
 		cards[i].tween.kill()
 		cards[i].tween = tween
 

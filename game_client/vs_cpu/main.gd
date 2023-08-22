@@ -95,14 +95,15 @@ func on_match_scene_performed():
 		else:
 			$CanvasLayer/Control/Label.text = "Draw %d:%d" % [mp,rp]
 			pass
-		Global.replay_log.append(logger.match_log)
+		var time_string := "%.3f" % Time.get_unix_time_from_system()
+		MatchLogFile.save("user://replay/" + time_string + ".replay_log",logger.match_log)
 	
 func on_match_scene_ended(msg : String):
 		$CanvasLayer/Control.show()
 		
 		$CanvasLayer/Control/Label.text = "Game End:\n" + msg
-		
-		Global.replay_log.append(logger.match_log)
+		var time_string := "%.3f" % Time.get_unix_time_from_system()
+		MatchLogFile.save("user://replay/" + time_string + ".replay_log",logger.match_log)
 		
 
 

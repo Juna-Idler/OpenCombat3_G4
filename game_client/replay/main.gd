@@ -44,18 +44,18 @@ func _initialize(changer : SceneChanger,_param : Array):
 	_scene_changer = changer
 	%Settings.hide()
 	
-	var d := RegulationData.DeckRegulation.new("",27,30,2,1,"1-27")
-	var m := RegulationData.MatchRegulation.new("",4,60,10,5)
 	
 	myself = NonPlayablePlayerFieldScene.instantiate()
 	rival = NonPlayablePlayerFieldScene.instantiate()
 	
-	if Global.replay_log.is_empty():
+	var list := MatchLogFile.load_directory("user://replay")
+
+	if list.is_empty():
 		return
 	
 	_complete_board = []
 	
-	_match_log = Global.replay_log[0]
+	_match_log = list[0]
 	replay_server.initialize(_match_log)
 	match_scene.initialize(replay_server,myself,rival,catalog,catalog)
 	if not match_scene.performed.is_connected(on_match_scene_performed):
@@ -85,7 +85,7 @@ func on_match_scene_performed():
 	var p2 := rival.serialize()
 	var board := IGameServer.CompleteData.new(match_scene.round_count,match_scene.phase,p1,p2)
 
-	duration_last_performing = (performing_counter.wait_time - performing_counter.time_left) * 1000
+	duration_last_performing = int((performing_counter.wait_time - performing_counter.time_left) * 1000)
 	if replay_server.step == performing_durations.size():
 		performing_durations.append(duration_last_performing)
 		_complete_board.append(board)
@@ -120,7 +120,7 @@ func start_auto_replay():
 
 
 	
-func on_match_scene_ended(msg : String):
+func on_match_scene_ended(_msg : String):
 	pass
 
 
@@ -162,7 +162,6 @@ func _on_button_step_back_pressed():
 	if not match_scene.is_performing():
 		match_scene._performing = true
 		var step := replay_server.step_backward()
-		_complete_board[step]
 		myself.deserialize(_complete_board[step].myself,0.5)
 		rival.deserialize(_complete_board[step].rival,0.5)
 		match_scene.round_count = _complete_board[step].round_count

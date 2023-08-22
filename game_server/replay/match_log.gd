@@ -102,5 +102,5 @@ func deserialize(dic : Dictionary) -> void:
 	end_time = dic["end"]["time"]
 	primary_data = IGameServer.PrimaryData.deserialize(dic["pd"])
 	first_data = IGameServer.FirstData.deserialize(dic["fd"])
-	update_data = dic["ud"].map(func(v):return TimedUpdateData.deserialize(v))
+	update_data.assign(dic["ud"].map(func(v):return TimedUpdateData.deserialize(v)))
 

@@ -49,6 +49,11 @@ class DeckRegulation:
 			"cp":card_pool_string(),
 		}
 	
+	static func deserialize(data : Dictionary) -> DeckRegulation:
+		return DeckRegulation.new(data["n"],data["cc"],data["tc"],
+				data["l2"],data["l3"],data["cp"])
+		
+	
 	func to_regulation_string() -> String:
 		return "%s/%s/%s/%s/%s" % [card_count,total_cost,level2_limit,level3_limit,card_pool_string()]
 
@@ -147,6 +152,9 @@ class MatchRegulation:
 			"ct":combat_time,
 			"rt":recovery_time
 		}
-
+		
+	static func deserialize(data : Dictionary) -> MatchRegulation:
+		return MatchRegulation.new(data["n"],data["hc"],data["tt"],data["ct"],data["rt"])
+		
 	
 

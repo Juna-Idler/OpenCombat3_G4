@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://fl3ao8ergfyo"]
+[gd_scene load_steps=8 format=3 uid="uid://fl3ao8ergfyo"]
 
 [ext_resource type="Script" path="res://game_client/replay/main.gd" id="1_cgplh"]
 [ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="2_wfbr5"]
@@ -15,6 +15,9 @@ corner_radius_bottom_left = 4
 [sub_resource type="Theme" id="27"]
 default_font = ExtResource("3_8f1e2")
 Button/styles/normal = SubResource("StyleBoxFlat_wbww6")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c7e2"]
+bg_color = Color(0, 0, 0, 1)
 
 [node name="main" type="Node"]
 script = ExtResource("1_cgplh")
@@ -170,6 +173,41 @@ offset_right = 256.0
 offset_bottom = 64.0
 text = "EXIT"
 
+[node name="CanvasLayerMenu" type="CanvasLayer" parent="."]
+layer = 101
+
+[node name="Panel" type="Panel" parent="CanvasLayerMenu"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_5c7e2")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayerMenu/Panel"]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_right = 320.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayerMenu/Panel/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="ButtonBack" type="Button" parent="CanvasLayerMenu/Panel"]
+layout_mode = 0
+offset_right = 192.0
+offset_bottom = 64.0
+text = "BACK"
+
 [node name="TimerPerformingCounter" type="Timer" parent="."]
 wait_time = 10000.0
 
@@ -183,6 +221,7 @@ one_shot = true
 [connection signal="pressed" from="CanvasLayer/ControlSettings/UI/TabContainer/Step/HBoxContainer/ButtonStepBack" to="." method="_on_button_step_back_pressed"]
 [connection signal="pressed" from="CanvasLayer/ControlSettings/UI/TabContainer/Step/HBoxContainer/ButtonStep" to="." method="_on_button_step_pressed"]
 [connection signal="pressed" from="CanvasLayer/ControlSettings/Settings/ButtonExit" to="." method="_on_button_exit_pressed"]
+[connection signal="pressed" from="CanvasLayerMenu/Panel/ButtonBack" to="." method="_on_button_back_pressed"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 
 [editable path="CanvasLayer/ControlSettings/Settings"]

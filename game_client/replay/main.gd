@@ -8,6 +8,8 @@ var catalog := CardCatalog.new()
 
 const NonPlayablePlayerFieldScene := preload("res://game_client/match/player/field/non_playable_field.tscn")
 
+const ReplayLabel := preload("res://game_client/replay/replay_label.tscn")
+
 @onready var match_scene : MatchScene = $match_scene
 
 
@@ -22,13 +24,13 @@ var _complete_board : Array[IGameServer.CompleteData]
 enum ReplayMode {NONE,AUTO,NO_WAIT,STEP}
 var replay_mode : ReplayMode = ReplayMode.NONE
 
-var time_start_perform : int
 var duration_last_performing : int
 var performing_durations : Array = []
 
 @onready var performing_counter : Timer = $TimerPerformingCounter
 @onready var timer : Timer = $Timer
 
+@onready var v_box_container : VBoxContainer = %VBoxContainer
 
 func _ready():
 	pass
@@ -42,21 +44,26 @@ func _process(_delta):
 
 func _initialize(changer : SceneChanger,_param : Array):
 	_scene_changer = changer
-	%Settings.hide()
-	
-	
-	myself = NonPlayablePlayerFieldScene.instantiate()
-	rival = NonPlayablePlayerFieldScene.instantiate()
 	
 	var list := MatchLogFile.load_directory("user://replay")
+	for l in list:
+		var label := ReplayLabel.instantiate()
+		label.initialize(l,"title")
+		label.pressed.connect(func():
+			replay_start(l)
+			)
+		v_box_container.add_child(label)
 
-	if list.is_empty():
-		return
-	
+
+func replay_start(log : MatchLog):
+	duration_last_performing = 0
+	performing_durations = []
 	_complete_board = []
+	_match_log = log
 	
-	_match_log = list[0]
 	replay_server.initialize(_match_log)
+	myself = NonPlayablePlayerFieldScene.instantiate()
+	rival = NonPlayablePlayerFieldScene.instantiate()
 	match_scene.initialize(replay_server,myself,rival,catalog,catalog)
 	if not match_scene.performed.is_connected(on_match_scene_performed):
 		match_scene.performed.connect(on_match_scene_performed)
@@ -64,12 +71,24 @@ func _initialize(changer : SceneChanger,_param : Array):
 		match_scene.ended.connect(on_match_scene_ended)
 	
 	replay_mode = ReplayMode.AUTO
-
+	%Settings.hide()
+	timer.stop()
 		
-func _fade_in_finished():
+	var tween := create_tween()
+	tween.tween_property($CanvasLayerMenu/Panel,"modulate:a",0.0,0.5)
+	await tween.finished
+	$CanvasLayerMenu.hide()
+	
 	performing_counter.start()
 	replay_server._send_ready()
+	
+
+func _fade_in_finished():
 	pass
+
+func _terminalize():
+	pass
+
 
 func _on_timer_timeout():
 	if replay_mode == ReplayMode.AUTO and\
@@ -130,8 +149,12 @@ func _on_setting_button_pressed():
 	pass # Replace with function body.
 
 func _on_button_exit_pressed():
-	_scene_changer.goto_scene("res://game_client/title/title_scene.tscn",[])
-	pass # Replace with function body.
+	$CanvasLayerMenu.show()
+	var tween := create_tween()
+	tween.tween_property($CanvasLayerMenu/Panel,"modulate:a",1.0,0.5)
+	await tween.finished
+	match_scene.terminalize()
+
 
 func _on_h_slider_speed_value_changed(value):
 	Engine.time_scale = value
@@ -174,3 +197,8 @@ func _on_button_step_pressed():
 	if not match_scene.is_performing():
 		performing_counter.start()
 		replay_server.step_forward()
+
+
+func _on_button_back_pressed():
+	_scene_changer.goto_scene("res://game_client/title/title_scene.tscn",[])
+	pass # Replace with function body.

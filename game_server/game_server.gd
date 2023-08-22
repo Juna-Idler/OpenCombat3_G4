@@ -80,8 +80,8 @@ class FirstData:
 				"e0":start.map(func(v):return v.serialize()),
 			}
 		static func deserialize(dic : Dictionary) -> PlayerData:
-			var ini : Array[AbilityLog]
-			var e0 : Array[EffectLog]
+			var ini : Array[AbilityLog] = []
+			var e0 : Array[EffectLog] = []
 			ini.assign(dic["ini"].map(func(v):return AbilityLog.deserialize(v)))
 			e0.assign(dic["e0"].map(func(v):return EffectLog.deserialize(v)))
 			return PlayerData.new(dic["h"],dic["l"],dic["t"],ini,e0)
@@ -162,11 +162,11 @@ class CombatData:
 				"t":time,
 			}
 		static func deserialize(dic : Dictionary) -> PlayerData:
-			var e1 : Array[EffectLog]
-			var e2 : Array[EffectLog]
-			var e3 : Array[EffectLog]
-			var e4 : Array[EffectLog]
-			var e0 : Array[EffectLog]
+			var e1 : Array[EffectLog] = []
+			var e2 : Array[EffectLog] = []
+			var e3 : Array[EffectLog] = []
+			var e4 : Array[EffectLog] = []
+			var e0 : Array[EffectLog] = []
 			e1.assign(dic["e1"].map(func(v):return EffectLog.deserialize(v)))
 			e2.assign(dic["e2"].map(func(v):return EffectLog.deserialize(v)))
 			e3.assign(dic["e3"].map(func(v):return EffectLog.deserialize(v)))
@@ -241,8 +241,10 @@ class RecoveryData:
 				"t":time,
 			}
 		static func deserialize(dic : Dictionary) -> PlayerData:
+			var e0 : Array[EffectLog] = []
+			e0.assign(dic["e0"].map(func(v):return EffectLog.deserialize(v))) 
 			return PlayerData.new(dic["h"],dic["s"],
-					dic["e0"].map(func(v):return EffectLog.deserialize(v)),
+					e0,
 					EffectLog.deserialize(dic["res"]),
 					dic["d"],dic["l"],dic["t"])
 
@@ -296,7 +298,7 @@ class EffectLog:
 			"f":fragment.map(func(v):return v.serialize()),
 		}
 	static func deserialize(dic : Dictionary) -> EffectLog:
-		var f : Array[EffectFragment]
+		var f : Array[EffectFragment] = []
 		f.assign(dic["f"].map(func(v):return EffectFragment.deserialize(v)))
 		return EffectLog.new(dic["t"],dic["i"],dic["p"],f)
 
@@ -317,7 +319,7 @@ class AbilityLog:
 			"f":fragment.map(func(v):return v.serialize()),
 		}
 	static func deserialize(dic : Dictionary) -> AbilityLog:
-		var f : Array[EffectFragment]
+		var f : Array[EffectFragment] = []
 		f.assign(dic["f"].map(func(v):return EffectFragment.deserialize(v)))
 		return AbilityLog.new(dic["i"],dic["c"],f)
 	
@@ -363,7 +365,7 @@ class EffectFragment:
 			"p":passive.map(func(v):return v.serialize()),
 		}
 	static func deserialize(dic : Dictionary) -> EffectFragment:
-		var p : Array[PassiveLog]
+		var p : Array[PassiveLog] = []
 		p.assign(dic["p"].map(func(v):return PassiveLog.deserialize(v)))
 		return EffectFragment.new(dic["t"],dic["o"],dic["d"],p)
 

@@ -31,6 +31,8 @@ func is_performing() -> bool:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	$Field.visible = false
+	$CanvasLayer.visible = false
 	pass
 
 
@@ -42,6 +44,9 @@ func initialize(server : IGameServer,
 		myself : I_PlayerField,rival : I_PlayerField,
 		my_catalog : I_CardCatalog,rival_catalog : I_CardCatalog):
 	terminalize()
+	$Field.visible = true
+	$CanvasLayer.visible = true
+	
 	_game_server = server
 	_game_server.recieved_first_data.connect(_on_recieved_first_data)
 	_game_server.recieved_combat_result.connect(_on_recieved_combat_result)
@@ -76,6 +81,9 @@ func initialize(server : IGameServer,
 
 
 func terminalize():
+	if _performing:
+		await performed
+	
 	if _game_server:
 		_game_server.recieved_first_data.disconnect(_on_recieved_first_data)
 		_game_server.recieved_combat_result.disconnect(_on_recieved_combat_result)
@@ -97,6 +105,8 @@ func terminalize():
 		_rival.queue_free()
 		_rival = null
 
+	$Field.visible = false
+	$CanvasLayer.visible = false
 
 func _on_recieved_first_data(data : IGameServer.FirstData):
 	_performing = true

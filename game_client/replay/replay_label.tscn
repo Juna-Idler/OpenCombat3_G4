@@ -1,0 +1,90 @@
+[gd_scene load_steps=7 format=3 uid="uid://c1t4l2jrkuedp"]
+
+[ext_resource type="Script" path="res://game_client/replay/replay_label.gd" id="1_c8a0q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6avbq"]
+bg_color = Color(0.12549, 0.12549, 0.12549, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0fytv"]
+bg_color = Color(0.25098, 0.25098, 0.25098, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="LabelSettings" id="LabelSettings_btmf1"]
+font_size = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_8gpji"]
+font_size = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_fn5vh"]
+font_size = 20
+
+[node name="ReplayLabel" type="Button"]
+custom_minimum_size = Vector2(0, 128)
+offset_right = 512.0
+offset_bottom = 128.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_6avbq")
+theme_override_styles/hover = SubResource("StyleBoxFlat_0fytv")
+theme_override_styles/focus = SubResource("StyleBoxFlat_0fytv")
+script = ExtResource("1_c8a0q")
+
+[node name="LabelPlayer1" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -30.0
+offset_right = 256.0
+offset_bottom = -4.0
+grow_vertical = 0
+text = "プレイヤー"
+label_settings = SubResource("LabelSettings_btmf1")
+vertical_alignment = 1
+
+[node name="LabelPlayer2" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -256.0
+offset_top = -30.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "プレイヤー"
+label_settings = SubResource("LabelSettings_8gpji")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="LabelTitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 4.0
+offset_bottom = 30.0
+grow_horizontal = 2
+text = "Title"
+label_settings = SubResource("LabelSettings_fn5vh")
+horizontal_alignment = 1
+vertical_alignment = 1

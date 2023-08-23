@@ -60,7 +60,15 @@ func replay_start(log : MatchLog):
 	performing_durations = []
 	_complete_board = []
 	_match_log = log
+	replay_mode = ReplayMode.AUTO
+	%ButtonNoWait.set_pressed_no_signal(false)
+	%ButtonPause.set_pressed_no_signal(false)
+	%TabContainer.current_tab = 0
+	%HSliderSpeed.value = 1.0
+	%Settings.hide()
+	timer.stop()
 	
+	$CanvasLayerMenu/InputShutter.show()
 	replay_server.initialize(_match_log)
 	myself = NonPlayablePlayerFieldScene.instantiate()
 	rival = NonPlayablePlayerFieldScene.instantiate()
@@ -70,10 +78,6 @@ func replay_start(log : MatchLog):
 	if not match_scene.ended.is_connected(on_match_scene_ended):
 		match_scene.ended.connect(on_match_scene_ended)
 	
-	replay_mode = ReplayMode.AUTO
-	%Settings.hide()
-	timer.stop()
-		
 	var tween := create_tween()
 	tween.tween_property($CanvasLayerMenu/Panel,"modulate:a",0.0,0.5)
 	await tween.finished
@@ -124,12 +128,12 @@ func start_auto_replay():
 				if step > 0:
 					duration -= _match_log.update_data[step-1].time
 				duration -= performing_durations[step]
-				timer.start(0.01 if duration <= 0 else duration / 1000.0)
+				timer.start(0.1 if duration <= 0 else duration / 1000.0)
 			else:
 				if _match_log.end_time > 0:
 					var duration = _match_log.end_time - _match_log.update_data.back().time
 					duration -= duration_last_performing
-					timer.start(0.01 if duration <= 0 else duration / 1000.0)
+					timer.start(0.1 if duration <= 0 else duration / 1000.0)
 		ReplayMode.NO_WAIT:
 			performing_counter.start()
 			replay_server.step_forward()
@@ -150,10 +154,18 @@ func _on_setting_button_pressed():
 
 func _on_button_exit_pressed():
 	$CanvasLayerMenu.show()
+	$CanvasLayerMenu/InputShutter.show()
+	replay_mode = ReplayMode.NONE
+	timer.stop()
+	if match_scene.is_performing():
+		await match_scene.performed
+		match_scene.terminalize()
+	Engine.time_scale = 1.0
+
 	var tween := create_tween()
 	tween.tween_property($CanvasLayerMenu/Panel,"modulate:a",1.0,0.5)
 	await tween.finished
-	match_scene.terminalize()
+	$CanvasLayerMenu/InputShutter.hide()
 
 
 func _on_h_slider_speed_value_changed(value):

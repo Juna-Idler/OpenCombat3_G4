@@ -208,6 +208,15 @@ offset_right = 192.0
 offset_bottom = 64.0
 text = "BACK"
 
+[node name="InputShutter" type="Control" parent="CanvasLayerMenu"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="TimerPerformingCounter" type="Timer" parent="."]
 wait_time = 10000.0
 

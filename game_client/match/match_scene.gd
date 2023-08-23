@@ -81,9 +81,6 @@ func initialize(server : IGameServer,
 
 
 func terminalize():
-	if _performing:
-		await performed
-	
 	if _game_server:
 		_game_server.recieved_first_data.disconnect(_on_recieved_first_data)
 		_game_server.recieved_combat_result.disconnect(_on_recieved_combat_result)
@@ -175,7 +172,7 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	
 	_myself._combat_end()
 	_rival._combat_end()
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(1.0).timeout
 
 	log_display.append_combat_supply_effect()
 	var duration := maxf(_myself._perform_simultaneous_supply(data.myself.supply,0.5),

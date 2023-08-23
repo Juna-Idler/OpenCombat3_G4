@@ -166,6 +166,7 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	tween.tween_property(_playing_card,"position",$CombatPosition.position,0.5)
 	hand_area.move_card(0.5)
 	tween.tween_property(_playing_card,"rotation_degrees:y",180.0,0.25).set_ease(Tween.EASE_IN)
+#	tween.tween_callback(_playing_card.set_picture_texture)
 	await tween.finished
 	
 	_playing_card.set_picture_texture()

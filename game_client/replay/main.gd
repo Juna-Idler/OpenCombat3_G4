@@ -64,7 +64,7 @@ func replay_start(log : MatchLog):
 	%ButtonNoWait.set_pressed_no_signal(false)
 	%ButtonPause.set_pressed_no_signal(false)
 	%TabContainer.current_tab = 0
-	%HSliderSpeed.value = 1.0
+	%HSliderSpeed.value = 0.0
 	%Settings.hide()
 	timer.stop()
 	
@@ -128,12 +128,12 @@ func start_auto_replay():
 				if step > 0:
 					duration -= _match_log.update_data[step-1].time
 				duration -= performing_durations[step]
-				timer.start(0.1 if duration <= 0 else duration / 1000.0)
+				timer.start(0.01 if duration <= 0 else duration / 1000.0)
 			else:
 				if _match_log.end_time > 0:
 					var duration = _match_log.end_time - _match_log.update_data.back().time
 					duration -= duration_last_performing
-					timer.start(0.1 if duration <= 0 else duration / 1000.0)
+					timer.start(0.01 if duration <= 0 else duration / 1000.0)
 		ReplayMode.NO_WAIT:
 			performing_counter.start()
 			replay_server.step_forward()
@@ -169,7 +169,7 @@ func _on_button_exit_pressed():
 
 
 func _on_h_slider_speed_value_changed(value):
-	Engine.time_scale = value
+	Engine.time_scale = 2.0 ** value
 	pass # Replace with function body.
 
 

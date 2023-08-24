@@ -68,9 +68,9 @@ offset_top = 72.0
 offset_right = 72.0
 offset_bottom = 104.0
 grow_horizontal = 2
+min_value = -2.0
 max_value = 2.0
-step = 0.25
-value = 1.0
+step = 0.5
 tick_count = 5
 ticks_on_borders = true
 

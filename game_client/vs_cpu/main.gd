@@ -46,7 +46,7 @@ func _initialize(changer : SceneChanger,_param : Array):
 	
 	rival = NonPlayablePlayerFieldScene.instantiate()
 	
-	offline_server.initialize("",pile,ICpuCommander.ZeroCommander.new(),pile,d,m,catalog)
+	offline_server.initialize(Global.game_settings.player_name,pile,ICpuCommander.ZeroCommander.new(),pile,d,m,catalog)
 	logger.initialize(offline_server)
 	server = logger
 	$match_scene.initialize(server,myself,rival,catalog,catalog)

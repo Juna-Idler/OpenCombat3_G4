@@ -4,10 +4,12 @@ extends Panel
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-
+	$LineEditName.text = Global.game_settings.player_name
+	%LineEditSaveDir.text =  OS.get_user_data_dir()
 	set_sound("Master")
 	set_sound("BGM")
 	set_sound("SE")
+	
 	
 func set_sound(bus_name:String):
 	var idx := AudioServer.get_bus_index(bus_name)
@@ -51,3 +53,11 @@ func _on_check_button_se_toggled(button_pressed):
 
 func _on_button_back_pressed():
 	hide()
+
+
+func _on_button_save_pressed():
+	Global.game_settings.save_config()
+
+
+func _on_line_edit_name_text_changed(new_text):
+	Global.game_settings.player_name = new_text

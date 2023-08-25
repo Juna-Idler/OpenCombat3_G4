@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bpf65cofrvm0s" path="res://game_client/match/player/field/played_position.tscn" id="2_qevd1"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="3_nn8jw"]
 [ext_resource type="PackedScene" uid="uid://buq07v2a7onpv" path="res://game_client/match/player/field/enchant_display/enchant_display.tscn" id="4_lhaqf"]
-[ext_resource type="PackedScene" uid="uid://bulsq8u2pvsua" path="res://game_client/match/player/field/conbat_stats.tscn" id="5_hwcnp"]
+[ext_resource type="PackedScene" uid="uid://bulsq8u2pvsua" path="res://game_client/match/player/field/combat_stats.tscn" id="5_hwcnp"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_omqhk"]
 size = Vector2(1, 1.5)

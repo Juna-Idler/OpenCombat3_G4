@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cnc6sua8jiqfa"]
+[gd_scene load_steps=14 format=3 uid="uid://cnc6sua8jiqfa"]
 
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_e1gee"]
 [ext_resource type="Script" path="res://game_client/settings/settings.gd" id="2_db558"]
@@ -58,7 +58,30 @@ HSlider/icons/tick = SubResource("GradientTexture2D_pvvud")
 HSlider/styles/grabber_area = SubResource("StyleBoxFlat_2roji")
 HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_2roji")
 HSlider/styles/slider = SubResource("StyleBoxFlat_klv8w")
+Label/fonts/font = ExtResource("1_e1gee")
+LineEdit/font_sizes/font_size = 20
+LineEdit/fonts/font = ExtResource("1_e1gee")
 Panel/styles/panel = SubResource("StyleBoxFlat_687wh")
+
+[sub_resource type="LabelSettings" id="LabelSettings_pohqh"]
+font = ExtResource("1_e1gee")
+font_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pomst"]
+content_margin_left = 4.0
+content_margin_right = 4.0
+bg_color = Color(0.12549, 0.12549, 0.12549, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="LabelSettings" id="LabelSettings_vy62w"]
+font_size = 24
 
 [node name="Settings" type="Panel"]
 anchors_preset = 15
@@ -80,6 +103,29 @@ offset_right = -8.0
 offset_bottom = 72.0
 grow_horizontal = 0
 text = "BACK"
+
+[node name="LineEditName" type="LineEdit" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -192.0
+offset_top = 8.0
+offset_right = 192.0
+offset_bottom = 72.0
+grow_horizontal = 2
+
+[node name="Label" type="Label" parent="LineEditName"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_right = -8.0
+grow_vertical = 2
+text = "YOUR_NAME"
+label_settings = SubResource("LabelSettings_pohqh")
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="SoundVolume" type="Control" parent="."]
 unique_name_in_owner = true
@@ -174,10 +220,57 @@ button_pressed = true
 text = "SE"
 alignment = 2
 
+[node name="LineEditSaveDir" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 256.0
+offset_top = -64.0
+offset_right = -256.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/read_only = SubResource("StyleBoxFlat_pomst")
+placeholder_text = "Settings Save Directory"
+editable = false
+
+[node name="Label" type="Label" parent="LineEditSaveDir"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_right = -8.0
+grow_vertical = 2
+text = "SAVE_DIR"
+label_settings = SubResource("LabelSettings_vy62w")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ButtonSave" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -208.0
+offset_top = -72.0
+offset_right = -16.0
+offset_bottom = -15.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "SAVE"
+
 [connection signal="pressed" from="ButtonBack" to="." method="_on_button_back_pressed"]
+[connection signal="text_changed" from="LineEditName" to="." method="_on_line_edit_name_text_changed"]
 [connection signal="value_changed" from="SoundVolume/HSliderMaster" to="." method="_on_h_slider_master_value_changed"]
 [connection signal="toggled" from="SoundVolume/HSliderMaster/CheckButtonMaster" to="." method="_on_check_button_master_toggled"]
 [connection signal="value_changed" from="SoundVolume/HSliderBGM" to="." method="_on_h_slider_bgm_value_changed"]
 [connection signal="toggled" from="SoundVolume/HSliderBGM/CheckButtonBGM" to="." method="_on_check_button_bgm_toggled"]
 [connection signal="value_changed" from="SoundVolume/HSliderSE" to="." method="_on_h_slider_se_value_changed"]
 [connection signal="toggled" from="SoundVolume/HSliderSE/CheckButtonSE" to="." method="_on_check_button_se_toggled"]
+[connection signal="pressed" from="ButtonSave" to="." method="_on_button_save_pressed"]

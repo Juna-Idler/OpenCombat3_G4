@@ -1,6 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://c1t4l2jrkuedp"]
+[gd_scene load_steps=9 format=3 uid="uid://c1t4l2jrkuedp"]
 
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_85pay"]
 [ext_resource type="Script" path="res://game_client/replay/replay_label.gd" id="1_c8a0q"]
+
+[sub_resource type="Theme" id="Theme_8ermx"]
+Label/fonts/font = ExtResource("1_85pay")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6avbq"]
 bg_color = Color(0.12549, 0.12549, 0.12549, 1)
@@ -40,6 +44,7 @@ offset_right = 512.0
 offset_bottom = 128.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
+theme = SubResource("Theme_8ermx")
 theme_override_styles/normal = SubResource("StyleBoxFlat_6avbq")
 theme_override_styles/hover = SubResource("StyleBoxFlat_0fytv")
 theme_override_styles/focus = SubResource("StyleBoxFlat_0fytv")

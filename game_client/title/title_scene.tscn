@@ -103,6 +103,7 @@ theme_override_font_sizes/font_size = 24
 text = "SETTINGS"
 
 [node name="Settings" parent="." instance=ExtResource("3_1e7jc")]
+visible = false
 layout_mode = 1
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

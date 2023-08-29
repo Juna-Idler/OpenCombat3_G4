@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dord51exnv3go"]
+
+[ext_resource type="Script" path="res://game_client/deck_build/deck_sequence.gd" id="1_lfyun"]
+
+[node name="DeckSequence" type="Container"]
+custom_minimum_size = Vector2(0, 216)
+script = ExtResource("1_lfyun")

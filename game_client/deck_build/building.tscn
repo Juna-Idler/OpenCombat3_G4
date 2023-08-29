@@ -1,0 +1,232 @@
+[gd_scene load_steps=7 format=3 uid="uid://b2wxiqxqi7uw2"]
+
+[ext_resource type="Script" path="res://game_client/deck_build/building.gd" id="1_fkgs7"]
+[ext_resource type="PackedScene" uid="uid://dord51exnv3go" path="res://game_client/deck_build/deck_sequence.tscn" id="1_shixr"]
+[ext_resource type="Script" path="res://utility_code/draggable_control.gd" id="3_5b0iw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o8eak"]
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Theme" id="Theme_n7ql2"]
+HScrollBar/styles/scroll = SubResource("StyleBoxFlat_o8eak")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hfovb"]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[node name="building" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_n7ql2")
+script = ExtResource("1_fkgs7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="Header" type="Panel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hfovb")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 0
+
+[node name="DeckSequence" parent="VBoxContainer/ScrollContainer" instance=ExtResource("1_shixr")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect13" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect3" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect4" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect5" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect6" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect7" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect8" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect9" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect10" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect11" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="ColorRect12" type="ColorRect" parent="VBoxContainer/ScrollContainer/DeckSequence"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.5
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 12
+columns = 9
+
+[node name="ColorRect" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer")]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("3_5b0iw")
+_timer = NodePath("../../../../Timer")
+_double_click_duration_ms = 1000
+
+[node name="ColorRect2" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect3" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect4" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect5" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect6" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect7" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect8" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect9" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect10" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect11" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect12" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect13" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect14" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect15" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect16" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect17" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ColorRect18" type="ColorRect" parent="VBoxContainer/PanelContainer/GridContainer"]
+custom_minimum_size = Vector2(114, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Footer" type="Panel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_hfovb")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Mover" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -142.0
+offset_top = -200.0
+
+[connection signal="clicked" from="VBoxContainer/PanelContainer/GridContainer/ColorRect" to="." method="_on_color_rect_clicked"]
+[connection signal="double_clicked" from="VBoxContainer/PanelContainer/GridContainer/ColorRect" to="." method="_on_color_rect_double_clicked"]
+[connection signal="drag_start" from="VBoxContainer/PanelContainer/GridContainer/ColorRect" to="." method="_on_color_rect_drag_start"]
+[connection signal="dragging" from="VBoxContainer/PanelContainer/GridContainer/ColorRect" to="." method="_on_color_rect_dragging"]
+[connection signal="dropped" from="VBoxContainer/PanelContainer/GridContainer/ColorRect" to="." method="_on_color_rect_dropped"]
+[connection signal="held" from="VBoxContainer/PanelContainer/GridContainer/ColorRect" to="." method="_on_color_rect_held"]

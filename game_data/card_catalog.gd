@@ -27,8 +27,10 @@ func load_catalog():
 	_load_card_data()
 	
 
-func get_max_card_id() -> int:
-	return _card_catalog.size() - 1
+func _get_card_id_list() -> Array[int]:
+	return _card_catalog.keys()
+
+
 
 func _get_card_data(id : int) -> CatalogData.CardData:
 	return _card_catalog[id]

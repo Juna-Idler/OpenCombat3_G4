@@ -27,7 +27,7 @@ func load_catalog():
 	_load_card_data()
 	
 
-func _get_card_id_list() -> Array[int]:
+func _get_card_id_list() -> PackedInt32Array:
 	return _card_catalog.keys()
 
 

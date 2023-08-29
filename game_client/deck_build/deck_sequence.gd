@@ -42,7 +42,10 @@ func _ready():
 
 	_tween = create_tween()
 	_tween.kill()
-	
+
+	for c in get_children():
+		c.position.y = top_margin
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -66,9 +69,8 @@ func _notification(what):
 		for i in count:
 			var c : Control = get_child(i)
 			c.size = Vector2(card_width,card_heith)
-			c.position.y = top_margin
-			var x := side_margin + (card_width + card_space) * i
-			_tween.tween_property(c,"position:x",x,0.5)
+			var pos := Vector2(side_margin + (card_width + card_space) * i,top_margin)
+			_tween.tween_property(c,"position",pos,0.5)
 	#		fit_child_in_rect( c, Rect2( Vector2(x,0), Vector2(card_width,card_heith) ) )
 
 func _get_minimum_size() -> Vector2:
@@ -87,37 +89,58 @@ func _get_minimum_size() -> Vector2:
 #		print(get_local_mouse_position())
 #		print(make_canvas_position_local(get_global_mouse_position()))
 #		pass
-#	pass # Replace with function body.
+
+var _dragging := -2
+
+func drag_start(c : Control):
+	_dragging = get_children().find(c)
+
 
 var _last_area := -1
+
 func pointing(point : Vector2):
+	var count := get_child_count()
 	var area := floori((point.x - card_width / 2 - side_margin) / (card_width + card_space)) + 1
-	print(area)
-	print(get_rect())
+	area = mini(area,count)
 	if area != _last_area:
-		var count := get_child_count()
 		if count == 0:
 			return
 		_tween.kill()
 		_tween = create_tween().set_parallel()
-		for i in count:
-			var c : Control = get_child(i)
-			var x := side_margin + (card_width + card_space) * i
-			if i < area:
-				x -= card_width * 0.8 / (area - i + 1)
-			else:
-				x += card_width * 0.8 / (i - area + 2)
-			_tween.tween_property(c,"position:x",x,0.5)
+		if area == _dragging or area == _dragging + 1:
+			for i in count:
+				var c : Control = get_child(i)
+				var x := side_margin + (card_width + card_space) * i
+				_tween.tween_property(c,"position:x",x,0.5)
+		else:
+			for i in count:
+				var c : Control = get_child(i)
+				var x := side_margin + (card_width + card_space) * i
+				if i < area:
+					x -= card_width * 0.5 / (1.0 + (area - i) * 0.25)
+				else:
+					x += card_width * 0.5 / (1.0 + (i - area + 1) * 0.25)
+				_tween.tween_property(c,"position:x",x,0.5)
 		
-		_last_area = area
-	pass
+	_last_area = area
 
 func exit():
-	queue_sort()
-	_last_area = -1
+	if _last_area != -1:
+		queue_sort()
+		_last_area = -1
 
-func drop(point : Vector2):
+
+func drop(card : Control,point : Vector2):
 	var area := floori((point.x - card_width / 2 - side_margin) / (card_width + card_space)) + 1
+	var f := get_children().find(card)
+	if f >= 0:
+		if f < area:
+			area -= 1
+	else:
+		add_child(card)
+		card.position = point - card.size / 2
+	move_child(card,area)
 	queue_sort()
 	_last_area = -1
+	_dragging = -2
 

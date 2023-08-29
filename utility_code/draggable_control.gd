@@ -4,9 +4,9 @@ extends Control
 signal clicked(_self : Control)
 signal held(_self : Control)
 signal double_clicked(_self : Control)
-signal drag_start(_self : Control,pos : Vector2)
-signal dragging(_self : Control,relative_pos : Vector2,start_pos : Vector2)
-signal dropped(_self : Control,relative_pos : Vector2,start_pos : Vector2)
+signal drag_start(_self : Control,_pos : Vector2)
+signal dragging(_self : Control,_relative_pos : Vector2,_start_pos : Vector2)
+signal dropped(_self : Control,_relative_pos : Vector2,_start_pos : Vector2)
 
 
 @export var _timer : Timer = null
@@ -20,7 +20,7 @@ var _click_count := 0
 var _dragging := false
 var _drag_point : Vector2
 
-const drag_amount := 10 * 10
+const drag_amount := 4 * 4
 
 func _ready():
 	pass # Replace with function body.

@@ -16,5 +16,5 @@ func _get_ability_data(_id : int) -> CatalogData.AbilityData:
 	return null
 
 
-func _get_card_id_list() -> Array[int]:
+func _get_card_id_list() -> PackedInt32Array:
 	return []

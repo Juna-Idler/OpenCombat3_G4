@@ -25,6 +25,18 @@ func initialize(cd : CatalogData.CardData,
 			st_label.text = st.name + st_param + "\n" + st.text
 			$ScrollContainer/VBoxContainer.add_child(st_label)
 
+func initialize_origin(cd : CatalogData.CardData):
+	for child in $ScrollContainer/VBoxContainer.get_children():
+		$ScrollContainer/VBoxContainer.remove_child(child)
+		child.queue_free()
 	
-	
-	
+	$CardFront.initialize(cd.name,cd.color,cd.level,cd.power,cd.hit,cd.block,cd.skills,load(cd.image))
+	for s in cd.skills:
+		var skill_detail := CardDetailSkill.instantiate()
+		skill_detail.initialize(s)
+		$ScrollContainer/VBoxContainer.add_child(skill_detail)
+		for st in s.data.enchants:
+			var st_label : RichTextLabel = CardDetailSkillEnchant.instantiate()
+			var st_param := "" if st.param_name.is_empty() else ("(" + ",".join(st.param_name) + ")")
+			st_label.text = st.name + st_param + "\n" + st.text
+			$ScrollContainer/VBoxContainer.add_child(st_label)

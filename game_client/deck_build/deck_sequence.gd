@@ -128,10 +128,12 @@ func exit():
 	if _last_area != -1:
 		queue_sort()
 		_last_area = -1
+	_dragging = -2
 
 
 func drop(card : Control,point : Vector2):
 	var area := floori((point.x - card_width / 2 - side_margin) / (card_width + card_space)) + 1
+	area = mini(area,get_child_count())
 	var f := get_children().find(card)
 	if f >= 0:
 		if f < area:
@@ -144,3 +146,11 @@ func drop(card : Control,point : Vector2):
 	_last_area = -1
 	_dragging = -2
 
+func add_card(card : Control):
+	add_child(card)
+	card.position = Vector2(side_margin + (card_width + card_space) * (get_child_count() - 1),top_margin)
+	card.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(card,"modulate:a",1.0,0.5)
+	queue_sort()
+	

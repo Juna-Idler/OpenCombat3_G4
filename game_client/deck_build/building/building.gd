@@ -1,6 +1,10 @@
 extends Panel
 
 
+signal exit
+signal saved(deck : DeckData)
+
+
 @onready var mover = %Mover
 
 var drag_card : Control = null
@@ -11,31 +15,47 @@ var list_page : int = 0
 var list_page_max : int = 1
 
 
+func initialize(deck : DeckData):
+	$VBoxContainer/Header/LineEditName.text = deck.name
+	catalog = deck.catalog
+	list = catalog._get_card_id_list()
+	list_page = 0
+	list_page_max = ceili(list.size() / 18.0)
+	$VBoxContainer/Footer/BoxContainer/Label.text = "/" + str(list_page_max)
+	
+	for c in %DeckSequence.get_children():
+		%DeckSequence.remove_child(c)
+		c.queue_free()
+	for i in deck.cards:
+		var c := _create_deck_card(catalog._get_card_data(i))
+		%DeckSequence.add_card(c)
+
+	var i := 0
+	for c in %GridContainer.get_children():
+		if i  < list.size():
+			var cd := Global.card_catalog._get_card_data(list[i])
+			c.initialize(cd)
+		else:
+			c.hide()
+		i += 1
+		
+	pass
+
+
 func _create_deck_card(cd : CatalogData.CardData) -> Control:
-	const DeckCard := preload("res://game_client/deck_build/card.tscn")
+	const DeckCard := preload("res://game_client/deck_build/building/card.tscn")
 	var c := DeckCard.instantiate()
 	c.drag_start.connect(_on_card_drag_start)
 	c.dragging.connect(_on_card_dragging)
 	c.dropped.connect(_on_card_dropped)
 	c.held.connect(_on_card_held)
-	c._timer = $Timer
+	c.timer = $Timer
 	c.initialize(cd)
 	return c
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	catalog = Global.card_catalog
-	list = Global.card_catalog._get_card_id_list()
-	list_page = 0
-	list_page_max = ceili(list.size() / 18.0)
-	$VBoxContainer/Footer/BoxContainer/Label.text = "/" + str(list_page_max)
-	
-	for i in mini(15,list.size()):
-		var c := _create_deck_card(catalog._get_card_data(list[i]))
-		%DeckSequence.add_card(c)
-
-	var i := list_page * 18
 	for c in %GridContainer.get_children():
 		c.drag_start.connect(_on_pool_card_drag_start)
 		c.dragging.connect(_on_pool_card_dragging)
@@ -44,13 +64,36 @@ func _ready():
 		c.mouse_exited.connect(_on_pool_card_mouse_exited.bind(c))
 		c.double_clicked.connect(_on_pool_card_double_clicked)
 		c.held.connect(_on_card_held)
+		c.double_click_duration_ms = 500
+		
 
-		if i  < list.size():
-			var cd := Global.card_catalog._get_card_data(list[i])
-			c.initialize(cd)
-		else:
-			c.hide()
-		i += 1
+#	catalog = Global.card_catalog
+#	list = Global.card_catalog._get_card_id_list()
+#	list_page = 0
+#	list_page_max = ceili(list.size() / 18.0)
+#	$VBoxContainer/Footer/BoxContainer/Label.text = "/" + str(list_page_max)
+#
+#	for i in mini(15,list.size()):
+#		var c := _create_deck_card(catalog._get_card_data(list[i]))
+#		%DeckSequence.add_card(c)
+#
+#	var i := list_page * 18
+#	for c in %GridContainer.get_children():
+#		c.drag_start.connect(_on_pool_card_drag_start)
+#		c.dragging.connect(_on_pool_card_dragging)
+#		c.dropped.connect(_on_pool_card_dropped)
+#		c.mouse_entered.connect(_on_pool_card_mouse_entered.bind(c))
+#		c.mouse_exited.connect(_on_pool_card_mouse_exited.bind(c))
+#		c.double_clicked.connect(_on_pool_card_double_clicked)
+#		c.held.connect(_on_card_held)
+#
+#		if i  < list.size():
+#			var cd := Global.card_catalog._get_card_data(list[i])
+#			c.initialize(cd)
+#		else:
+#			c.hide()
+#		i += 1
+	pass
 
 
 func _process(_delta):
@@ -241,3 +284,15 @@ func _on_line_edit_page_number_text_submitted(new_text : String):
 			c.hide()
 		i += 1
 
+
+
+func _on_button_back_pressed():
+	exit.emit()
+
+
+func _on_button_save_pressed():
+	var cards : PackedInt32Array = []
+	for c in %DeckSequence.get_children():
+		var cd := c.card_data as CatalogData.CardData
+		cards.append(cd.id)
+	saved.emit(DeckData.new($VBoxContainer/Header/LineEditName.text,catalog,cards))

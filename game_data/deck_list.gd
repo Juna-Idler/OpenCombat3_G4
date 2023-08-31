@@ -4,20 +4,21 @@ class_name DeckList
 
 var file_path : String
 
-var list : Array # of DeckData
+var list : Array[DeckData] = []
 var select : int = 0
 
+var _catalog_factory : CatalogFactory
 
-func _init(path : String):
+func _init(path : String,cf : CatalogFactory):
 	file_path = path
-# warning-ignore:return_value_discarded
+	_catalog_factory = cf
 	load_deck_list()
 
+func clamp_select() -> int:
+	select = clampi(select,0,list.size()-1)
+	return select
 
-func get_select_deck():
-	if select < 0 or select >= list.size():
-		return null
-	return list[select]
+
 
 
 func save_deck_list():
@@ -26,31 +27,29 @@ func save_deck_list():
 	if select < 0:
 		select = 0
 
+	var dic := {
+		"select":select,
+		"list":list.map(func(v : DeckData):return v.serialize())
+	}
+	var json := JSON.stringify(dic)
 	var f = FileAccess.open(file_path,FileAccess.WRITE)
-	f.store_csv_line(PackedStringArray([select]),"\t")
-	for i in list:
-		var item := i as DeckData
-		var cards_text := ",".join(PackedStringArray(Array(item.cards)))
-		var keys_text := ",".join(PackedStringArray(Array(item.key_cards)))
-		f.store_csv_line(PackedStringArray([item.name,cards_text,keys_text]),"\t")
+	f.store_string(json)
 	f.close()
+	
 	
 func load_deck_list() -> bool:
 	if not FileAccess.file_exists(file_path):
 		return false
-	list = []
+		
 	var f = FileAccess.open(file_path,FileAccess.READ)
-	var head = f.get_csv_line("\t")
-	select = int(head[0])
-	while (not f.eof_reached()):
-		var line = f.get_csv_line("\t")
-		if line.size() != 3:
-			continue
-		var tmp : PackedStringArray = line[1].split(",")
-		var cards := PackedInt32Array([] if tmp.size() == 1 and tmp[0] == "" else Array(tmp))
-		tmp = line[2].split(",")
-		var keys := PackedInt32Array([] if tmp.size() == 1 and tmp[0] == "" else Array(tmp))
-		list.append(DeckData.new(line[0],cards,keys))
+	var json := f.get_as_text()
 	f.close()
+
+	var dic = JSON.parse_string(json)
+	if not dic is Dictionary:
+		return false
+	select = dic["select"]
+	list.assign(dic["list"].map(func(v):return DeckData.deserialize(v,_catalog_factory)))
+	
 	return true
 	

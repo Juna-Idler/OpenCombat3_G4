@@ -7,7 +7,15 @@ func _ready():
 
 func initialize(skill : CatalogData.CardSkill):
 	$VBoxContainer/HBoxContainer/Label.text = skill.title
-	$VBoxContainer/RichTextLabel.text = skill.text
+	
+	var skill_text := skill.text
+	for e in skill.data.enchants:
+		skill_text = skill_text.replace("{:%s}" % e.name,"[url]%s[/url]" % e.name)
+	
+	var pattern := RegEx.create_from_string("{([^}]+)}")
+	skill_text = pattern.sub(skill_text,"[color=#d00]$1[/color]",true)
+	
+	$VBoxContainer/RichTextLabel.text = skill_text
 	
 	if skill.condition & CatalogData.ColorCondition.VS_FLAG:
 		%ColorRectLeft.visible = true

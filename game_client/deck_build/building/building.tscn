@@ -1,10 +1,10 @@
 [gd_scene load_steps=14 format=3 uid="uid://b2wxiqxqi7uw2"]
 
-[ext_resource type="Script" path="res://game_client/deck_build/building.gd" id="1_fkgs7"]
-[ext_resource type="PackedScene" uid="uid://dord51exnv3go" path="res://game_client/deck_build/deck_sequence.tscn" id="1_shixr"]
-[ext_resource type="PackedScene" uid="uid://dbbcogl63yhrp" path="res://game_client/deck_build/card.tscn" id="3_knbe7"]
-[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_cp13t"]
-[ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="4_lu5b5"]
+[ext_resource type="Script" path="res://game_client/deck_build/building/building.gd" id="1_3fj06"]
+[ext_resource type="PackedScene" uid="uid://dord51exnv3go" path="res://game_client/deck_build/building/deck_sequence.tscn" id="2_7cp0g"]
+[ext_resource type="PackedScene" uid="uid://dbbcogl63yhrp" path="res://game_client/deck_build/building/card.tscn" id="3_5cbyg"]
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="4_w8aby"]
+[ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="5_33jrk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o8eak"]
 content_margin_top = 12.0
@@ -12,6 +12,8 @@ content_margin_bottom = 12.0
 bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Theme" id="Theme_n7ql2"]
+default_font = ExtResource("4_w8aby")
+default_font_size = 24
 HScrollBar/styles/scroll = SubResource("StyleBoxFlat_o8eak")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hfovb"]
@@ -27,7 +29,7 @@ bg_color = Color(0.25098, 0.25098, 0.25098, 1)
 bg_color = Color(0.25098, 0.25098, 0.25098, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_3b5af"]
-font = ExtResource("4_cp13t")
+font = ExtResource("4_w8aby")
 font_size = 20
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_s32gp"]
@@ -44,7 +46,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_n7ql2")
-script = ExtResource("1_fkgs7")
+script = ExtResource("1_3fj06")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -61,13 +63,40 @@ layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hfovb")
 
+[node name="ButtonBack" type="Button" parent="VBoxContainer/Header"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 184.0
+offset_bottom = 56.0
+text = "BACK"
+
+[node name="ButtonSave" type="Button" parent="VBoxContainer/Header"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 56.0
+grow_horizontal = 0
+text = "SAVE"
+
+[node name="LineEditName" type="LineEdit" parent="VBoxContainer/Header"]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 8.0
+offset_right = 640.0
+offset_bottom = 56.0
+
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_scroll_mode = 2
 vertical_scroll_mode = 0
 
-[node name="DeckSequence" parent="VBoxContainer/ScrollContainer" instance=ExtResource("1_shixr")]
+[node name="DeckSequence" parent="VBoxContainer/ScrollContainer" instance=ExtResource("2_7cp0g")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -86,113 +115,77 @@ theme_override_constants/h_separation = 16
 theme_override_constants/v_separation = 12
 columns = 9
 
-[node name="Card" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card2" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card2" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card3" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card3" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card4" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card4" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card5" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card5" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card6" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card6" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card7" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card7" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card8" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card8" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card9" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card9" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card10" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card10" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card11" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card11" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card12" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card12" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card13" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card13" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card14" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card14" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card15" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card15" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card16" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card16" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card17" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card17" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
-[node name="Card18" parent="VBoxContainer/PanelContainer/GridContainer" node_paths=PackedStringArray("_timer") instance=ExtResource("3_knbe7")]
+[node name="Card18" parent="VBoxContainer/PanelContainer/GridContainer" instance=ExtResource("3_5cbyg")]
 custom_minimum_size = Vector2(114, 160)
 layout_mode = 2
-_timer = NodePath("../../../../Timer")
-_double_click_duration_ms = 500
 
 [node name="Footer" type="Panel" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 64)
@@ -223,7 +216,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 size_flags_horizontal = 8
-theme_override_fonts/font = ExtResource("4_cp13t")
+theme_override_fonts/font = ExtResource("4_w8aby")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_fd01l")
 text = "1"
@@ -269,7 +262,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.501961)
 
-[node name="CardDetail" parent="CardDetailPanel" instance=ExtResource("4_lu5b5")]
+[node name="CardDetail" parent="CardDetailPanel" instance=ExtResource("5_33jrk")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
@@ -284,6 +277,8 @@ offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[connection signal="pressed" from="VBoxContainer/Header/ButtonBack" to="." method="_on_button_back_pressed"]
+[connection signal="pressed" from="VBoxContainer/Header/ButtonSave" to="." method="_on_button_save_pressed"]
 [connection signal="pressed" from="VBoxContainer/Footer/BoxContainer/ButtonPageMinus" to="." method="_on_button_page_minus_pressed"]
 [connection signal="text_submitted" from="VBoxContainer/Footer/BoxContainer/LineEditPageNumber" to="." method="_on_line_edit_page_number_text_submitted"]
 [connection signal="pressed" from="VBoxContainer/Footer/BoxContainer/ButtonPagePlus" to="." method="_on_button_page_plus_pressed"]

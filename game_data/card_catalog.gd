@@ -19,6 +19,11 @@ var version : String
 func _init():
 	load_catalog()
 
+
+func _get_catalog_name() -> String:
+	return "Basic"
+
+
 func load_catalog():
 	_load_param_names()
 	_load_enchant_data()

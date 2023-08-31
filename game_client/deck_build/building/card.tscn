@@ -1,20 +1,21 @@
 [gd_scene load_steps=3 format=3 uid="uid://dbbcogl63yhrp"]
 
-[ext_resource type="Script" path="res://game_client/deck_build/card.gd" id="1_81fef"]
-[ext_resource type="PackedScene" uid="uid://88s2fwk2lrtx" path="res://game_client/card/card_front.tscn" id="1_qw8cf"]
+[ext_resource type="Script" path="res://game_client/deck_build/building/card.gd" id="1_rydc8"]
+[ext_resource type="PackedScene" uid="uid://88s2fwk2lrtx" path="res://game_client/card/card_front.tscn" id="2_7olif"]
 
 [node name="Card" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 142.0
 offset_bottom = 200.0
-script = ExtResource("1_81fef")
+script = ExtResource("1_rydc8")
+_double_click_duration_ms = null
 
 [node name="SubViewport" type="SubViewport" parent="."]
 size = Vector2i(364, 510)
 render_target_update_mode = 1
 
-[node name="CardFront" parent="SubViewport" instance=ExtResource("1_qw8cf")]
+[node name="CardFront" parent="SubViewport" instance=ExtResource("2_7olif")]
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

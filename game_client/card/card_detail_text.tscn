@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://bmmbea8yxjgim"]
+
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_5a823"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t8430"]
+content_margin_left = 8.0
+content_margin_top = 24.0
+content_margin_right = 4.0
+content_margin_bottom = 24.0
+bg_color = Color(0, 0, 0, 0.752941)
+
+[node name="RichTextLabel" type="RichTextLabel"]
+offset_right = 227.0
+offset_bottom = 27.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_fonts/normal_font = ExtResource("1_5a823")
+theme_override_fonts/bold_font = ExtResource("1_5a823")
+theme_override_fonts/italics_font = ExtResource("1_5a823")
+theme_override_font_sizes/normal_font_size = 18
+theme_override_font_sizes/bold_font_size = 18
+theme_override_font_sizes/italics_font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_t8430")
+bbcode_enabled = true
+text = "リッチテキスト"
+fit_content = true

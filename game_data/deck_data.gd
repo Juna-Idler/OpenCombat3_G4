@@ -2,52 +2,55 @@
 class_name DeckData
 
 var name : String
-var cards : PackedInt32Array #of int (card id)
-var key_cards : PackedInt32Array #of int (card id)
+var catalog : I_CardCatalog
+var cards : PackedInt32Array
 
-func _init(d_name : String, d_cards : PackedInt32Array, k_cards : PackedInt32Array):
-	cards = d_cards
-	name = d_name
-	key_cards = k_cards
+func _init(n : String,c : I_CardCatalog, cs : PackedInt32Array):
+	name = n
+	catalog = c
+	cards = cs
 
 func equal(other : DeckData) -> bool:
-	if name != other.name or cards.size() != other.cards.size()\
-			or key_cards.size() != other.key_cards.size():
-		return false
-	for i in cards.size():
-		if cards[i] != other.cards[i]:
-			return false
-	for i in key_cards.size():
-		if key_cards[i] != other.key_cards[i]:
-			return false
-	return true
+	return name == other.name and catalog == other.catalog and cards == other.cards
 
-class DeckFace:
-	var name : String
-	var key_cards : PackedInt32Array #of int (card id)
-	var cards_count : int
-	var total_cost : int
-	var level : PackedInt32Array
-	var color : PackedInt32Array
-	
-	func _init(n:String,kc : PackedInt32Array,
-			count:int,cost:int,
-			l:PackedInt32Array,c:PackedInt32Array):
-		name = n
-		key_cards = kc
-		cards_count = count
-		total_cost = cost
-		level = l
-		color = c
+func get_cards_count() -> int:
+	return cards.size()
 
-func get_deck_face(catalog : CardCatalog) -> DeckFace:
-	var cost := 0
-	var rgb := [0,0,0,0]
-	var level := [0,0,0,0]
+func get_total_cost() -> int:
+	var cost : int = 0
 	for i in cards:
-		var c := catalog._get_card_data(i) as CatalogData.CardData
-		rgb[c.color] += 1
-		level[c.level] += 1
+		var c := catalog._get_card_data(i)
 		cost += c.level
-	return DeckFace.new(name,key_cards,cards.size(),cost,level,rgb)
+	return cost
+
+func get_level_count() -> PackedInt32Array:
+	var level : PackedInt32Array = [0,0,0,0]
+	for i in cards:
+		var c := catalog._get_card_data(i)
+		level[c.level] += 1
+	return level
+
+func get_color_count() -> PackedInt32Array:
+	var color : PackedInt32Array = [0,0,0,0]
+	for i in cards:
+		var c := catalog._get_card_data(i)
+		color[c.color] += 1
+	return color
+
+
+func serialize() -> Dictionary:
+	return {
+		"name":name,
+		"catalog":catalog._get_catalog_name(),
+		"cards":cards,
+	}
+
+static func deserialize(dic : Dictionary,catalog_factory : CatalogFactory) -> DeckData:
+	if not dic.has("name") or not dic.has("catalog") or not dic.has("cards"):
+		return null
+#	if not dic["name"] is String or not dic["catalog"] is String or not dic["cards"] is Array:
+#		return null
+	
+	return DeckData.new(dic["name"],catalog_factory.get_catalog(dic["catalog"]),dic["cards"])
+
 

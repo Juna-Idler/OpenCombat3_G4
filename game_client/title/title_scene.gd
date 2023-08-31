@@ -45,3 +45,7 @@ func _on_button_settings_pressed():
 func _on_button_2_pressed():
 	_scene_changer.goto_scene("res://game_client/replay/main.tscn",[])
 	pass # Replace with function body.
+
+
+func _on_button_3_pressed():
+	_scene_changer.goto_scene("res://game_client/deck_build/main.tscn",[])

@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://deqhr41m4i402"]
+
+[ext_resource type="Script" path="res://game_client/deck_build/deck_title.gd" id="1_gasul"]
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_mxeeq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_asgyj"]
+bg_color = Color(0.0470588, 0.0470588, 0.0470588, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_5psem"]
+font = ExtResource("1_mxeeq")
+font_size = 20
+
+[node name="Panel" type="Panel"]
+custom_minimum_size = Vector2(0, 120)
+offset_right = 680.0
+offset_bottom = 120.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_asgyj")
+script = ExtResource("1_gasul")
+
+[node name="LabelName" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 42.0
+grow_horizontal = 2
+text = "デッキ名"
+label_settings = SubResource("LabelSettings_5psem")
+horizontal_alignment = 1
+
+[node name="LabelInfo" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -42.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "情報"
+label_settings = SubResource("LabelSettings_5psem")
+horizontal_alignment = 2
+vertical_alignment = 2

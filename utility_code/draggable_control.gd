@@ -9,12 +9,12 @@ signal dragging(_self : Control,_relative_pos : Vector2,_start_pos : Vector2)
 signal dropped(_self : Control,_relative_pos : Vector2,_start_pos : Vector2)
 
 
-@export var _timer : Timer = null
-@export var _double_click_duration_ms : int = 0
+@export var timer : Timer = null
+@export var double_click_duration_ms : int = 0
 
 var _holding := false
 
-var _double_click_time : int = -_double_click_duration_ms - 1
+var _double_click_time : int = -double_click_duration_ms - 1
 var _click_count := 0
 
 var _dragging := false
@@ -38,13 +38,13 @@ func _gui_input(event: InputEvent):
 				_dragging = false
 				dropped.emit(self,relative,_drag_point)
 			else:
-				if _timer != null and not _timer.is_stopped():
-					_timer.stop()
-					_timer.timeout.disconnect(_on_timer_timeout)
-				if _double_click_duration_ms > 0:
+				if timer != null and not timer.is_stopped():
+					timer.stop()
+					timer.timeout.disconnect(_on_timer_timeout)
+				if double_click_duration_ms > 0:
 					var time = Time.get_ticks_msec()
-					if time - _double_click_time <= _double_click_duration_ms and _click_count == 2:
-						_double_click_time = -_double_click_duration_ms-1
+					if time - _double_click_time <= double_click_duration_ms and _click_count == 2:
+						_double_click_time = -double_click_duration_ms-1
 						_click_count = 0
 						double_clicked.emit(self)
 						return
@@ -56,9 +56,9 @@ func _gui_input(event: InputEvent):
 			if not _dragging and relative.length_squared() >= drag_amount:
 				_dragging = true
 				drag_start.emit(self,_drag_point)
-				if _timer != null and not _timer.is_stopped():
-					_timer.stop()
-					_timer.timeout.disconnect(_on_timer_timeout)
+				if timer != null and not timer.is_stopped():
+					timer.stop()
+					timer.timeout.disconnect(_on_timer_timeout)
 			if _dragging:
 				dragging.emit(self,relative,_drag_point)
 	else:
@@ -67,12 +67,12 @@ func _gui_input(event: InputEvent):
 				and event.pressed):
 			_holding = true
 			_drag_point = (event as InputEventMouseButton).position
-			if _timer != null:
-				_timer.start()
-				_timer.timeout.connect(_on_timer_timeout,CONNECT_ONE_SHOT)
-			if _double_click_duration_ms > 0:
+			if timer != null:
+				timer.start()
+				timer.timeout.connect(_on_timer_timeout,CONNECT_ONE_SHOT)
+			if double_click_duration_ms > 0:
 				var time = Time.get_ticks_msec()
-				if time - _double_click_time > _double_click_duration_ms:
+				if time - _double_click_time > double_click_duration_ms:
 					_double_click_time = time
 					_click_count = 0
 				_click_count += 1
@@ -82,9 +82,9 @@ func _on_timer_timeout():
 	held.emit(self)
 
 func cancel():
-	if _timer != null and not _timer.is_stopped():
-		_timer.stop()
-		_timer.timeout.disconnect(_on_timer_timeout)
+	if timer != null and not timer.is_stopped():
+		timer.stop()
+		timer.timeout.disconnect(_on_timer_timeout)
 	_dragging = false
 	_holding = false
 

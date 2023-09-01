@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvipsf0d1eg43"]
+
+[ext_resource type="Script" path="res://utility_code/draggable_control.gd" id="1_t6mk1"]
+
+[node name="card" type="TextureRect"]
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("1_t6mk1")

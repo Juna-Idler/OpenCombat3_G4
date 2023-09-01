@@ -6,12 +6,12 @@ extends Container
 	set(v):
 		card_width = v
 		queue_sort()
-@export var card_heith := 200.0 :
+@export var card_height := 200.0 :
 	set(v):
-		card_heith = v
-		custom_minimum_size.y = card_heith + top_margin + bottom_margin
+		card_height = v
+		custom_minimum_size.y = card_height + top_margin + bottom_margin
 		for c in get_children():
-			c.size.y = card_heith
+			c.size.y = card_height
 		reset_size()
 @export var card_space := 16.0 :
 	set(v):
@@ -24,14 +24,14 @@ extends Container
 @export var top_margin := 8.0 :
 	set(v):
 		top_margin = v
-		custom_minimum_size.y = card_heith + top_margin + bottom_margin
+		custom_minimum_size.y = card_height + top_margin + bottom_margin
 		for c in get_children():
 			c.position.y = top_margin
 		reset_size()
 @export var bottom_margin := 8.0 :
 	set(v):
 		bottom_margin = v
-		custom_minimum_size.y = card_heith + top_margin + bottom_margin
+		custom_minimum_size.y = card_height + top_margin + bottom_margin
 		reset_size()
 
 
@@ -68,16 +68,16 @@ func _notification(what):
 		_tween = create_tween().set_parallel()
 		for i in count:
 			var c : Control = get_child(i)
-			c.size = Vector2(card_width,card_heith)
+			c.size = Vector2(card_width,card_height)
 			var pos := Vector2(side_margin + (card_width + card_space) * i,top_margin)
 			_tween.tween_property(c,"position",pos,0.5)
-	#		fit_child_in_rect( c, Rect2( Vector2(x,0), Vector2(card_width,card_heith) ) )
+	#		fit_child_in_rect( c, Rect2( Vector2(x,0), Vector2(card_width,card_height) ) )
 
 func _get_minimum_size() -> Vector2:
 	var count := get_child_count()
 	count += int(count == 0)
 	var min_size = Vector2(side_margin + (card_width + card_space) * count - card_space + side_margin,
-				card_heith + top_margin + bottom_margin)
+				card_height + top_margin + bottom_margin)
 	return min_size
 
 

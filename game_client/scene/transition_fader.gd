@@ -50,8 +50,8 @@ func _fade_in(duration : float):
 		tween.tween_method(set_rate,1.0,0.0,duration)
 		await tween.finished
 
-func _stop_fade(rate : float):
+func _stop_fade(force_rate : float):
 	if tween and tween.is_running():
 		tween.kill()
-		set_rate(rate)
+		set_rate(force_rate)
 

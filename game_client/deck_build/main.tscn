@@ -1,12 +1,17 @@
-[gd_scene load_steps=5 format=3 uid="uid://bdd7kr8i8o0dx"]
+[gd_scene load_steps=8 format=3 uid="uid://bdd7kr8i8o0dx"]
 
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_1ooi2"]
 [ext_resource type="Script" path="res://game_client/deck_build/main.gd" id="1_fvkqa"]
 [ext_resource type="PackedScene" uid="uid://b2wxiqxqi7uw2" path="res://game_client/deck_build/building/building.tscn" id="3_i2sba"]
+[ext_resource type="PackedScene" uid="uid://4v2h15esi7xs" path="res://game_client/deck_build/deck_list/deck_list.tscn" id="4_l5kdf"]
+[ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="5_s0cox"]
 
 [sub_resource type="Theme" id="Theme_lr34a"]
 Button/font_sizes/font_size = 32
 Button/fonts/font = ExtResource("1_1ooi2")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s7dn0"]
+bg_color = Color(0, 0, 0, 0.752941)
 
 [node name="main" type="Control"]
 layout_mode = 3
@@ -18,7 +23,7 @@ grow_vertical = 2
 theme = SubResource("Theme_lr34a")
 script = ExtResource("1_fvkqa")
 
-[node name="building" parent="." instance=ExtResource("3_i2sba")]
+[node name="Building" parent="." instance=ExtResource("3_i2sba")]
 visible = false
 layout_mode = 1
 
@@ -93,8 +98,62 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "NEW"
 
-[connection signal="exit" from="building" to="." method="_on_building_exit"]
-[connection signal="saved" from="building" to="." method="_on_building_saved"]
+[node name="Timer" type="Timer" parent="Menu"]
+wait_time = 0.5
+
+[node name="DeckList" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_s7dn0")
+
+[node name="DeckList" parent="DeckList" instance=ExtResource("4_l5kdf")]
+layout_mode = 1
+
+[node name="ButtonDeckListClose" type="Button" parent="DeckList"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_bottom = 64.0
+grow_horizontal = 0
+text = "X"
+
+[node name="CardDetail" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CardDetail" parent="CardDetail" instance=ExtResource("5_s0cox")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -256.0
+offset_right = 400.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="exit" from="Building" to="." method="_on_building_exit"]
+[connection signal="request_card_detail" from="Building" to="." method="_on_building_request_card_detail"]
+[connection signal="request_deck_list" from="Building" to="." method="_on_building_request_deck_list"]
+[connection signal="saved" from="Building" to="." method="_on_building_saved"]
 [connection signal="pressed" from="Menu/HBoxContainer/PanelLeft/ButtonBack" to="." method="_on_button_back_pressed"]
 [connection signal="pressed" from="Menu/HBoxContainer/PanelRight/ButtonEdit" to="." method="_on_button_edit_pressed"]
 [connection signal="pressed" from="Menu/HBoxContainer/PanelRight/ButtonNew" to="." method="_on_button_new_pressed"]
+[connection signal="card_clicked" from="DeckList/DeckList" to="." method="_on_deck_list_card_clicked"]
+[connection signal="pressed" from="DeckList/ButtonDeckListClose" to="." method="_on_button_deck_list_close_pressed"]
+[connection signal="gui_input" from="CardDetail" to="." method="_on_card_detail_gui_input"]

@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://4v2h15esi7xs"]
+
+[ext_resource type="Script" path="res://game_client/deck_build/deck_list/deck_list.gd" id="1_115wn"]
+[ext_resource type="Script" path="res://game_client/deck_build/deck_list/deck_list_container.gd" id="2_fob1j"]
+
+[node name="DeckList" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_115wn")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DeckListContainer" type="Container" parent="CenterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_fob1j")
+card_width = 110.0
+card_height = 154.0
+card_y_space = 11.0
+
+[node name="Mover" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+offset_left = -142.0
+offset_top = -200.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5

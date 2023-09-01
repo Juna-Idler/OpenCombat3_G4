@@ -1,4 +1,4 @@
-extends "res://utility_code/clickable_control.gd"
+extends "res://utility_code/holdable_control.gd"
 
 var _deck_data : DeckData
 

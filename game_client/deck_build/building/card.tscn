@@ -9,7 +9,6 @@ anchors_preset = 0
 offset_right = 142.0
 offset_bottom = 200.0
 script = ExtResource("1_rydc8")
-_double_click_duration_ms = null
 
 [node name="SubViewport" type="SubViewport" parent="."]
 size = Vector2i(364, 510)

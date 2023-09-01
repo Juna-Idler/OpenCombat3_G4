@@ -4,6 +4,9 @@ extends Panel
 signal exit
 signal saved(deck : DeckData)
 
+signal request_card_detail(cd : CatalogData.CardData)
+signal request_deck_list(deck : DeckData)
+
 
 @onready var mover = %Mover
 
@@ -65,35 +68,7 @@ func _ready():
 		c.double_clicked.connect(_on_pool_card_double_clicked)
 		c.held.connect(_on_card_held)
 		c.double_click_duration_ms = 500
-		
-
-#	catalog = Global.card_catalog
-#	list = Global.card_catalog._get_card_id_list()
-#	list_page = 0
-#	list_page_max = ceili(list.size() / 18.0)
-#	$VBoxContainer/Footer/BoxContainer/Label.text = "/" + str(list_page_max)
-#
-#	for i in mini(15,list.size()):
-#		var c := _create_deck_card(catalog._get_card_data(list[i]))
-#		%DeckSequence.add_card(c)
-#
-#	var i := list_page * 18
-#	for c in %GridContainer.get_children():
-#		c.drag_start.connect(_on_pool_card_drag_start)
-#		c.dragging.connect(_on_pool_card_dragging)
-#		c.dropped.connect(_on_pool_card_dropped)
-#		c.mouse_entered.connect(_on_pool_card_mouse_entered.bind(c))
-#		c.mouse_exited.connect(_on_pool_card_mouse_exited.bind(c))
-#		c.double_clicked.connect(_on_pool_card_double_clicked)
-#		c.held.connect(_on_card_held)
-#
-#		if i  < list.size():
-#			var cd := Global.card_catalog._get_card_data(list[i])
-#			c.initialize(cd)
-#		else:
-#			c.hide()
-#		i += 1
-	pass
+		c.timer = $Timer
 
 
 func _process(_delta):
@@ -222,16 +197,7 @@ func _on_pool_card_double_clicked(_self):
 
 
 func _on_card_held(_self):
-	%CardDetailPanel.show()
-	%CardDetail.initialize_origin(_self.get_card_data())
-
-
-func _on_card_detail_panel_gui_input(event : InputEvent):
-	if (event is InputEventMouseButton
-			and event.button_index == MOUSE_BUTTON_LEFT
-			and event.pressed):
-		%CardDetailPanel.hide()
-
+	request_card_detail.emit(_self.get_card_data())
 
 
 func _on_button_page_plus_pressed():
@@ -296,3 +262,21 @@ func _on_button_save_pressed():
 		var cd := c.card_data as CatalogData.CardData
 		cards.append(cd.id)
 	saved.emit(DeckData.new($VBoxContainer/Header/LineEditName.text,catalog,cards))
+
+
+func _on_button_list_pressed():
+	var cards : PackedInt32Array = []
+	for c in %DeckSequence.get_children():
+		var cd := c.card_data as CatalogData.CardData
+		cards.append(cd.id)
+	request_deck_list.emit(DeckData.new($VBoxContainer/Header/LineEditName.text,catalog,cards))
+	process_mode = Node.PROCESS_MODE_DISABLED
+
+func reset_card_order(order : PackedInt32Array):
+	var cards : Array = %DeckSequence.get_children().duplicate()
+	order.reverse()
+	for i in order:
+		%DeckSequence.move_child(cards[i],0)
+	process_mode = Node.PROCESS_MODE_INHERIT
+
+

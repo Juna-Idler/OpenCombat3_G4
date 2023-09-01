@@ -31,6 +31,7 @@ card_y_space = 11.0
 [node name="Mover" type="TextureRect" parent="."]
 unique_name_in_owner = true
 visible = false
+layout_mode = 0
 offset_left = -142.0
 offset_top = -200.0
 mouse_filter = 2

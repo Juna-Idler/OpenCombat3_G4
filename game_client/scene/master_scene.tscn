@@ -10,7 +10,7 @@
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_nw8tx"]
 gradient = SubResource("Gradient_smdaf")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_5my6h"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sdqyc"]
 shader = ExtResource("3_otrr6")
 shader_parameter/rate = null
 shader_parameter/invert = false
@@ -34,7 +34,7 @@ layer = 128
 [node name="SceneFader" type="TextureRect" parent="CanvasLayer"]
 unique_name_in_owner = true
 visible = false
-material = SubResource("ShaderMaterial_5my6h")
+material = SubResource("ShaderMaterial_sdqyc")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -5,4 +5,3 @@
 [node name="DeckSequence" type="Container"]
 custom_minimum_size = Vector2(0, 216)
 script = ExtResource("1_2ybs0")
-card_height = null

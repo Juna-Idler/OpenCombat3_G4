@@ -154,6 +154,7 @@ grow_vertical = 2
 [connection signal="pressed" from="Menu/HBoxContainer/PanelLeft/ButtonBack" to="." method="_on_button_back_pressed"]
 [connection signal="pressed" from="Menu/HBoxContainer/PanelRight/ButtonEdit" to="." method="_on_button_edit_pressed"]
 [connection signal="pressed" from="Menu/HBoxContainer/PanelRight/ButtonNew" to="." method="_on_button_new_pressed"]
+[connection signal="gui_input" from="DeckList" to="." method="_on_deck_list_gui_input"]
 [connection signal="card_clicked" from="DeckList/DeckList" to="." method="_on_deck_list_card_clicked"]
 [connection signal="pressed" from="DeckList/ButtonDeckListClose" to="." method="_on_button_deck_list_close_pressed"]
 [connection signal="gui_input" from="CardDetail" to="." method="_on_card_detail_gui_input"]

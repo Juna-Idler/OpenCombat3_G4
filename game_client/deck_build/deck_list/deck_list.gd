@@ -7,6 +7,7 @@ const BuildCard := preload("res://game_client/deck_build/building/card.tscn")
 signal card_clicked(_index : int)
 
 @onready var mover = %Mover
+var mover_tween : Tween
 
 func initialize(items : Array[Texture2D],order : PackedInt32Array,editable : bool = true):
 	terminalize()
@@ -21,6 +22,9 @@ func initialize(items : Array[Texture2D],order : PackedInt32Array,editable : boo
 			c.dragging.connect(_on_card_dragging)
 			c.dropped.connect(_on_card_dropped)
 		c.clicked.connect(_on_card_clicked)
+		c.mouse_entered.connect(_on_card_mouse_entered.bind(c))
+		c.mouse_exited.connect(_on_card_mouse_exited.bind(c))
+
 		c.set_meta("index",order[i])
 		%DeckListContainer.add_child(c)
 	pass
@@ -38,6 +42,8 @@ func initialize_from_deck(deck : DeckData,order : PackedInt32Array,editable : bo
 			c.dragging.connect(_on_card_dragging)
 			c.dropped.connect(_on_card_dropped)
 		c.clicked.connect(_on_card_clicked)
+		c.mouse_entered.connect(_on_card_mouse_entered.bind(c))
+		c.mouse_exited.connect(_on_card_mouse_exited.bind(c))
 		c.set_meta("index",order[i])
 		%DeckListContainer.add_child(c)
 	pass
@@ -54,6 +60,9 @@ func get_order() -> PackedInt32Array:
 
 
 func _ready():
+	mover_tween = create_tween()
+	mover_tween.kill()
+
 	pass # Replace with function body.
 
 
@@ -68,11 +77,10 @@ func _on_card_drag_start(_self, _pos):
 	_self.modulate.a = 0.1
 	
 	mover.show()
-	mover.size = Vector2(142,200)
+	mover.scale = Vector2(0.71,0.71)
 	mover.modulate.a = 1.0
 	mover.global_position = get_global_mouse_position() - mover.size / 2
 	mover.texture = _self.get_texture()
-
 
 
 
@@ -97,7 +105,18 @@ func _on_card_dropped(_self, _relative_pos, _start_pos):
 	
 	mover.hide()
 
-
-
 func _on_card_clicked(_self):
 	card_clicked.emit(_self.get_meta("index"))
+
+func _on_card_mouse_entered(card):
+	mover.texture = card.get_texture()
+	mover.global_position = card.global_position + card.size / 2 - mover.size / 2
+	mover.modulate.a = 1.0
+	mover.show()
+	mover.scale = Vector2(0.71,0.71)
+	mover_tween.kill()
+	mover_tween = create_tween()
+	mover_tween.tween_property(mover,"scale",Vector2(1.0,1.0),0.2)
+
+func _on_card_mouse_exited(_card):
+	mover.hide()

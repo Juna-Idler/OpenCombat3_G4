@@ -10,6 +10,8 @@ signal request_deck_list(deck : DeckData)
 
 @onready var mover = %Mover
 
+var mover_tween : Tween
+
 var drag_card : Control = null
 
 var catalog : I_CardCatalog = null
@@ -69,6 +71,9 @@ func _ready():
 		c.held.connect(_on_card_held)
 		c.double_click_duration_ms = 500
 		c.timer = $Timer
+	
+	mover_tween = create_tween()
+	mover_tween.kill()
 
 
 func _process(_delta):
@@ -97,7 +102,7 @@ func _on_card_drag_start(_self, _pos):
 	_self.modulate.a = 0.1
 	
 	mover.show()
-	mover.size = Vector2(142,200)
+	mover.scale = Vector2(0.71,0.71)
 	mover.modulate.a = 1.0
 	mover.global_position = get_global_mouse_position() - mover.size / 2
 	mover.texture = _self.get_texture()
@@ -113,7 +118,7 @@ func _on_card_dragging(_self, _relative_pos, _start_pos):
 		%DeckSequence.pointing(point)
 		mover.modulate.a = 1.0
 	else:
-		%DeckSequence.exit()
+		%DeckSequence.not_pointing()
 		mover.modulate.a = 0.3
 
 	mover.global_position = pos - mover.size / 2
@@ -140,7 +145,7 @@ func _on_pool_card_drag_start(_self, _pos):
 	drag_card = _self
 	drag_card.modulate.a = 0.5
 	mover.show()
-	mover.size = Vector2(142,200)
+	mover.scale = Vector2(0.71,0.71)
 	mover.modulate.a = 1.0
 	mover.global_position = get_global_mouse_position() - mover.size / 2
 	
@@ -154,7 +159,7 @@ func _on_pool_card_dragging(_self, _relative_pos, _start_pos):
 	if Rect2(Vector2.ZERO,%DeckSequence.size).has_point(point):
 		%DeckSequence.pointing(point)
 	else:
-		%DeckSequence.exit()
+		%DeckSequence.not_pointing()
 	mover.global_position = pos - mover.size / 2
 
 
@@ -175,10 +180,13 @@ func _on_pool_card_dropped(_self, _relative_pos, _start_pos):
 func _on_pool_card_mouse_entered(card):
 	if not drag_card:
 		mover.texture = card.get_texture()
-		mover.size = Vector2(200,200*1.4)
 		mover.global_position = card.global_position + card.size / 2 - mover.size / 2
 		mover.modulate.a = 1.0
 		mover.show()
+		mover.scale = Vector2(0.71,0.71)
+		mover_tween.kill()
+		mover_tween = create_tween()
+		mover_tween.tween_property(mover,"scale",Vector2(1.0,1.0),0.1)
 
 
 func _on_pool_card_mouse_exited(_card):

@@ -124,12 +124,11 @@ func pointing(point : Vector2):
 		
 	_last_area = area
 
-func exit():
+func not_pointing():
 	if _last_area != -1:
 		queue_sort()
 		_last_area = -1
-	_dragging = -2
-
+	
 
 func drop(card : Control,point : Vector2):
 	var area := floori((point.x - card_width / 2 - side_margin) / (card_width + card_space)) + 1
@@ -145,6 +144,13 @@ func drop(card : Control,point : Vector2):
 	queue_sort()
 	_last_area = -1
 	_dragging = -2
+
+func exit():
+	if _last_area != -1:
+		queue_sort()
+		_last_area = -1
+	_dragging = -2
+	
 
 func add_card(card : Control):
 	add_child(card)

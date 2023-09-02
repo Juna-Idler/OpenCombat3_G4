@@ -130,8 +130,10 @@ size_flags_vertical = 3
 alignment = 1
 
 [node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
 
 [connection signal="pressed" from="ButtonBack" to="." method="_on_button_back_pressed"]
 [connection signal="pressed" from="ButtonStart" to="." method="_on_button_start_pressed"]
 [connection signal="clicked" from="MyDeck" to="." method="_on_my_deck_clicked"]
 [connection signal="clicked" from="CpuDeck" to="." method="_on_cpu_deck_clicked"]
+[connection signal="gui_input" from="DeckSelect" to="." method="_on_deck_select_gui_input"]

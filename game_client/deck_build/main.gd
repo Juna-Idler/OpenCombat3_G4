@@ -122,5 +122,15 @@ func _on_button_deck_list_close_pressed():
 		
 	$DeckList.hide()
 	$DeckList/DeckList.terminalize()
-	
-	
+
+func _on_deck_list_gui_input(event):
+	if (event is InputEventMouseButton
+			and event.button_index == MOUSE_BUTTON_LEFT
+			and event.pressed):
+		if _hold_deck:
+			_hold_deck = null
+		else:
+			$Building.reset_card_order($DeckList/DeckList.get_order())
+			
+		$DeckList.hide()
+		$DeckList/DeckList.terminalize()

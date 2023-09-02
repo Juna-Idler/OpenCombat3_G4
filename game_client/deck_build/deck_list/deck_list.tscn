@@ -10,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_115wn")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
@@ -23,6 +24,7 @@ grow_vertical = 2
 [node name="DeckListContainer" type="Container" parent="CenterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 0
 script = ExtResource("2_fob1j")
 card_width = 110.0
 card_height = 154.0
@@ -32,8 +34,9 @@ card_y_space = 11.0
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
-offset_left = -142.0
-offset_top = -200.0
+offset_right = 200.0
+offset_bottom = 280.0
+pivot_offset = Vector2(100, 140)
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5

@@ -22,6 +22,7 @@ font_size = 20
 custom_minimum_size = Vector2(0, 120)
 offset_right = 680.0
 offset_bottom = 120.0
+mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_asgyj")
 script = ExtResource("1_gasul")
 
@@ -34,7 +35,7 @@ offset_top = 8.0
 offset_right = -8.0
 offset_bottom = 42.0
 grow_horizontal = 2
-text = "デッキ名"
+text = "No Deck"
 label_settings = SubResource("LabelSettings_5psem")
 horizontal_alignment = 1
 
@@ -50,7 +51,7 @@ offset_right = -8.0
 offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "情報"
+text = "not built"
 label_settings = SubResource("LabelSettings_5psem")
 horizontal_alignment = 2
 vertical_alignment = 2

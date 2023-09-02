@@ -49,7 +49,7 @@ func _initialize(changer : SceneChanger,_param : Array):
 	myself.hand_selected.connect(on_hand_selected)
 	rival = NonPlayablePlayerFieldScene.instantiate()
 
-
+	
 func _fade_in_finished():
 	pass
 
@@ -120,7 +120,13 @@ func _on_button_deck_list_close_pressed():
 	panel_deck_list.hide()
 	deck_list.terminalize()
 
-
+func _on_panel_deck_list_gui_input(event):
+	if (event is InputEventMouseButton
+			and event.button_index == MOUSE_BUTTON_LEFT
+			and event.pressed):
+		panel_deck_list.hide()
+		deck_list.terminalize()
+	
 func _on_card_detail_gui_input(event):
 	if (event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT
@@ -169,3 +175,5 @@ func _on_deck_list_card_clicked(_index):
 	var cd := current_deck_data.catalog._get_card_data(current_deck_data.cards[_index])
 	panel_card_detail.show()
 	card_detail.initialize_origin(cd)
+
+

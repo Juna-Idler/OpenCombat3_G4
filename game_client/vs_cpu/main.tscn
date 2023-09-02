@@ -178,6 +178,7 @@ text = "SURRENDER"
 [connection signal="back_pressed" from="CanvasLayerMenu/Menu" to="." method="_on_menu_back_pressed"]
 [connection signal="request_deck_list" from="CanvasLayerMenu/Menu" to="." method="_on_menu_request_deck_list"]
 [connection signal="start_pressed" from="CanvasLayerMenu/Menu" to="." method="_on_menu_start_pressed"]
+[connection signal="gui_input" from="CanvasLayerCardList/PanelDeckList" to="." method="_on_panel_deck_list_gui_input"]
 [connection signal="card_clicked" from="CanvasLayerCardList/PanelDeckList/DeckList" to="." method="_on_deck_list_card_clicked"]
 [connection signal="pressed" from="CanvasLayerCardList/PanelDeckList/ButtonDeckListClose" to="." method="_on_button_deck_list_close_pressed"]
 [connection signal="gui_input" from="CanvasLayerCardList/PanelCardDetail" to="." method="_on_card_detail_gui_input"]

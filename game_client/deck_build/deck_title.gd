@@ -1,6 +1,6 @@
 extends "res://utility_code/holdable_control.gd"
 
-var _deck_data : DeckData
+var _deck_data : DeckData = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

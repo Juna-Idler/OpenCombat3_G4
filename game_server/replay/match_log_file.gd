@@ -4,14 +4,14 @@ class_name MatchLogFile
 const FILE_VERSION = "Ver.first_time"
 
 
-static func save(path : String,log : MatchLog) -> bool:
+static func save_log(path : String,log_data : MatchLog) -> bool:
 	var dir_path := path.get_base_dir()
 	if not DirAccess.dir_exists_absolute(dir_path):
 		DirAccess.make_dir_recursive_absolute(dir_path)
 	
 	var save_dic = {
 		"version":FILE_VERSION,
-		"log":log.serialize()
+		"log":log_data.serialize()
 	}
 	var file := FileAccess.open(path,FileAccess.WRITE)
 	if file:
@@ -20,7 +20,7 @@ static func save(path : String,log : MatchLog) -> bool:
 		return true
 	return false
 
-static func load(path : String) -> MatchLog:
+static func load_log(path : String) -> MatchLog:
 	var file := FileAccess.open(path,FileAccess.READ)
 	if not file:
 		return null
@@ -48,8 +48,8 @@ static func load_directory(directory_path : String) -> Array[MatchLog]:
 	var list : Array[MatchLog] = []
 	for f in files:
 		var path := directory_path.path_join(f)
-		var log := MatchLogFile.load(path)
-		if log:
-			list.append(log)
+		var log_data := MatchLogFile.load_log(path)
+		if log_data:
+			list.append(log_data)
 	return list
 

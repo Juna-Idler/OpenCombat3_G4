@@ -1,9 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://by1tfuimby7sp"]
+[gd_scene load_steps=11 format=3 uid="uid://by1tfuimby7sp"]
 
 [ext_resource type="Script" path="res://game_client/vs_cpu/main.gd" id="1_x7hgn"]
 [ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="1_yn0n3"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="3_xca0b"]
+[ext_resource type="PackedScene" uid="uid://byeuc141cmuvp" path="res://game_client/vs_cpu/menu.tscn" id="4_1nvn3"]
 [ext_resource type="PackedScene" uid="uid://cnc6sua8jiqfa" path="res://game_client/settings/settings.tscn" id="4_okodh"]
+[ext_resource type="PackedScene" uid="uid://4v2h15esi7xs" path="res://game_client/deck_build/deck_list/deck_list.tscn" id="5_yiot8"]
+[ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="6_d7h3p"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yt6cf"]
 content_margin_left = 40.0
@@ -24,15 +27,17 @@ shadow_size = 0
 shadow_color = Color(0, 0, 0, 0.752941)
 shadow_offset = Vector2(10, 10)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m0u64"]
+bg_color = Color(0, 0, 0, 0.752941)
+
 [node name="main" type="Node"]
 script = ExtResource("1_x7hgn")
 
 [node name="match_scene" parent="." instance=ExtResource("1_yn0n3")]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 100
+[node name="CanvasLayerSettingsButton" type="CanvasLayer" parent="match_scene"]
 
-[node name="Control" type="Control" parent="CanvasLayer"]
+[node name="ControlSettings" type="Control" parent="match_scene/CanvasLayerSettingsButton"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,7 +46,31 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Label" type="Label" parent="CanvasLayer/Control"]
+[node name="ButtonSettings" type="Button" parent="match_scene/CanvasLayerSettingsButton/ControlSettings"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -128.0
+offset_bottom = 64.0
+grow_horizontal = 0
+theme_override_fonts/font = ExtResource("3_xca0b")
+theme_override_font_sizes/font_size = 24
+text = "SETTINGS"
+
+[node name="CanvasLayerMatch" type="CanvasLayer" parent="."]
+layer = 11
+
+[node name="GameEnd" type="Control" parent="CanvasLayerMatch"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="CanvasLayerMatch/GameEnd"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -60,73 +89,98 @@ label_settings = SubResource("LabelSettings_5rfru")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ButtonRetry" type="Button" parent="CanvasLayer/Control"]
+[node name="ButtonGoback" type="Button" parent="CanvasLayerMatch/GameEnd"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -512.0
-offset_top = 24.0
-offset_right = -32.0
-offset_bottom = 184.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 100
-text = "RETRY"
-
-[node name="ButtonGoback" type="Button" parent="CanvasLayer/Control"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 32.0
-offset_top = 24.0
-offset_right = 512.0
-offset_bottom = 184.0
+offset_left = -240.0
+offset_top = 72.0
+offset_right = 240.0
+offset_bottom = 217.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 100
 text = "BACK"
 
-[node name="ControlSettings" type="Control" parent="CanvasLayer"]
-layout_mode = 3
+[node name="CanvasLayerMenu" type="CanvasLayer" parent="."]
+layer = 12
+
+[node name="Menu" parent="CanvasLayerMenu" instance=ExtResource("4_1nvn3")]
+
+[node name="CanvasLayerCardList" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="PanelDeckList" type="Panel" parent="CanvasLayerCardList"]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_m0u64")
 
-[node name="ButtonSettings" type="Button" parent="CanvasLayer/ControlSettings"]
+[node name="DeckList" parent="CanvasLayerCardList/PanelDeckList" instance=ExtResource("5_yiot8")]
+layout_mode = 1
+
+[node name="ButtonDeckListClose" type="Button" parent="CanvasLayerCardList/PanelDeckList"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -128.0
+offset_left = -64.0
 offset_bottom = 64.0
 grow_horizontal = 0
-theme_override_fonts/font = ExtResource("3_xca0b")
-theme_override_font_sizes/font_size = 24
-text = "SETTINGS"
+text = "X"
 
-[node name="Settings" parent="CanvasLayer/ControlSettings" instance=ExtResource("4_okodh")]
+[node name="PanelCardDetail" type="Panel" parent="CanvasLayerCardList"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CardDetail" parent="CanvasLayerCardList/PanelCardDetail" instance=ExtResource("6_d7h3p")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -256.0
+offset_right = 400.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CanvasLayerSettings" type="CanvasLayer" parent="."]
+layer = 127
+
+[node name="Settings" parent="CanvasLayerSettings" instance=ExtResource("4_okodh")]
 unique_name_in_owner = true
 visible = false
-layout_mode = 1
 
-[node name="ButtonSurrender" type="Button" parent="CanvasLayer/ControlSettings/Settings"]
+[node name="ButtonSurrender" type="Button" parent="CanvasLayerSettings/Settings"]
 layout_mode = 1
 offset_right = 256.0
 offset_bottom = 64.0
 text = "SURRENDER"
 
-[connection signal="pressed" from="CanvasLayer/Control/ButtonRetry" to="." method="_on_button_game_over_pressed"]
-[connection signal="pressed" from="CanvasLayer/Control/ButtonGoback" to="." method="_on_button_game_over_2_pressed"]
-[connection signal="pressed" from="CanvasLayer/ControlSettings/ButtonSettings" to="." method="_on_button_settings_pressed"]
-[connection signal="pressed" from="CanvasLayer/ControlSettings/Settings/ButtonSurrender" to="." method="_on_button_surrender_pressed"]
+[connection signal="ended" from="match_scene" to="." method="_on_match_scene_ended"]
+[connection signal="performed" from="match_scene" to="." method="_on_match_scene_performed"]
+[connection signal="request_card_detail" from="match_scene" to="." method="_on_match_scene_request_card_detail"]
+[connection signal="pressed" from="match_scene/CanvasLayerSettingsButton/ControlSettings/ButtonSettings" to="." method="_on_button_settings_pressed"]
+[connection signal="pressed" from="CanvasLayerMatch/GameEnd/ButtonGoback" to="." method="_on_button_game_over_2_pressed"]
+[connection signal="back_pressed" from="CanvasLayerMenu/Menu" to="." method="_on_menu_back_pressed"]
+[connection signal="request_deck_list" from="CanvasLayerMenu/Menu" to="." method="_on_menu_request_deck_list"]
+[connection signal="start_pressed" from="CanvasLayerMenu/Menu" to="." method="_on_menu_start_pressed"]
+[connection signal="card_clicked" from="CanvasLayerCardList/PanelDeckList/DeckList" to="." method="_on_deck_list_card_clicked"]
+[connection signal="pressed" from="CanvasLayerCardList/PanelDeckList/ButtonDeckListClose" to="." method="_on_button_deck_list_close_pressed"]
+[connection signal="gui_input" from="CanvasLayerCardList/PanelCardDetail" to="." method="_on_card_detail_gui_input"]
+[connection signal="pressed" from="CanvasLayerSettings/Settings/ButtonSurrender" to="." method="_on_button_surrender_pressed"]
 
-[editable path="CanvasLayer/ControlSettings/Settings"]
+[editable path="CanvasLayerSettings/Settings"]

@@ -55,11 +55,11 @@ func _initialize(changer : SceneChanger,_param : Array):
 		v_box_container.add_child(label)
 
 
-func replay_start(log : MatchLog):
+func replay_start(log_data : MatchLog):
 	duration_last_performing = 0
 	performing_durations = []
 	_complete_board = []
-	_match_log = log
+	_match_log = log_data
 	replay_mode = ReplayMode.AUTO
 	%ButtonNoWait.set_pressed_no_signal(false)
 	%ButtonPause.set_pressed_no_signal(false)

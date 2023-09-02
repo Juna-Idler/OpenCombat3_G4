@@ -6,6 +6,8 @@ class_name MatchScene
 signal performed
 signal ended(msg : String)
 
+signal request_card_detail(cd,color,level,power,hit,block,skills,picture)
+
 var _performing : bool
 
 var my_game_end_point : int
@@ -77,8 +79,6 @@ func initialize(server : IGameServer,
 	_myself.request_enchant_list_view.connect(_on_request_enchant_list_view)
 	_rival.request_enchant_list_view.connect(_on_request_enchant_list_view)
 	
-	%CardDetailPanel.visible = false
-
 
 func terminalize():
 	if _game_server:
@@ -283,15 +283,8 @@ func _on_button_log_toggled(button_pressed):
 	pass # Replace with function body.
 
 func _on_card_clicked(card : Card3D):
-	%CardDetailPanel.visible = true
-	%CardDetail.initialize(card.data,card.color,card.level,card.power,card.hit,card.block,card.skills,card.picture)
+	request_card_detail.emit(card.data,card.color,card.level,card.power,card.hit,card.block,card.skills,card.picture)
 	
-func _on_card_detail_panel_gui_input(event : InputEvent):
-	if (event is InputEventMouseButton
-			and event.button_index == MOUSE_BUTTON_LEFT
-			and event.pressed):
-		%CardDetailPanel.visible = false
-
 
 func _on_request_card_list_view(p_cards : Array[Card3D],d_cards : Array[Card3D]):
 	%CardList.visible = true

@@ -59,7 +59,8 @@ class DeckRegulation:
 
 	func card_pool_string():
 		var cp : PackedStringArray = []
-		for i in card_pool.size()/2:
+		@warning_ignore("integer_division")
+		for i in card_pool.size() / 2:
 			if card_pool[i*2] == card_pool[i*2+1]:
 				cp.append(str(card_pool[i*2]))
 			else:

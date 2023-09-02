@@ -30,10 +30,10 @@ var non_playable_recovery_phase : bool = false
 func _init():
 	pass
 
-func initialize(name:String,deck:PackedInt32Array,
-		commander : ICpuCommander,cpu_deck:PackedInt32Array,
+func initialize(name:String,deck:PackedInt32Array,card_catalog : CardCatalog,
+		commander : ICpuCommander,cpu_deck:PackedInt32Array,cpu_card_catalog : CardCatalog,
 		d_regulation :RegulationData.DeckRegulation,
-		m_regulation :RegulationData.MatchRegulation,card_catalog : CardCatalog):
+		m_regulation :RegulationData.MatchRegulation):
 	_player_name = name;
 	_commander = commander
 	commander._set_deck_list(cpu_deck,deck)
@@ -42,7 +42,7 @@ func initialize(name:String,deck:PackedInt32Array,
 	match_regulation = m_regulation
 	
 	var factory := PlayerCardFactory.new(card_catalog)
-	var cpu_factory := PlayerCardFactory.new(card_catalog)
+	var cpu_factory := PlayerCardFactory.new(cpu_card_catalog)
 	
 	_player = OfflinePlayer.new(factory,deck,m_regulation.hand_count,true)
 	_cpu_player = OfflinePlayer.new(cpu_factory,cpu_deck,m_regulation.hand_count,true)

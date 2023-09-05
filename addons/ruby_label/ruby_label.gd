@@ -1,8 +1,8 @@
 @tool
-
-# warning-ignore-all:return_value_discarded
-
 extends Control
+
+class_name RubyLabel
+
 
 func _get_property_list():
 	var properties = [

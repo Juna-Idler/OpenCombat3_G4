@@ -1,0 +1,157 @@
+[gd_scene load_steps=7 format=3 uid="uid://bgb6srewoa364"]
+
+[ext_resource type="Script" path="res://addons/ruby_label/ruby_label.gd" id="1_313rp"]
+[ext_resource type="Script" path="res://game_client/story/dialog.gd" id="1_isb78"]
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="2_spbgm"]
+
+[sub_resource type="Gradient" id="Gradient_4ek07"]
+colors = PackedColorArray(0, 0, 0, 0.752941, 0, 0, 0, 0.25098)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_yfgsy"]
+gradient = SubResource("Gradient_4ek07")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_l51i7"]
+texture = SubResource("GradientTexture2D_yfgsy")
+
+[node name="Dialog" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_isb78")
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 192.0
+offset_top = -168.0
+offset_right = -192.0
+offset_bottom = 152.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_l51i7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Name" type="Control" parent="Panel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("1_313rp")
+font_font = ExtResource("2_spbgm")
+font_size = 32
+font_ruby_size = 16
+font_outline_width = 0
+font_ruby_outline_width = 0
+font_color = Color(1, 1, 1, 1)
+font_outline_color = Color(0, 0, 0, 1)
+ruby_alignment_ruby = 0
+ruby_alignment_parent = 0
+buffer_left_margin = 0
+buffer_right_margin = 0
+buffer_left_padding = 32
+buffer_right_padding = 32
+buffer_visible_border = false
+adjust_line_height = 0
+adjust_ruby_distance = -10
+adjust_no_ruby_space = 0
+text_input = "｜名前《なまえ》"
+text_ruby_parent = "｜"
+text_ruby_begin = "《"
+text_ruby_end = "》"
+display_horizontal_alignment = 0
+display_vertical_alignment = 2
+display_rate = 100.0
+display_rate_phonetic = false
+output_base_text = "名前"
+output_phonetic_text = "なまえ"
+clip_rect = false
+auto_fit_height = false
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Text" type="Control" parent="Panel/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("1_313rp")
+font_font = ExtResource("2_spbgm")
+font_size = 32
+font_ruby_size = 16
+font_outline_width = 0
+font_ruby_outline_width = 0
+font_color = Color(1, 1, 1, 1)
+font_outline_color = Color(0, 0, 0, 1)
+ruby_alignment_ruby = 0
+ruby_alignment_parent = 0
+buffer_left_margin = 0
+buffer_right_margin = 0
+buffer_left_padding = 16
+buffer_right_padding = 16
+buffer_visible_border = false
+adjust_line_height = -5
+adjust_ruby_distance = -10
+adjust_no_ruby_space = 5
+text_input = "ダイアログメッセージウィンドウのテストです。
+日本語ではメッセージウィンドウという呼び名が一般的っぽいが、英語ではダイアログ(Dialogue/Dialog)と呼ばれてるっぽい？
+GodotにはDialogicとDialogue Managerという二大Dialog系Assetがあるけど、まあそんな複雑なことをするつもりもないから自作でいいでしょ。
+ここにも｜振り仮名《ルビ》をつけられるし"
+text_ruby_parent = "｜"
+text_ruby_begin = "《"
+text_ruby_end = "》"
+display_horizontal_alignment = 0
+display_vertical_alignment = 0
+display_rate = 100.0
+display_rate_phonetic = false
+output_base_text = "ダイアログメッセージウィンドウのテストです。
+日本語ではメッセージウィンドウという呼び名が一般的っぽいが、英語ではダイアログ(Dialogue/Dialog)と呼ばれてるっぽい？
+GodotにはDialogicとDialogue Managerという二大Dialog系Assetがあるけど、まあそんな複雑なことをするつもりもないから自作でいいでしょ。
+ここにも振り仮名をつけられるし"
+output_phonetic_text = "ダイアログメッセージウィンドウのテストです。
+日本語ではメッセージウィンドウという呼び名が一般的っぽいが、英語ではダイアログ(Dialogue/Dialog)と呼ばれてるっぽい？
+GodotにはDialogicとDialogue Managerという二大Dialog系Assetがあるけど、まあそんな複雑なことをするつもりもないから自作でいいでしょ。
+ここにもルビをつけられるし"
+clip_rect = false
+auto_fit_height = true
+
+[node name="TestButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 544.0
+offset_top = 7.0
+offset_right = 704.0
+offset_bottom = 102.0
+text = "test"
+
+[node name="HSlider" type="HSlider" parent="."]
+layout_mode = 0
+offset_left = 712.0
+offset_top = 7.0
+offset_right = 1096.0
+offset_bottom = 70.0
+max_value = 1.0
+step = 0.01
+value = 0.1
+
+[node name="LineEdit" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 728.0
+offset_top = 71.0
+offset_right = 795.063
+offset_bottom = 102.0
+
+[connection signal="pressed" from="TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="value_changed" from="HSlider" to="." method="_on_h_slider_value_changed"]

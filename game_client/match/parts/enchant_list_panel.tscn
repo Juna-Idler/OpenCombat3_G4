@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://baq8u4hrojdij"]
+
+[ext_resource type="Script" path="res://game_client/match/parts/enchant_list_panel.gd" id="1_4vay7"]
+[ext_resource type="PackedScene" uid="uid://v5cb1bb1rml0" path="res://game_client/match/parts/enchant_list_item.tscn" id="2_kn1io"]
+
+[node name="EnchantListPanel" type="ColorRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+script = ExtResource("1_4vay7")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_right = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 720)
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="EnchantListItem" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_kn1io")]
+layout_mode = 2
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

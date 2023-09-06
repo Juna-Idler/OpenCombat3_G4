@@ -9,8 +9,8 @@ const RECOVER_RESULT_DELAY = 1000
 
 var _processor := GameProcessor.new()
 
-var _player : OfflinePlayer
-var _cpu_player : OfflinePlayer
+var _player : StandardPlayer
+var _cpu_player : StandardPlayer
 
 var _player_name:String
 
@@ -44,8 +44,8 @@ func initialize(name:String,deck:PackedInt32Array,card_catalog : CardCatalog,
 	var factory := PlayerCardFactory.new(card_catalog)
 	var cpu_factory := PlayerCardFactory.new(cpu_card_catalog)
 	
-	_player = OfflinePlayer.new(factory,deck,m_regulation.hand_count,true)
-	_cpu_player = OfflinePlayer.new(cpu_factory,cpu_deck,m_regulation.hand_count,true)
+	_player = StandardPlayer.new(factory,deck,m_regulation.hand_count,true)
+	_cpu_player = StandardPlayer.new(cpu_factory,cpu_deck,m_regulation.hand_count,true)
 	
 
 func _get_primary_data() -> PrimaryData:

@@ -8,8 +8,8 @@ var logger := MatchLogger.new()
 var server : IGameServer = null
 var catalog := CardCatalog.new()
 
-const PlayablePlayerFieldScene := preload("res://game_client/match/player/field/playable_field.tscn")
-const NonPlayablePlayerFieldScene := preload("res://game_client/match/player/field/non_playable_field.tscn")
+const PlayablePlayerFieldScene := preload("res://game_client/match/field/player/playable_field.tscn")
+const NonPlayablePlayerFieldScene := preload("res://game_client/match/field/player/non_playable_field.tscn")
 
 
 var myself : PlayablePlayerField

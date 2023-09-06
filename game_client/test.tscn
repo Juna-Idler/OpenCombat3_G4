@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dju4e56se3o1v"]
 
-[ext_resource type="PackedScene" uid="uid://41vguxcbj5ix" path="res://game_client/match/card3d.tscn" id="1_jqnet"]
+[ext_resource type="PackedScene" uid="uid://41vguxcbj5ix" path="res://game_client/match/parts/card3d.tscn" id="1_jqnet"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fnxu6"]
 transparency = 1

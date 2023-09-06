@@ -1,16 +1,16 @@
 [gd_scene load_steps=10 format=3 uid="uid://dci4g4cu74w6n"]
 
 [ext_resource type="Script" path="res://game_client/match/match_scene.gd" id="1_jvtjj"]
-[ext_resource type="PackedScene" uid="uid://cx8qc3q1f3xaj" path="res://game_client/match/card_list.tscn" id="2_4fyv0"]
-[ext_resource type="PackedScene" uid="uid://cjumv2ulywgfb" path="res://game_client/match/label_board.tscn" id="3_hyybm"]
+[ext_resource type="PackedScene" uid="uid://cx8qc3q1f3xaj" path="res://game_client/match/parts/card_list.tscn" id="2_4fyv0"]
+[ext_resource type="PackedScene" uid="uid://cjumv2ulywgfb" path="res://game_client/match/parts/label_board.tscn" id="3_hyybm"]
 [ext_resource type="PackedScene" uid="uid://urb0isujicis" path="res://game_client/match/log_display/log_display.tscn" id="4_dw15p"]
-[ext_resource type="PackedScene" uid="uid://baq8u4hrojdij" path="res://game_client/match/enchant_list_panel.tscn" id="7_vhnd4"]
+[ext_resource type="PackedScene" uid="uid://baq8u4hrojdij" path="res://game_client/match/parts/enchant_list_panel.tscn" id="7_vhnd4"]
 
 [sub_resource type="Environment" id="Environment_m7sro"]
 background_mode = 1
 background_color = Color(0.219608, 0.219608, 0.219608, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j0m3l"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7xaw"]
 resource_local_to_scene = true
 transparency = 2
 alpha_scissor_threshold = 0.5
@@ -18,7 +18,7 @@ alpha_antialiasing_mode = 0
 shading_mode = 0
 billboard_mode = 1
 
-[sub_resource type="QuadMesh" id="QuadMesh_566l5"]
+[sub_resource type="QuadMesh" id="QuadMesh_nbwvw"]
 resource_local_to_scene = true
 size = Vector2(2, 1)
 
@@ -45,8 +45,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 visible = false
 
 [node name="LabelBoard" parent="Field" instance=ExtResource("3_hyybm")]
-material_override = SubResource("StandardMaterial3D_j0m3l")
-mesh = SubResource("QuadMesh_566l5")
+material_override = SubResource("StandardMaterial3D_h7xaw")
+mesh = SubResource("QuadMesh_nbwvw")
 label_settings = SubResource("LabelSettings_jsf2d")
 viewport_size = Vector2i(512, 256)
 board_size = Vector2(2, 1)

@@ -1,0 +1,42 @@
+[gd_scene load_steps=9 format=3 uid="uid://cx8qc3q1f3xaj"]
+
+[ext_resource type="Script" path="res://game_client/match/parts/card_list.gd" id="1_axcd4"]
+[ext_resource type="Shader" path="res://game_client/match/parts/card_list_back.gdshader" id="2_hycwo"]
+[ext_resource type="Texture2D" uid="uid://cxnbuph6tf4tq" path="res://BayerMatrix2.png" id="3_3y3bw"]
+
+[sub_resource type="Gradient" id="Gradient_guk7g"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.752941)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_55byx"]
+gradient = SubResource("Gradient_guk7g")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_maxvm"]
+render_priority = 0
+shader = ExtResource("2_hycwo")
+shader_parameter/Alpha = 1.0
+shader_parameter/Texture = SubResource("GradientTexture2D_55byx")
+shader_parameter/Bayer = ExtResource("3_3y3bw")
+
+[sub_resource type="QuadMesh" id="QuadMesh_jke18"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_xmfej"]
+plane = Plane(0, 0, 1, 0)
+
+[node name="CardList" type="Node3D"]
+script = ExtResource("1_axcd4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(6, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_maxvm")
+mesh = SubResource("QuadMesh_jke18")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("WorldBoundaryShape3D_xmfej")
+
+[connection signal="input_event" from="Area3D" to="." method="_on_area_3d_input_event"]

@@ -1,0 +1,30 @@
+[gd_scene load_steps=8 format=3 uid="uid://vqapltvky8po"]
+
+[ext_resource type="Shader" path="res://game_client/match/parts/card_aura.gdshader" id="1_ky6q2"]
+[ext_resource type="Texture2D" uid="uid://cmpvk1pk0xrog" path="res://game_client/card/カードオーラ.png" id="2_ueex8"]
+[ext_resource type="Script" path="res://game_client/match/parts/card_aura.gd" id="3_6o8bc"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_g153w"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_n8qfm"]
+width = 128
+height = 256
+seamless = true
+noise = SubResource("FastNoiseLite_g153w")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hstys"]
+render_priority = 0
+shader = ExtResource("1_ky6q2")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/intensity = 1.0
+shader_parameter/aura = ExtResource("2_ueex8")
+shader_parameter/noize = SubResource("NoiseTexture2D_n8qfm")
+
+[sub_resource type="QuadMesh" id="QuadMesh_mhlla"]
+size = Vector2(1, 1.282)
+
+[node name="CardAura" type="MeshInstance3D"]
+transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, 0, -0.01)
+material_override = SubResource("ShaderMaterial_hstys")
+mesh = SubResource("QuadMesh_mhlla")
+script = ExtResource("3_6o8bc")

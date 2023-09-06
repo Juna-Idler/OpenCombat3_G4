@@ -1,0 +1,10 @@
+[gd_scene load_steps=4 format=3 uid="uid://026oflkw2uyu"]
+
+[ext_resource type="PackedScene" uid="uid://lrs3pdwt6rv7" path="res://game_client/match/field/player/base_player_field.tscn" id="1_cc7ax"]
+[ext_resource type="Script" path="res://game_client/match/field/enemy/enemy_field.gd" id="1_sbu2o"]
+[ext_resource type="PackedScene" uid="uid://b7b3003msyt14" path="res://game_client/match/field/enemy/enemy_hand_area.tscn" id="2_ne5o8"]
+
+[node name="PlayerField" instance=ExtResource("1_cc7ax")]
+script = ExtResource("1_sbu2o")
+
+[node name="HandArea" parent="." index="0" instance=ExtResource("2_ne5o8")]

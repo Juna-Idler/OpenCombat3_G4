@@ -15,12 +15,12 @@ class DialogUnit:
 	
 
 class SequencialScenario:
-	var scenario : Array[DialogUnit]
+	var list : Array[DialogUnit]
 	
-	func _init(s : Array[DialogUnit]):
-		scenario = s
-	
-	static func load_script(text : String) -> SequencialScenario:
+	func _init(l : Array[DialogUnit]):
+		list = l
+	static func load_text(text : String) -> SequencialScenario:
+		@warning_ignore("shadowed_variable")
 		var list : Array[DialogUnit] = []
 		var lines := text.split("\n")
 		var main : String = ""

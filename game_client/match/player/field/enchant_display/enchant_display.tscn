@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://buq07v2a7onpv"]
-
-[ext_resource type="Script" path="res://game_client/match/player/field/enchant_display/enchant_display.gd" id="1_h0owd"]
-
-[node name="EnchantDisplay" type="Node2D"]
-position = Vector2(512, 0)
-script = ExtResource("1_h0owd")

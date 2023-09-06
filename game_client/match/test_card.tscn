@@ -1,9 +1,9 @@
 [gd_scene load_steps=17 format=3 uid="uid://d3vqtf8tawmd"]
 
 [ext_resource type="Script" path="res://game_client/match/test_card.gd" id="1_au24m"]
-[ext_resource type="PackedScene" uid="uid://41vguxcbj5ix" path="res://game_client/match/card3d.tscn" id="1_guvs4"]
+[ext_resource type="PackedScene" uid="uid://41vguxcbj5ix" path="res://game_client/match/parts/card3d.tscn" id="1_guvs4"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="3_snbho"]
-[ext_resource type="Shader" path="res://game_client/match/card_aura.gdshader" id="4_ib3oy"]
+[ext_resource type="Shader" path="res://game_client/match/parts/card_aura.gdshader" id="4_ib3oy"]
 [ext_resource type="Texture2D" uid="uid://cmpvk1pk0xrog" path="res://game_client/card/カードオーラ.png" id="5_lpqg2"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_uhu1q"]

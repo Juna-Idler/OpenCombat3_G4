@@ -1,0 +1,11 @@
+[gd_scene load_steps=4 format=3 uid="uid://bdb4l7at2qv6a"]
+
+[ext_resource type="PackedScene" uid="uid://lrs3pdwt6rv7" path="res://game_client/match/field/player/base_player_field.tscn" id="1_38ppl"]
+[ext_resource type="Script" path="res://game_client/match/field/player/non_playable_field.gd" id="2_fsloo"]
+[ext_resource type="PackedScene" uid="uid://c1jb7cip5c33x" path="res://game_client/match/field/hand_area/hand_area.tscn" id="3_lp7hf"]
+
+[node name="PlayerField" instance=ExtResource("1_38ppl")]
+script = ExtResource("2_fsloo")
+
+[node name="HandArea" parent="." index="0" instance=ExtResource("3_lp7hf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0.5)

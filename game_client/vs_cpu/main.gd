@@ -156,10 +156,10 @@ func _on_menu_start_pressed():
 	var m := RegulationData.MatchRegulation.new("",4,60,10,5)
 	
 	offline_server.initialize(Global.game_settings.player_name,my_deck.cards,my_deck.catalog,
-			ICpuCommander.ZeroCommander.new(),cpu_deck.cards,cpu_deck.catalog,d,m)
+			ICpuCommander.ZeroCommander.new(),cpu_deck.cards,cpu_deck.catalog,d,m,menu.get_shuffle())
 	logger.initialize(offline_server)
 	server = logger
-	$match_scene.initialize(server,myself,rival,my_deck.catalog,cpu_deck.catalog)
+	$match_scene.initialize(server,myself,rival)
 	
 	server._send_ready()
 

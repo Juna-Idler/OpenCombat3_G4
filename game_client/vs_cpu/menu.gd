@@ -40,6 +40,9 @@ func get_my_deck() -> DeckData:
 func get_cpu_deck() -> DeckData:
 	return $CpuDeck.get_deck()
 
+func get_shuffle() -> bool:
+	return $CheckButtonShuffle.button_pressed
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

@@ -119,6 +119,7 @@ class IPlayer:
 		return [0,0,0]
 
 
+	#敗北が確定したかどうか
 	func _damage_is_fatal() -> bool:
 		return false
 
@@ -136,6 +137,10 @@ class IPlayer:
 		
 	func _is_recovery() -> bool:
 		return true
+
+	#回復フェイズ中に敗北が確定したかどうか（life>=2でdamage=1だが、残りのカードが一枚の場合など）
+	func _fatal_in_recovery() -> bool:
+		return false
 
 
 	func _change_order(_new_hand : PackedInt32Array) -> void:

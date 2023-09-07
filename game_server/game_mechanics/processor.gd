@@ -197,16 +197,15 @@ func recover(index1:int,index2:int) -> IGameServer.RecoveryData:
 		index2 = mini(maxi(0, index2), p2_hand.size() - 1);
 		p2_result = player2._recover(index2)
 	
-	if player1._is_recovery() and player2._is_recovery():
+	var p1_fatal := player1._fatal_in_recovery()
+	var p2_fatal := player2._fatal_in_recovery()
+	
+	if p1_fatal or p2_fatal:
+			phase = IGameServer.Phase.GAME_END
+	elif player1._is_recovery() and player2._is_recovery():
 		round_count += 1
 		phase = IGameServer.Phase.COMBAT
 		_start_effect()
-	elif (((not player1._is_recovery()) and
-			player1._get_hand().size() + player1._get_stock_count() <= 1)
-			or
-			((not player2._is_recovery()) and
-			player2._get_hand().size() + player2._get_stock_count() <= 1)):
-		phase = IGameServer.Phase.GAME_END
 
 	return IGameServer.RecoveryData.new(current_round_count,phase,recovery_count,
 			IGameServer.RecoveryData.PlayerData.new(p1_hand,index1,

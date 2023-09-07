@@ -53,8 +53,10 @@ func _get_catalog() -> I_CardCatalog:
 	return _catalog
 
 
-func _initialize(match_scene : MatchScene,player_name:String,deck : PackedInt32Array,
-		catalog : I_CardCatalog,opponent : bool,
+
+func _initialize(match_scene : MatchScene,
+		player_name:String,deck : PackedInt32Array,catalog : I_CardCatalog,
+		opponent : bool,
 		on_card_clicked : Callable,
 		log_display : LogDisplay) -> void:
 
@@ -65,7 +67,6 @@ func _initialize(match_scene : MatchScene,player_name:String,deck : PackedInt32A
 	_initial_deck_size = deck.size()
 	_deck.resize(_initial_deck_size)
 	var id : int = 0
-	var life : int = 0
 	for i in deck:
 		var cd :=  catalog._get_card_data(i)
 		var c := Card3D_Scene.instantiate()
@@ -76,15 +77,14 @@ func _initialize(match_scene : MatchScene,player_name:String,deck : PackedInt32A
 		c.position = deck_position.position
 		c.rotation.y = PI
 		card_holder.add_child(c)
-		life += cd.level
 		id += 1
 	_stock_count = _deck.size()
 	_hand = []
 	_played = []
 	_discard = []
-	_life = life
+	_life = 0
 	_damage = 0
-
+	
 	_playing_card = null
 	_player_name = player_name
 	$CanvasLayer/Control/LabelName.text = _player_name
@@ -110,10 +110,14 @@ func _initialize(match_scene : MatchScene,player_name:String,deck : PackedInt32A
 		%LabelBlock.rotation_degrees = 180
 		%LabelDamage.rotation_degrees = 180
 		%LabelStockCount.rotation_degrees = 180
+		%LabelLife.rotation_degrees = 180
 		
 	%CombatStats.initialize(opponent)
 
 	_catalog = catalog
+
+func _terminalize():
+	hand_area.set_cards([])
 
 
 func _set_rival(rival : I_PlayerField) -> void:
@@ -123,6 +127,7 @@ func _set_first_data(data : IGameServer.FirstData.PlayerData) -> void:
 	_hand = data.hand.duplicate()
 	_life = data.life
 	_stock_count -= _hand.size()
+	%LabelLife.text = str(_life)
 	%LabelStockCount.text = str(_stock_count)
 	var cards : Array[Card3D] = []
 	for h in _hand:
@@ -143,6 +148,7 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	_playing_card.set_ray_pickable(false)
 	_playing_card.location = Card3D.CardLocation.COMBAT
 	_life -= _playing_card.level
+	%LabelLife.text = str(_life)
 	
 	while _skill_titles.size() < _playing_card.skills.size():
 		var title = preload("res://game_client/match/field/parts/skill_title.tscn").instantiate()
@@ -340,6 +346,8 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			var card_id : int = fragment.data
 			var card := _deck[card_id]
 			assert (card.location == Card3D.CardLocation.HAND)
+			_life -= card.level
+			%LabelLife.text = str(_life)
 			card.set_ray_pickable(false)
 			_log_display.append_fragment_discard(card.card_name,fragment.opponent)
 			_hand.remove_at(_hand.find(card_id))
@@ -419,7 +427,10 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 			_deck[card_id] = card
 			card_holder.add_child(card)
 			_life += cd.level
+			%LabelLife.text = str(_life)
+			
 			_stock_count += 1
+			%LabelStockCount.text = str(_stock_count)
 
 			_log_display.append_fragment_create_card(card,bounce_position,fragment.opponent)
 
@@ -647,6 +658,7 @@ func deserialize(data : IGameServer.CompleteData.PlayerData,duration : float = 0
 	_life = data.life
 	_damage = data.damage
 	%LabelStockCount.text = str(_stock_count)
+	%LabelLife.text = str(_life)
 	%Damage.visible = _damage > 0
 	%LabelDamage.text = str(_damage)
 	

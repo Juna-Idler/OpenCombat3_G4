@@ -33,7 +33,8 @@ func _init():
 func initialize(name:String,deck:PackedInt32Array,card_catalog : CardCatalog,
 		commander : ICpuCommander,cpu_deck:PackedInt32Array,cpu_card_catalog : CardCatalog,
 		d_regulation :RegulationData.DeckRegulation,
-		m_regulation :RegulationData.MatchRegulation):
+		m_regulation :RegulationData.MatchRegulation,
+		shuffle = true):
 	_player_name = name;
 	_commander = commander
 	commander._set_deck_list(cpu_deck,deck)
@@ -44,8 +45,8 @@ func initialize(name:String,deck:PackedInt32Array,card_catalog : CardCatalog,
 	var factory := PlayerCardFactory.new(card_catalog)
 	var cpu_factory := PlayerCardFactory.new(cpu_card_catalog)
 	
-	_player = StandardPlayer.new(factory,deck,m_regulation.hand_count,true)
-	_cpu_player = StandardPlayer.new(cpu_factory,cpu_deck,m_regulation.hand_count,true)
+	_player = StandardPlayer.new(factory,deck,m_regulation.hand_count,shuffle)
+	_cpu_player = StandardPlayer.new(cpu_factory,cpu_deck,m_regulation.hand_count,shuffle)
 	
 
 func _get_primary_data() -> PrimaryData:
@@ -55,9 +56,10 @@ func _get_primary_data() -> PrimaryData:
 	var r_deck_list  : PackedInt32Array = []
 	for c in _cpu_player._get_deck_list():
 		r_deck_list.append(c.data.id)
-	return PrimaryData.new(_player_name,my_deck_list,
-			_commander._get_commander_name(),r_deck_list,
-			deck_regulation,match_regulation)
+	return PrimaryData.new(_player_name,my_deck_list,"Basic",
+			_commander._get_commander_name(),r_deck_list,"Basic",
+			deck_regulation.to_regulation_string(),
+			match_regulation.to_regulation_string())
 
 func _send_ready():
 

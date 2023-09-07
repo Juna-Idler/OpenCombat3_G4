@@ -23,19 +23,24 @@ enum Phase {GAME_END = -1,COMBAT = 0,RECOVERY = 1}
 
 
 class PrimaryData:
-	var my_deck_list : PackedInt32Array
-	var rival_deck_list : PackedInt32Array
 	var my_name:String
 	var rival_name:String
-	var deck_regulation : RegulationData.DeckRegulation
-	var match_regulation : RegulationData.MatchRegulation
+	var my_deck_list : PackedInt32Array
+	var rival_deck_list : PackedInt32Array
+	var my_deck_catalog : String
+	var rival_deck_catalog : String
+	var deck_regulation : String
+	var match_regulation : String
 
-	func _init(name:String,deck:PackedInt32Array,rname:String,rdeck:PackedInt32Array,
-			dr:RegulationData.DeckRegulation,mr:RegulationData.MatchRegulation):
-		my_deck_list = deck
-		rival_deck_list = rdeck
+	func _init(name:String,deck:PackedInt32Array,catalog:String,
+			rname:String,rdeck:PackedInt32Array,rcatalog:String,
+			dr:String,mr:String):
 		my_name = name
 		rival_name = rname
+		my_deck_list = deck
+		rival_deck_list = rdeck
+		my_deck_catalog = catalog
+		rival_deck_catalog = rcatalog
 		deck_regulation = dr
 		match_regulation = mr
 
@@ -45,14 +50,25 @@ class PrimaryData:
 			"rd":rival_deck_list,
 			"mn":my_name,
 			"rn":rival_name,
-			"dr":deck_regulation.serialize(),
-			"mr":match_regulation.serialize(),
+			"mc":my_deck_catalog,
+			"rc":rival_deck_catalog,
+			"dr":deck_regulation,
+			"mr":match_regulation,
 		}
 	static func deserialize(dic : Dictionary) -> PrimaryData:
+		var mc = dic["mc"] if dic.has("mc") else "Basic"
+		var rc = dic["rc"] if dic.has("rc") else "Basic"
+		var dr = dic["dr"]
+		if not dr is String:
+			dr = RegulationData.DeckRegulation.deserialize(dr).to_regulation_string()
+		var mr = dic["mr"]
+		if not mr is String:
+			mr = RegulationData.MatchRegulation.deserialize(mr).to_regulation_string()
+		
 		return PrimaryData.new(
-			dic["mn"],dic["md"],dic["rn"],dic["rd"],
-			RegulationData.DeckRegulation.deserialize(dic["dr"]),
-			RegulationData.MatchRegulation.deserialize(dic["mr"]))
+			dic["mn"],dic["md"],mc,
+			dic["rn"],dic["rd"],rc,
+			dr,mr)
 
 
 class FirstData:

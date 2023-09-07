@@ -199,5 +199,22 @@ label_settings = SubResource("LabelSettings_fpaqe")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="LabelLife" type="Label" parent="CanvasLayer/Node2D/StockCount"]
+unique_name_in_owner = true
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -208.0
+offset_top = -26.0
+offset_right = -148.0
+offset_bottom = 34.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(30, 30)
+text = "15"
+label_settings = SubResource("LabelSettings_fpaqe")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="clicked" from="PlayedPosition" to="." method="_on_played_position_clicked"]
 [connection signal="input_event" from="AvatarPosition/Area3D" to="." method="_on_area_3d_input_event"]

@@ -103,6 +103,9 @@ func _damage_is_fatal() -> bool:
 	_damage = maxi(total_damage,0)
 	if _life <= _damage:
 		return true
+	if _damage > 0 and _hand.size() + _stock.size() <= 1:
+		_damage = _life
+		return true
 	return false
 
 func _combat_end() -> void:
@@ -130,6 +133,12 @@ func _recover(index : int) -> IGameServer.EffectLog:
 	
 func _is_recovery() -> bool:
 	return _damage == 0
+
+func _fatal_in_recovery() -> bool:
+	if _damage > 0 and _hand.size() + _stock.size() <= 1:
+		_damage = _life
+		return true
+	return false
 
 func _change_order(new_hand : PackedInt32Array) -> void:
 	if new_hand.size() != _hand.size():

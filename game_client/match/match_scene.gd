@@ -43,8 +43,7 @@ func _process(_delta):
 	pass
 
 func initialize(server : IGameServer,
-		myself : I_PlayerField,rival : I_PlayerField,
-		my_catalog : I_CardCatalog,rival_catalog : I_CardCatalog):
+		myself : I_PlayerField,rival : I_PlayerField):
 	terminalize()
 	$Field.visible = true
 	$CanvasLayer.visible = true
@@ -64,11 +63,13 @@ func initialize(server : IGameServer,
 	var pd := _game_server._get_primary_data()
 	
 	log_display.clear()
-
-	_myself._initialize(self,pd.my_name,pd.my_deck_list,my_catalog,false,
+	
+	_myself._initialize(self,pd.my_name,pd.my_deck_list,
+			Global.catalog_factory.get_catalog(pd.my_deck_catalog),false,
 			_on_card_clicked,
 			log_display)
-	_rival._initialize(self,pd.rival_name,pd.rival_deck_list,rival_catalog,true,
+	_rival._initialize(self,pd.rival_name,pd.rival_deck_list,
+			Global.catalog_factory.get_catalog(pd.rival_deck_catalog),true,
 			_on_card_clicked,
 			log_display)
 	_myself._set_rival(_rival)
@@ -92,14 +93,14 @@ func terminalize():
 	if _myself:
 		_myself.request_card_list_view.disconnect(_on_request_card_list_view)
 		_myself.request_enchant_list_view.disconnect(_on_request_enchant_list_view)
+		_myself._terminalize()
 		$Field.remove_child(_myself)
-		_myself.queue_free()
 		_myself = null
 	if _rival:
 		_rival.request_card_list_view.disconnect(_on_request_card_list_view)
 		_rival.request_enchant_list_view.disconnect(_on_request_enchant_list_view)
+		_rival._terminalize()
 		$Field.remove_child(_rival)
-		_rival.queue_free()
 		_rival = null
 
 	$Field.visible = false
@@ -209,6 +210,14 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	
 	_myself._recovery_end()
 	_rival._recovery_end()
+	
+	if data.next_phase == IGameServer.Phase.GAME_END:
+		phase = data.next_phase
+		my_game_end_point = data.myself.life - data.myself.damage
+		rival_game_end_point = data.rival.life - data.rival.damage
+		_performing = false
+		performed.emit()
+		return
 
 	if data.next_phase == IGameServer.Phase.COMBAT:
 		round_count = data.round_count + 1

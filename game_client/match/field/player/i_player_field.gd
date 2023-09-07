@@ -20,6 +20,10 @@ func _initialize(_match_scene : MatchScene,
 		_on_card_clicked : Callable,
 		_log_display : LogDisplay) -> void:
 	pass
+
+func _terminalize():
+	pass
+
 func _set_rival(_rival : I_PlayerField) -> void:
 	pass
 

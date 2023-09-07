@@ -4,10 +4,8 @@ var _scene_changer : SceneChanger
 
 var replay_server := ReplayServer.new()
 
-var catalog := CardCatalog.new()
 
-const NonPlayablePlayerFieldScene := preload("res://game_client/match/player/field/non_playable_field.tscn")
-
+const NonPlayablePlayerFieldScene := preload("res://game_client/match/field/player/non_playable_field.tscn")
 const ReplayLabel := preload("res://game_client/replay/replay_label.tscn")
 
 @onready var match_scene : MatchScene = $match_scene
@@ -72,7 +70,7 @@ func replay_start(log_data : MatchLog):
 	replay_server.initialize(_match_log)
 	myself = NonPlayablePlayerFieldScene.instantiate()
 	rival = NonPlayablePlayerFieldScene.instantiate()
-	match_scene.initialize(replay_server,myself,rival,catalog,catalog)
+	match_scene.initialize(replay_server,myself,rival)
 	if not match_scene.performed.is_connected(on_match_scene_performed):
 		match_scene.performed.connect(on_match_scene_performed)
 	if not match_scene.ended.is_connected(on_match_scene_ended):

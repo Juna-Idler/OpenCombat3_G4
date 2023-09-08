@@ -301,146 +301,39 @@ func _perform_effect(effect : IGameServer.EffectLog) -> void:
 		else:
 			await _perform_effect_fragment(f)
 
+
+
 func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 	match fragment.type:
 		IGameServer.EffectFragmentType.NO_EFFECT:
 			pass
 		IGameServer.EffectFragmentType.DAMAGE:
-			await perform_fragment_damage(fragment)
-			pass
+			await _perfrom_effect_damage_fragment(fragment.data[0],fragment.data[1],fragment.opponent)
 		IGameServer.EffectFragmentType.RECOVERY:
-			var recovery_point : int = fragment.data
-			_damage -= recovery_point
-			_log_display.append_fragment_recovery(recovery_point,_damage,fragment.opponent)
-			%LabelDamage.text = str(_damage)
-			pass
+			await _perform_effect_recovery_fragment(fragment.data,fragment.opponent)
 		IGameServer.EffectFragmentType.INITIATIVE:
-			var initiative : bool = fragment.data
-			_log_display.append_fragment_initiative(initiative,fragment.opponent)
-			await %CombatStats.set_initiative_async(initiative,0.3)
-			pass
+			await _perform_effect_initiative_fragment(fragment.data,fragment.opponent)
 		IGameServer.EffectFragmentType.COMBAT_STATS:
-			var power : int = fragment.data[0]
-			var hit : int = fragment.data[1]
-			var block : int = fragment.data[2]
-			_log_display.append_fragment_combat_stats(power,hit,block,fragment.opponent)
-			%CombatStats.set_stats(power,hit,block)
-			var card := _get_playing_card()
-			var cpower := card.power
-			card.update_card_stats(power,hit,block)
-			pass
+			await _perform_effect_combat_stats_fragment(fragment.data,fragment.opponent)
 		IGameServer.EffectFragmentType.CARD_STATS:
-			var card_id : int = fragment.data[0]
-			var power : int = fragment.data[1]
-			var hit : int = fragment.data[2]
-			var block : int = fragment.data[3]
-			var card := _deck[card_id]
-			_log_display.append_fragment_card_stats(card.card_name,power,hit,block,fragment.opponent)
-			card.update_card_stats(power,hit,block)
-			pass
+			await _perform_effect_card_stats_fragment(fragment.data[0],
+					fragment.data[1],fragment.data[2],fragment.data[3],fragment.opponent)
 		IGameServer.EffectFragmentType.DRAW_CARD:
-			draw_sequence(fragment)
-			await draw_coroutine(fragment,0.5)
-			pass
+			await _perform_effect_draw_card_fragment(fragment.data,fragment.opponent)
 		IGameServer.EffectFragmentType.DISCARD_CARD:
-			var card_id : int = fragment.data
-			var card := _deck[card_id]
-			assert (card.location == Card3D.CardLocation.HAND)
-			_life -= card.level
-			%LabelLife.text = str(_life)
-			card.set_ray_pickable(false)
-			_log_display.append_fragment_discard(card.card_name,fragment.opponent)
-			_hand.remove_at(_hand.find(card_id))
-			hand_area.set_cards_in_deck(_hand,_deck)
-			hand_area.move_card(0.5)
-			_discard.append(card_id)
-			card.location = Card3D.CardLocation.DISCARD
-			var tween := create_tween().set_parallel()
-			tween.tween_property(card,"position",avatar_position.position,0.5)
-#			tween.tween_method(card.set_albedo_color,Color.WHITE,Color.BLACK,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
-			await tween.finished
-			pass
+			await _perform_effect_discard_card_fragment(fragment.data,fragment.opponent)
 		IGameServer.EffectFragmentType.BOUNCE_CARD:
-			var card_id : int = fragment.data[0]
-			var pos : int = fragment.data[1]
-			var card := _deck[card_id]
-			assert(card.location == Card3D.CardLocation.HAND)
-			card.set_ray_pickable(false)
-			_log_display.append_fragment_bounce(card.card_name,pos,fragment.opponent)
-			_hand.remove_at(_hand.find(card_id))
-			hand_area.set_cards_in_deck(_hand,_deck)
-			hand_area.move_card(0.5)
-			card.location = Card3D.CardLocation.STOCK
-			var tween := create_tween().set_parallel()
-			tween.tween_property(card,"position",deck_position.position,0.5)
-			tween.tween_property(card,"rotation:y",PI,0.5)
-			await tween.finished
-			_stock_count += 1
-			pass
-		
+			await _perform_effect_bounce_card_fragment(fragment.data[0],fragment.data[1],fragment.opponent)
 		IGameServer.EffectFragmentType.CREATE_ENCHANTMENT:
-			var id : int = fragment.data[0]
-			var opponent_source : bool = fragment.data[1]
-			var data_id : int = fragment.data[2]
-			var param = fragment.data[3]
-			var catalog := _rival._get_catalog() if opponent_source else _catalog
-			var sd : CatalogData.EnchantmentData = catalog._get_enchantment_data(data_id)
-			await enchant_display.create_enchantment(id,sd,param,fragment.opponent)
-			pass
+			await _perform_effect_create_enchantment_fragment(
+						fragment.data[0],fragment.data[1],fragment.data[2],fragment.data[3],fragment.opponent)
 		IGameServer.EffectFragmentType.UPDATE_ENCHANTMENT:
-			var id : int = fragment.data[0]
-			var param = fragment.data[1]
-			await enchant_display.update_enchantment(id,param,fragment.opponent)
-			pass
+			await _perform_effect_update_enchantment_fragment(fragment.data[0],fragment.data[1],fragment.opponent)
 		IGameServer.EffectFragmentType.DELETE_ENCHANTMENT:
-			var id : int = fragment.data[0]
-			var expired : bool = fragment.data[1]
-			await enchant_display.delete_enchantment(id,expired,fragment.opponent)
-			pass
-		
+			await _perform_effect_delete_enchantment_fragment(fragment.data[0],fragment.data[1],fragment.opponent)
 		IGameServer.EffectFragmentType.CREATE_CARD:
-			var card_id : int = fragment.data[0]
-			var opponent_source : bool = fragment.data[1]
-			var data_id : int = fragment.data[2]
-			var bounce_position : int = fragment.data[3]
-			var changes : Dictionary = fragment.data[4]
-			
-			var catalog := _rival._get_catalog() if opponent_source else _get_catalog() 
-			var cd := catalog._get_card_data(data_id)
-			var card := Card3D_Scene.instantiate()
-			card.clicked.connect(_on_card_clicked)
-			var pict = load(cd.image)
-			var stats : PackedInt32Array = [cd.power,cd.hit,cd.block]
-			var level := cd.level
-			for k in changes:
-				match k:
-					"power":
-						stats[0] = changes["power"]
-					"hit":
-						stats[1] = changes["hit"]
-					"block":
-						stats[2] = changes["block"]
-					"level":
-						level = changes["level"]
-			card.initialize(card_id,cd,cd.name,cd.color,level,stats[0],stats[1],stats[2],cd.skills,pict,_opponent_layout)
-			_deck.resize(card_id + 1)
-			_deck[card_id] = card
-			card_holder.add_child(card)
-			_life += cd.level
-			%LabelLife.text = str(_life)
-			
-			_stock_count += 1
-			%LabelStockCount.text = str(_stock_count)
-
-			_log_display.append_fragment_create_card(card,bounce_position,fragment.opponent)
-
-			card.position = $CombatPosition.position
-			var tween := create_tween().set_parallel()
-			tween.tween_property(card,"position",deck_position.position,0.5)
-			tween.tween_property(card,"rotation:y",PI,0.5)
-			await tween.finished
-			
-			pass
+			await _perform_effect_create_card_fragment(fragment.data[0],fragment.data[1],fragment.data[2],
+					fragment.data[3],fragment.data[4],fragment.opponent)
 		IGameServer.EffectFragmentType.PERFORMANCE:
 			pass
 	for p in fragment.passive:
@@ -450,6 +343,126 @@ func _perform_effect_fragment(fragment : IGameServer.EffectFragment) -> void:
 		else:
 			_passive_sequence(p)
 			await _passive_coroutine(p,0.2)
+
+
+func _perfrom_effect_damage_fragment(unblocked_damage : int,blocked_damage : int,opponent : bool):
+	_log_display.append_fragment_damage(unblocked_damage,blocked_damage,opponent)
+	if opponent:
+		await _rival._perform_attack(unblocked_damage,blocked_damage)
+	else:
+		for i in blocked_damage:
+			_damaged(0,1)
+			await get_tree().create_timer(0.3).timeout
+		for i in unblocked_damage:
+			_damaged(1,0)
+			await get_tree().create_timer(0.3).timeout
+		pass
+
+func _perform_effect_recovery_fragment(recovery_point : int,opponent : bool):
+	_damage -= recovery_point
+	_log_display.append_fragment_recovery(recovery_point,_damage,opponent)
+	%LabelDamage.text = str(_damage)
+
+func _perform_effect_initiative_fragment(initiative : bool,opponent : bool):
+	_log_display.append_fragment_initiative(initiative,opponent)
+	await %CombatStats.set_initiative_async(initiative,0.3)
+
+func _perform_effect_combat_stats_fragment(stats : PackedInt32Array,opponent : bool):
+	_log_display.append_fragment_combat_stats(stats[0],stats[1],stats[2],opponent)
+	%CombatStats.set_stats(stats[0],stats[1],stats[2])
+	var card := _get_playing_card()
+	card.update_card_stats(stats[0],stats[1],stats[2])
+
+func _perform_effect_card_stats_fragment(card_id : int,power : int,hit : int,block : int,opponent : bool):
+	var card := _deck[card_id]
+	_log_display.append_fragment_card_stats(card.card_name,power,hit,block,opponent)
+	card.update_card_stats(power,hit,block)
+
+func _perform_effect_draw_card_fragment(card_id : int,opponent : bool):
+	draw_sequence(card_id,opponent)
+	await draw_coroutine(card_id,0.5)
+
+func _perform_effect_discard_card_fragment(card_id : int,opponent : bool):
+	var card := _deck[card_id]
+	assert (card.location == Card3D.CardLocation.HAND)
+	_life -= card.level
+	%LabelLife.text = str(_life)
+	card.set_ray_pickable(false)
+	_log_display.append_fragment_discard(card.card_name,opponent)
+	_hand.remove_at(_hand.find(card_id))
+	hand_area.set_cards_in_deck(_hand,_deck)
+	hand_area.move_card(0.5)
+	_discard.append(card_id)
+	card.location = Card3D.CardLocation.DISCARD
+	var tween := create_tween().set_parallel()
+	tween.tween_property(card,"position",avatar_position.position,0.5)
+#			tween.tween_method(card.set_albedo_color,Color.WHITE,Color.BLACK,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
+	await tween.finished
+
+func _perform_effect_bounce_card_fragment(card_id : int,pos : int,opponent : bool):
+	var card := _deck[card_id]
+	assert(card.location == Card3D.CardLocation.HAND)
+	card.set_ray_pickable(false)
+	_log_display.append_fragment_bounce(card.card_name,pos,opponent)
+	_hand.remove_at(_hand.find(card_id))
+	hand_area.set_cards_in_deck(_hand,_deck)
+	hand_area.move_card(0.5)
+	card.location = Card3D.CardLocation.STOCK
+	var tween := create_tween().set_parallel()
+	tween.tween_property(card,"position",deck_position.position,0.5)
+	tween.tween_property(card,"rotation:y",PI,0.5)
+	await tween.finished
+	_stock_count += 1
+
+func _perform_effect_create_enchantment_fragment(id : int,source : bool,data_id : int,param,opponent : bool):
+	var catalog := _rival._get_catalog() if source else _catalog
+	var sd : CatalogData.EnchantmentData = catalog._get_enchantment_data(data_id)
+	await enchant_display.create_enchantment(id,sd,param,opponent)
+
+func _perform_effect_update_enchantment_fragment(id : int,param,opponent : bool):
+	await enchant_display.update_enchantment(id,param,opponent)
+
+func _perform_effect_delete_enchantment_fragment(id : int,expired : bool,opponent : bool):
+	await enchant_display.delete_enchantment(id,expired,opponent)
+
+func _perform_effect_create_card_fragment(card_id : int,source : bool,data_id : int,
+		bounce_position : int,changes : Dictionary,opponent : bool):
+	var catalog := _rival._get_catalog() if source else _get_catalog() 
+	var cd := catalog._get_card_data(data_id)
+	var card := Card3D_Scene.instantiate()
+	card.clicked.connect(_on_card_clicked)
+	var pict = load(cd.image)
+	var stats : PackedInt32Array = [cd.power,cd.hit,cd.block]
+	var level := cd.level
+	for k in changes:
+		match k:
+			"power":
+				stats[0] = changes["power"]
+			"hit":
+				stats[1] = changes["hit"]
+			"block":
+				stats[2] = changes["block"]
+			"level":
+				level = changes["level"]
+	card.initialize(card_id,cd,cd.name,cd.color,level,stats[0],stats[1],stats[2],cd.skills,pict,_opponent_layout)
+	_deck.resize(card_id + 1)
+	_deck[card_id] = card
+	card_holder.add_child(card)
+	_life += cd.level
+	%LabelLife.text = str(_life)
+	
+	_stock_count += 1
+	%LabelStockCount.text = str(_stock_count)
+
+	_log_display.append_fragment_create_card(card,bounce_position,opponent)
+
+	card.position = $CombatPosition.position
+	var tween := create_tween().set_parallel()
+	tween.tween_property(card,"position",deck_position.position,0.5)
+	tween.tween_property(card,"rotation:y",PI,0.5)
+	await tween.finished
+	
+
 
 
 func _passive_sequence(passive : IGameServer.PassiveLog) -> void:
@@ -485,7 +498,7 @@ func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : floa
 	var wait_time : float = 0.0
 	for f in effect.fragment:
 		assert(f.type == IGameServer.EffectFragmentType.DRAW_CARD)
-		if draw_sequence(f):
+		if draw_sequence(f.data,f.opponent):
 			wait_time += duration
 		for p in f.passive:
 			if p.opponent:
@@ -497,7 +510,7 @@ func _perform_simultaneous_supply(effect : IGameServer.EffectLog,duration : floa
 	
 func supply_coroutine(effect : IGameServer.EffectLog,duration : float):
 	for f in effect.fragment:
-		draw_coroutine(f,duration)
+		draw_coroutine(f.data,duration)
 		if not f.passive.is_empty():
 			var p_duration := duration / f.passive.size()
 			for p in f.passive:
@@ -507,19 +520,17 @@ func supply_coroutine(effect : IGameServer.EffectLog,duration : float):
 					await _passive_coroutine(p,p_duration)
 		await get_tree().create_timer(duration).timeout
 
-func draw_sequence(fragment : IGameServer.EffectFragment) -> bool:
-	var card_id : int = fragment.data
+func draw_sequence(card_id : int,opponent : bool) -> bool:
 	if card_id < 0:
-		_log_display.append_fragment_no_draw(fragment.opponent)
+		_log_display.append_fragment_no_draw(opponent)
 		return false
 	else:
 		var card := _deck[card_id]
-		_log_display.append_fragment_draw(card.card_name,fragment.opponent)
+		_log_display.append_fragment_draw(card.card_name,opponent)
 		card.set_ray_pickable(true)
 	return true
 
-func draw_coroutine(fragment : IGameServer.EffectFragment,duration : float):
-	var card_id : int = fragment.data
+func draw_coroutine(card_id : int,duration : float):
 	if card_id < 0:
 		return
 	var card := _deck[card_id]
@@ -532,21 +543,7 @@ func draw_coroutine(fragment : IGameServer.EffectFragment,duration : float):
 	await get_tree().create_timer(duration).timeout
 
 
-func perform_fragment_damage(fragment : IGameServer.EffectFragment):
-	var unblocked_damage : int = fragment.data[0]
-	var blocked_damage : int = fragment.data[1]
-	_log_display.append_fragment_damage(unblocked_damage,blocked_damage,fragment.opponent)
 
-	if fragment.opponent:
-		await _rival._perform_attack(unblocked_damage,blocked_damage)
-	else:
-		for i in blocked_damage:
-			_damaged(0,1)
-			await get_tree().create_timer(0.3).timeout
-		for i in unblocked_damage:
-			_damaged(1,0)
-			await get_tree().create_timer(0.3).timeout
-		pass
 
 func _perform_attack(unblocked_damage : int,blocked_damage : int):
 	if unblocked_damage + blocked_damage == 0:

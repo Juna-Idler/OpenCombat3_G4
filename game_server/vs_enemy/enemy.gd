@@ -4,19 +4,17 @@ extends StandardPlayer
 class_name EnemyPlayer
 
 
-func _init(factory : MechanicsData.ICardFactory, deck : PackedInt32Array,
-		hand_count : int,shuffle : bool = true) -> void:
-	_card_factory = factory
+func _init(enemy_data : EnemyData):
+	_card_factory = enemy_data.factory
 	var pile := []
-	for i in range(deck.size()):
-		var c := _card_factory._create(i,deck[i])
+	for i in range(enemy_data.deck_list.size()):
+		var c := _card_factory._create(i,enemy_data.deck_list[i])
 		_deck_list.append(c);
 		pile.append(i);
-		_life += c.data.level
-	if shuffle:
-		pile.shuffle()
+	_life = enemy_data.hp
+	pile.shuffle()
 	_stock = PackedInt32Array(pile)
-	for _i in range(hand_count):
+	for _i in range(2):
 		_draw_card()
 
 	
@@ -44,10 +42,10 @@ func _supply() -> IGameServer.EffectLog:
 	fragments.append(_draw_card())
 	return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
 
-func _recover(index : int) -> IGameServer.EffectLog:
+func _recover(_index : int) -> IGameServer.EffectLog:
 	var fragments : Array[IGameServer.EffectFragment] = []
-	fragments.append(_recover_life(_damage,false))
 	_life -= _damage
+	fragments.append(_recover_life(_damage,false))
 	_damage = 0
 	return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
 	

@@ -1,5 +1,7 @@
 extends BasePlayerField
 
+class_name EnemyField
+
 
 var initial_life : int
 
@@ -10,7 +12,7 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 
 
@@ -66,3 +68,26 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 
 	await tween.finished
 	return
+
+func _recovery_end(life : int):
+	_life = life
+	%LabelLife.text = str(_life)
+	%Damage.visible = false
+	%Damage.position = damage_combat_pos
+
+func _perform_effect_discard_card_fragment(card_id : int,opponent : bool):
+	var card := _deck[card_id]
+	assert (card.location == Card3D.CardLocation.HAND)
+#	_life -= card.level
+#	%LabelLife.text = str(_life)
+	card.set_ray_pickable(false)
+	_log_display.append_fragment_discard(card.card_name,opponent)
+	_hand.remove_at(_hand.find(card_id))
+	hand_area.set_cards_in_deck(_hand,_deck)
+	hand_area.move_card(0.5)
+	_discard.append(card_id)
+	card.location = Card3D.CardLocation.DISCARD
+	var tween := create_tween().set_parallel()
+	tween.tween_property(card,"position",avatar_position.position,0.5)
+#			tween.tween_method(card.set_albedo_color,Color.WHITE,Color.BLACK,0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
+	await tween.finished

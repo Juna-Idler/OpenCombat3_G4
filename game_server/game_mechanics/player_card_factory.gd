@@ -33,6 +33,10 @@ var _card_catalog : CardCatalog
 func _init(card_catalog : CardCatalog):
 	_card_catalog = card_catalog
 
+
+func _get_catalog() -> I_CardCatalog:
+	return _card_catalog
+
 func _create(iid : int,data_id : int) -> MechanicsData.Card:
 	var card_data := _card_catalog._get_card_data(data_id)
 	var skills : Array[MechanicsData.ISkill] = []

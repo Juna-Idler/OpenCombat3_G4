@@ -208,8 +208,8 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	await _myself._perform_effect(data.myself.result)
 	await _rival._perform_effect(data.rival.result)
 	
-	_myself._recovery_end()
-	_rival._recovery_end()
+	_myself._recovery_end(data.myself.life)
+	_rival._recovery_end(data.rival.life)
 	
 	if data.next_phase == IGameServer.Phase.GAME_END:
 		phase = data.next_phase

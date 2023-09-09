@@ -47,9 +47,14 @@ class Enchant:
 func _get_enchant_dictionary() -> Dictionary:	# key = id, value = Enchant
 	return {}
 	
-
 func _combat_end() -> void:
 	pass
+	
+func _recovery_start(_hand : PackedInt32Array,_select : int) -> void:
+	pass
+func _recovery_end(_life : int):
+	pass
+
 
 func _perform_ability(_ability : IGameServer.AbilityLog) -> void:
 	assert(false)

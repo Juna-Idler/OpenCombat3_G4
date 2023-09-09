@@ -81,7 +81,8 @@ class SkillData:
 	var enchants : Array[EnchantmentData]
 	var text : String
 	
-	func _init(i:int,n:String,rn:String,pt:PackedInt32Array,pn:PackedStringArray,e:Array[EnchantmentData],t:String):
+	func _init(i:int,n:String,rn:String,pt:PackedInt32Array,pn:PackedStringArray,
+			e:Array[EnchantmentData],t:String):
 		id = i
 		name = n
 		ruby_name = rn

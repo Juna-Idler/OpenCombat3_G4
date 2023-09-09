@@ -1,6 +1,6 @@
 extends IGameServer
 
-class_name StoryServer
+class_name VsEnemyServer
 
 const COMBAT_RESULT_DELAY = -1
 const COMBAT_SKILL_DELAY = -1
@@ -10,14 +10,13 @@ const RECOVER_RESULT_DELAY = -1
 var _processor := GameProcessor.new()
 
 var _player : StandardPlayer
-
 var _enemy : EnemyPlayer
 
 var _player_name:String
 
-var deck_regulation : RegulationData.DeckRegulation
-var match_regulation : RegulationData.MatchRegulation
+var _player_catalog : I_CardCatalog
 
+var _enemy_data : EnemyData
 
 var non_playable_recovery_phase : bool = false
 
@@ -25,20 +24,18 @@ var non_playable_recovery_phase : bool = false
 func _init():
 	pass
 
-func initialize(name:String,deck:PackedInt32Array,card_catalog : CardCatalog,
-		enemy,cpu_deck:PackedInt32Array,cpu_card_catalog : CardCatalog,
-		d_regulation :RegulationData.DeckRegulation,
-		m_regulation :RegulationData.MatchRegulation):
+func initialize(name:String,deck:PackedInt32Array,card_catalog : I_CardCatalog,
+		enemy : EnemyData):
 	_player_name = name;
+	
+	_player_catalog = card_catalog
+	_enemy_data = enemy
 
-	deck_regulation = d_regulation
-	match_regulation = m_regulation
 	
 	var factory := PlayerCardFactory.new(card_catalog)
-	var cpu_factory := PlayerCardFactory.new(cpu_card_catalog)
 	
-	_player = StandardPlayer.new(factory,deck,m_regulation.hand_count,true)
-	_enemy = EnemyPlayer.new(cpu_factory,cpu_deck,m_regulation.hand_count,true)
+	_player = StandardPlayer.new(factory,deck,4,true)
+	_enemy = EnemyPlayer.new(enemy)
 	
 
 func _get_primary_data() -> PrimaryData:
@@ -48,14 +45,13 @@ func _get_primary_data() -> PrimaryData:
 	var r_deck_list  : PackedInt32Array = []
 	for c in _enemy._get_deck_list():
 		r_deck_list.append(c.data.id)
-	return PrimaryData.new(_player_name,my_deck_list,
-			"enemy",r_deck_list,
-			deck_regulation,match_regulation)
+	return PrimaryData.new(_player_name,my_deck_list,_player_catalog._get_catalog_name(),
+			"enemy",r_deck_list,_enemy_data.factory._get_catalog()._get_catalog_name(),"","")
 
 func _send_ready():
 
 	var first := _processor.standby(_player,_enemy)
-	first.myself.time = match_regulation.thinking_time
+	first.myself.time = -1
 
 	recieved_first_data.emit(first)
 

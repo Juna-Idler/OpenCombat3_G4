@@ -33,6 +33,9 @@ class Card:
 
 
 class ICardFactory:
+	func _get_catalog() -> I_CardCatalog:
+		return null
+
 	func _create(_iid : int,_data_id : int) -> Card:
 		return null
 	func _create_skill(_skill : CatalogData.CardSkill) -> ISkill:

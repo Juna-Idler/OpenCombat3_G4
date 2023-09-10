@@ -34,7 +34,7 @@ func _initialize(changer : SceneChanger,_param : Array):
 	myself.hand_selected.connect(on_hand_selected)
 	enemy = EnemyFieldScene.instantiate()
 
-	enemy_data = preload("res://enemy_data/dummy/dummy.tres")
+	enemy_data = EnemyDataFactory.create("dummy")
 	var e_catalog := enemy_data.factory._get_catalog()
 	Global.catalog_factory.register(e_catalog._get_catalog_name(),e_catalog)
 

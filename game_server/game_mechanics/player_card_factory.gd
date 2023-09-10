@@ -4,7 +4,7 @@ class_name PlayerCardFactory
 extends MechanicsData.ICardFactory
 
 
-const skill_behaviors : Array = [
+const skill_behaviors : Array[GDScript] = [
 	null,
 	SkillProcessor.Reinforce,
 	SkillProcessor.Pierce,
@@ -16,13 +16,13 @@ const skill_behaviors : Array = [
 	SkillProcessor.Recycle,
 	SkillProcessor.AngerBlow,
 ]
-const enchant_behaviors : Array = [
+const enchant_behaviors : Array[GDScript] = [
 	null,
 	EnchantmentProcessor.Reinforce,
 	EnchantmentProcessor.AngerCounter,
 ]
 
-const ability_behaviors : Array = [
+const ability_behaviors : Array[GDScript] = [
 	null,
 	AbilityProcessor.AngerCounter,
 ]

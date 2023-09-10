@@ -1,19 +1,24 @@
-extends Resource
 
 class_name EnemyData
 
+var name : String
+var ruby_name : String
+var text : String
+var hp : int
+var enemy_image : Texture
 
-@export var name : String
-@export var hp : int
-@export var enemy_image : Texture
+var deck_list : PackedInt32Array
 
-@export var deck_list : PackedInt32Array
+var catalog : I_CardCatalog
+var factory : MechanicsData.ICardFactory
 
-@export var factory_script : GDScript
-
-var factory : MechanicsData.ICardFactory :
-	get:
-		if not factory:
-			factory = factory_script.new()
-		return factory
-		
+func _init(n,rn,t,health,i,list,c,f):
+	name = n
+	ruby_name = rn
+	text = t
+	hp = health
+	enemy_image = i
+	deck_list = list
+	catalog = c
+	factory = f
+	

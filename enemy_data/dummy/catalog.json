@@ -1,0 +1,87 @@
+{
+	"Enemy": {
+		"id": "Dummy",
+		"name": "Dummy",
+		"ruby_name": "",
+		"text": "",
+		"hp": 30,
+		"list": [
+			1,
+			1,
+			1,
+			1,
+			1,
+			2
+		]
+	},
+	"Cards": [
+		{
+			"id": 1,
+			"name": "なにもしない",
+			"ruby_name": "",
+			"text": "",
+			"color": 0,
+			"level": 0,
+			"power": "0",
+			"hit": "0",
+			"block": "1",
+			"skills": [
+				{
+					"catalog_string": "0:1:0"
+				}
+			],
+			"abilities": []
+		},
+		{
+			"id": 2,
+			"name": "無尽蔵",
+			"ruby_name": "",
+			"text": "",
+			"color": 0,
+			"level": 0,
+			"power": "0",
+			"hit": "0",
+			"block": "0",
+			"skills": [],
+			"abilities": [
+				100
+			]
+		}
+	],
+	"Skills": [
+		{
+			"id": 1,
+			"name": "なにもしない",
+			"ruby_name": "",
+			"text": "",
+			"param_type": [
+				1
+			],
+			"parameter": [
+				"X"
+			],
+			"enchants": []
+		}
+	],
+	"Abilities": [
+		{
+			"id": 100,
+			"name": "無尽蔵",
+			"ruby_name": "",
+			"text": "",
+			"enchants": [
+				100
+			]
+		}
+	],
+	"Enchantments": [
+		{
+			"id": 100,
+			"name": "無尽蔵",
+			"ruby_name": "",
+			"text": "",
+			"param_type": [],
+			"parameter": []
+		}
+	]
+}

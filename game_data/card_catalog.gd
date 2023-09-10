@@ -2,7 +2,7 @@
 extends I_CardCatalog
 
 class_name CardCatalog
-
+ 
 
 
 var _card_catalog : Dictionary = {}
@@ -54,10 +54,10 @@ func _get_ability_data(id : int) -> CatalogData.AbilityData:
 func get_param_name(param_type : int) -> CatalogData.ParameterName:
 	return _param_names[param_type]
 
-func _parse_card_skill(skill_string : String,index : int) -> CatalogData.CardSkill:
+func parse_card_skill(skill_string : String,index : int,skill_dictionary : Dictionary) -> CatalogData.CardSkill:
 	var skill = skill_string.split(":");
 	var condition : int = int(skill[0])
-	var data := _get_skill_data(int(skill[1]))
+	var data : CatalogData.SkillData = skill_dictionary[int(skill[1])]
 	var params := []
 	var skill_params : PackedStringArray = skill[2].split(",")
 	var text := data.text
@@ -133,7 +133,7 @@ func _load_card_data():
 		if skill_texts.size() == 1 and skill_texts[0] == "":
 			skill_texts.resize(0)
 		for i in skill_texts.size():
-			skills.append(_parse_card_skill(skill_texts[i],i))
+			skills.append(parse_card_skill(skill_texts[i],i,_skill_catalog))
 		var abilities : Array[CatalogData.AbilityData] = []
 		var ability_texts := tsv[9].split(";")
 		if ability_texts.size() == 1 and ability_texts[0] == "":

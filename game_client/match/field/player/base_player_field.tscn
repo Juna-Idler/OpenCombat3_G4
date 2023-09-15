@@ -12,6 +12,7 @@ size = Vector2(1, 1.5)
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_iq1xn"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rvbv3"]
+width = 256
 noise = SubResource("FastNoiseLite_iq1xn")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ctw2y"]
@@ -74,8 +75,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, -0.2, 0)
 
 [node name="AvatarPosition" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -0.5)
+pixel_size = 0.006
 texture = SubResource("NoiseTexture2D_rvbv3")
-region_enabled = true
 region_rect = Rect2(0, 0, 150, 300)
 
 [node name="Area3D" type="Area3D" parent="AvatarPosition"]

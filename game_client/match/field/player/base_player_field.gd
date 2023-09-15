@@ -235,7 +235,7 @@ func _recovery_start(hand : PackedInt32Array,select : int) -> void:
 	_hand = hand.duplicate()
 	hand_area.set_cards_in_deck(_hand,_deck)
 
-func _recovery_end(_life : int):
+func _recovery_end(_life_ : int):
 	if _damage <= 0:
 		%Damage.visible = false
 		%Damage.position = damage_combat_pos

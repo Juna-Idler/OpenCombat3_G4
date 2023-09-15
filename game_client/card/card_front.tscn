@@ -16,7 +16,7 @@ font_size = 26
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ipdl6"]
-font_size = 58
+font_size = 56
 outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
@@ -153,10 +153,11 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -76.0
-offset_top = -14.0
+offset_top = -13.0
 offset_right = 8.0
-offset_bottom = 78.0
+offset_bottom = 79.0
 grow_horizontal = 0
+scale = Vector2(0.8, 0.8)
 pivot_offset = Vector2(42, 46)
 text = "1"
 label_settings = SubResource("LabelSettings_ipdl6")

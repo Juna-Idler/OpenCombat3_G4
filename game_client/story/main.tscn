@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://cvtppcww7rmhm"]
+[gd_scene load_steps=7 format=3 uid="uid://cvtppcww7rmhm"]
 
 [ext_resource type="Script" path="res://game_client/story/main.gd" id="1_2noy4"]
 [ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="2_vwimt"]
 [ext_resource type="PackedScene" uid="uid://4v2h15esi7xs" path="res://game_client/deck_build/deck_list/deck_list.tscn" id="3_3f1j3"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="4_1odnc"]
+[ext_resource type="PackedScene" uid="uid://bgb6srewoa364" path="res://game_client/story/dialog/dialog.tscn" id="5_gqcw5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1y3e3"]
 bg_color = Color(0, 0, 0, 0.752941)
@@ -59,6 +60,8 @@ offset_right = 400.0
 offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Dialog" parent="." instance=ExtResource("5_gqcw5")]
 
 [connection signal="performed" from="match_scene" to="." method="_on_match_scene_performed"]
 [connection signal="request_card_detail" from="match_scene" to="." method="_on_match_scene_request_card_detail"]

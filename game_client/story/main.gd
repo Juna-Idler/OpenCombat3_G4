@@ -2,17 +2,21 @@ extends SceneChanger.IScene
 
 var _scene_changer : SceneChanger
 
+
+var story_data
+
+@onready var dialog : DialogWindow = $Dialog
+
+
 var vs_enemy_server :=  VsEnemyServer.new()
 
 const PlayablePlayerFieldScene := preload("res://game_client/match/field/player/playable_field.tscn")
 const EnemyFieldScene := preload("res://game_client/match/field/enemy/enemy_field.tscn")
 
-
 var myself : PlayablePlayerField
 var enemy : EnemyField
 
 var enemy_data : EnemyData
-
 
 @onready var panel_deck_list = $CanvasLayerCardList/PanelDeckList
 @onready var deck_list = $CanvasLayerCardList/PanelDeckList/DeckList
@@ -30,15 +34,27 @@ func _process(_delta):
 func _initialize(changer : SceneChanger,_param : Array):
 	_scene_changer = changer
 	
+#	story_data = _param[0]
+#	story_data.start(dialog)
+	
+	
+	var text_resource := load("res://game_client/story/test.txt")
+	var scenario := DialogData.SequencialScenario.load_text(text_resource.text)
+	await dialog.set_and_wait_scenario(scenario)
+	
+	var c := await dialog.show_choices(["選択肢1","洗濯し2"])
+	dialog.hide()
+	
 	myself = PlayablePlayerFieldScene.instantiate()
 	myself.hand_selected.connect(on_hand_selected)
 	enemy = EnemyFieldScene.instantiate()
 
 	enemy_data = EnemyDataFactory.create("dummy")
+	enemy.set_avatar_texture(enemy_data.enemy_image)
 	var e_catalog := enemy_data.factory._get_catalog()
 	Global.catalog_factory.register(e_catalog._get_catalog_name(),e_catalog)
 
-	var my_deck : PackedInt32Array = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+	var my_deck : PackedInt32Array = [1,2,3,7,8,9,7,8,9,7,8,9,7,8,9]
 	
 	vs_enemy_server.initialize(Global.game_settings.player_name,my_deck,Global.card_catalog,
 			enemy_data)

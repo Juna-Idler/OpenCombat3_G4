@@ -15,7 +15,8 @@ func _ready():
 func _process(_delta):
 	pass
 
-
+func set_avatar_texture(texture : Texture2D):
+	$AvatarPosition.texture = texture
 
 func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	_playing_card =_deck[hand[select]]

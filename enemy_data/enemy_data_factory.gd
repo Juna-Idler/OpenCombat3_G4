@@ -100,9 +100,10 @@ class EnemyCatalog extends I_CardCatalog:
 			))
 			var abilities : Array[CatalogData.AbilityData] = []
 			abilities.assign(c["abilities"].map(func(a : int):return ability_catalog[a]))
+			var image_path := ENEMY_DATA_DIR.path_join(name).path_join(str(id) + ".png")
 			card_catalog[id] = CatalogData.CardData.new(id,c["name"],c["ruby_name"],
 					int(c["color"]),int(c["level"]),int(c["power"]),int(c["hit"]),int(c["block"]),
-					skills,abilities,c["text"],"res://enemy_data" + name + str(id) + ".png")
+					skills,abilities,c["text"],image_path)
 
 		
 	func _get_catalog_name() -> String:

@@ -24,6 +24,4 @@ func align():
 	for i in range(hand_count):
 		_hand_positions[i] = Vector3(position.x + start + step * i,position.y,position.z + 0.01 * (i + 1))
 #	_hand_positions[0].y += 0.5
-	%MeshInstance3D2.position = _hand_positions[0] - position
-	%MeshInstance3D2.position.z -= 0.5
 	_hand_position_distance = step

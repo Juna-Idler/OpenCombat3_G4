@@ -1,18 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://b7b3003msyt14"]
+[gd_scene load_steps=3 format=3 uid="uid://b7b3003msyt14"]
 
 [ext_resource type="PackedScene" uid="uid://c1jb7cip5c33x" path="res://game_client/match/field/hand_area/hand_area.tscn" id="1_44nfr"]
 [ext_resource type="Script" path="res://game_client/match/field/enemy/enemy_hand_area.gd" id="1_ms86s"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bmcum"]
-shading_mode = 0
-
-[sub_resource type="QuadMesh" id="QuadMesh_btu2c"]
-material = SubResource("StandardMaterial3D_bmcum")
-size = Vector2(1, 1.5)
-
 [node name="HandArea" instance=ExtResource("1_44nfr")]
 script = ExtResource("1_ms86s")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="." index="1"]
-unique_name_in_owner = true
-mesh = SubResource("QuadMesh_btu2c")

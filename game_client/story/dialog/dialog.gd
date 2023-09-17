@@ -14,13 +14,14 @@ const Choice := preload("res://game_client/story/dialog/choice.tscn")
 
 
 
-var scenario : DialogData.SequencialScenario :
+var scene : DialogData.Scene :
 	set(v):
-		scenario = v
-		if not scenario.list.is_empty():
-			dialog_name.text_input = scenario.list[0].name
-			dialog_text.text_input = scenario.list[0].text
-		dialog_text.display_rate = 0.0
+		scene = v
+		if scene.list[0].command == DialogData.CommandType.MESSAGE:
+			var m := scene.list[0] as DialogData.CommandMessage
+			dialog_name.text_input = m.name
+			dialog_text.text_input = m.text
+			dialog_text.display_rate = 0.0
 
 var current_index : int = 0
 
@@ -38,7 +39,9 @@ var _pressed := false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var text_resource := load("res://game_client/story/test.txt")
-	scenario = DialogData.SequencialScenario.load_text(text_resource.text)
+	var scenario = DialogData.ScenarioPackage.load_text(text_resource.text)
+
+	scene = scenario.scene.values()[0]
 
 	$HSlider.value = duration_per_character
 	$LineEdit.text = str(duration_per_character)
@@ -58,8 +61,8 @@ func _process(delta):
 
 signal scenario_finished
 
-func set_and_wait_scenario(s : DialogData.SequencialScenario):
-	scenario = s
+func set_and_wait_scenario(s : DialogData.Scene):
+	scene = s
 	await scenario_finished
 	
 
@@ -68,12 +71,16 @@ func dialog_next():
 		if dialog_text.display_rate < 100:
 			dialog_text.display_rate = 100
 			return
-		current_index += 1
-		if current_index >= scenario.list.size():
-			scenario_finished.emit()
-			return
-		dialog_name.text_input = scenario.list[current_index].name
-		dialog_text.text_input = scenario.list[current_index].text
+		
+		while true:
+			current_index += 1
+			if current_index >= scene.list.size():
+				scenario_finished.emit()
+				return
+			if scene.list[current_index].command == DialogData.CommandType.MESSAGE:
+				break
+		dialog_name.text_input = scene.list[current_index].name
+		dialog_text.text_input = scene.list[current_index].text
 		dialog_text.display_rate = 0.0
 
 

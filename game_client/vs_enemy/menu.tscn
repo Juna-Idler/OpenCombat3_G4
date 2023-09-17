@@ -1,0 +1,147 @@
+[gd_scene load_steps=9 format=3 uid="uid://58kjufmnbjwl"]
+
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_csp0l"]
+[ext_resource type="Script" path="res://game_client/vs_enemy/menu.gd" id="2_wpvmv"]
+[ext_resource type="PackedScene" uid="uid://deqhr41m4i402" path="res://game_client/deck_build/deck_title.tscn" id="3_3enmt"]
+
+[sub_resource type="Theme" id="Theme_mtgub"]
+default_font = ExtResource("1_csp0l")
+default_font_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxslj"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sexc6"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d574w"]
+width = 256
+noise = SubResource("FastNoiseLite_sexc6")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fdhw8"]
+width = 256
+noise = SubResource("FastNoiseLite_sexc6")
+
+[node name="Menu" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_mtgub")
+theme_override_styles/panel = SubResource("StyleBoxFlat_fxslj")
+script = ExtResource("2_wpvmv")
+
+[node name="ButtonBack" type="Button" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 184.0
+offset_bottom = 56.0
+text = "BACK"
+
+[node name="ButtonStart" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -32.0
+offset_right = 128.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "START"
+
+[node name="CheckButtonShuffle" type="CheckButton" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 144.0
+offset_top = 32.0
+offset_right = 320.0
+offset_bottom = 88.0
+grow_horizontal = 2
+grow_vertical = 2
+button_pressed = true
+text = "SHUFFLE"
+
+[node name="MyAvator" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -216.0
+offset_bottom = 296.0
+grow_horizontal = 0
+grow_vertical = 2
+texture = SubResource("NoiseTexture2D_d574w")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CpuAvator" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -296.0
+offset_right = 256.0
+offset_bottom = 216.0
+grow_vertical = 2
+texture = SubResource("NoiseTexture2D_fdhw8")
+
+[node name="MyDeck" parent="." instance=ExtResource("3_3enmt")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -936.0
+offset_top = -184.0
+offset_right = -256.0
+offset_bottom = -64.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="DeckSelect" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="DeckSelect"]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -360.0
+offset_right = 320.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DeckSelect/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+
+[connection signal="pressed" from="ButtonBack" to="." method="_on_button_back_pressed"]
+[connection signal="pressed" from="ButtonStart" to="." method="_on_button_start_pressed"]
+[connection signal="clicked" from="MyDeck" to="." method="_on_my_deck_clicked"]
+[connection signal="gui_input" from="DeckSelect" to="." method="_on_deck_select_gui_input"]

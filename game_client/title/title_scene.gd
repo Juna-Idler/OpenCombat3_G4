@@ -49,3 +49,8 @@ func _on_button_2_pressed():
 
 func _on_button_3_pressed():
 	_scene_changer.goto_scene("res://game_client/deck_build/main.tscn",[])
+
+
+func _on_button_4_pressed():
+	_scene_changer.goto_scene("res://game_client/vs_enemy/main.tscn",[])
+	pass # Replace with function body.

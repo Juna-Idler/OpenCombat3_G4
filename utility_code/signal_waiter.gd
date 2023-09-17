@@ -10,9 +10,9 @@ func cancel():
 	pass
 
 
-static func wait_all(signals : Array[Signal]) -> void:
+static func wait_all(signals : Array[Signal]) -> bool:
 	var all := All.new(signals)
-	await all.wait()
+	return (await all.wait()) == 0
 
 static func wait_any(signals : Array[Signal]) -> int:
 	var any := Any.new(signals)

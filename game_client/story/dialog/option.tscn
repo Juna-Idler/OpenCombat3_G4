@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bvrdi41mm0smf"]
 
-[node name="Choice" type="Button"]
+[node name="Option" type="Button"]
 custom_minimum_size = Vector2(640, 0)
 size_flags_horizontal = 4
 text = "選択肢"

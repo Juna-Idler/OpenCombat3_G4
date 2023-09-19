@@ -20,24 +20,22 @@ static func wait_any(signals : Array[Signal]) -> int:
 
 
 class All extends SignalWaiter:
-	var _done : Array[bool]
+	var _signaled_count : int
 	var _signals : Array[Signal]
 	
 	func _init(signals : Array[Signal]):
-		_done.resize(signals.size())
+		_signaled_count = 0
 		_signals = signals.duplicate()
 		for i in signals.size():
-			_done[i] = false
 			signals[i].connect(_on_signaled.bind(i))
 
 	func wait() -> int:
-		if _done.count(true) == _done.size():
+		if _signaled_count == _signals.size():
 			_release_signals()
 			return 0
 		await finished
 		if _signals.is_empty():
 			return -1
-		_release_signals()
 		return 0
 
 	func cancel():
@@ -51,8 +49,9 @@ class All extends SignalWaiter:
 		_signals.clear()
 
 	func _on_signaled(index : int):
-		_done[index] = true
-		if _done.count(true) == _done.size():
+		_signals[index].disconnect(_on_signaled)
+		_signaled_count += 1
+		if _signaled_count == _signals.size():
 			finished.emit()
 
 

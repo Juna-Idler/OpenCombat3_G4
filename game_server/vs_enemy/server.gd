@@ -46,7 +46,7 @@ func _get_primary_data() -> PrimaryData:
 	for c in _enemy._get_deck_list():
 		r_deck_list.append(c.data.id)
 	return PrimaryData.new(_player_name,my_deck_list,_player_catalog._get_catalog_name(),
-			"enemy",r_deck_list,_enemy_data.factory._get_catalog()._get_catalog_name(),"","")
+			_enemy_data.name,r_deck_list,_enemy_data.catalog._get_catalog_name(),"","")
 
 func _send_ready():
 
@@ -79,16 +79,6 @@ func _send_combat_select(round_count:int,index:int,hands_order:PackedInt32Array 
 	
 	recieved_combat_result.emit(combat_result)
 
-
-static func count_effect(pd : IGameServer.CombatData.PlayerData) -> int:
-	return pd.before.size() + pd.moment.size() + pd.after.size() + pd.end.size() + pd.start.size()
-
-
-static func create_commander_player(player : MechanicsData.IPlayer) -> ICpuCommander.Player:
-	return ICpuCommander.Player.new(player._get_hand(),player._get_played(),
-			player._get_discard(),player._get_stock_count(),player._get_life(),
-			player._get_enchants())
-	
 
 
 func _send_recovery_select(round_count:int,index:int,hands_order:PackedInt32Array = []):

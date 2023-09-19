@@ -53,6 +53,12 @@ func _initialize(changer : SceneChanger,_param : Array):
 func _fade_in_finished():
 	pass
 
+func _terminalize():
+	$match_scene.terminalize()
+	myself.hand_selected.disconnect(on_hand_selected)
+	myself.queue_free()
+	rival.queue_free()
+
 
 func on_hand_selected(index : int,hand : Array[Card3D]):
 	myself.hand_area.set_playable(false)

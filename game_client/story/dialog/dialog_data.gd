@@ -28,13 +28,13 @@ class CommandMessage extends Command:
 		text_color = tc
 
 
-class Scene:
+class Cut:
 	var list : Array[Command]
 	
 	func _init(l : Array[Command]):
 		list = l
 		
-	static func create(text : String) -> Scene:
+	static func create(text : String) -> Cut:
 		@warning_ignore("shadowed_variable")
 		var list : Array[Command] = []
 		var lines := text.split("\n")
@@ -55,37 +55,41 @@ class Scene:
 			list.append(Command.create(main,sub))
 			main = ""
 			sub = ""
-		return Scene.new(list)
+		return Cut.new(list)
 
 class Options:
-	var list : PackedStringArray
-	func _init(l : PackedStringArray):
-		list = l
+	var name : PackedStringArray = []
+	var value : PackedStringArray = []
+	func _init(n : PackedStringArray,v : PackedStringArray):
+		name = n
+		value = v
 	static func create(text : String) -> Options:
 		var lines := text.split("\n")
-		@warning_ignore("shadowed_variable")
-		var list : PackedStringArray = []
+		var n : PackedStringArray = []
+		var v : PackedStringArray = []
 		for l in lines:
 			if l.is_empty():
 				continue
-			list.append(l)
-		return Options.new(list)
+			var s := l.split("\t")
+			n.append(s[0])
+			v.append(s[1] if s.size() > 1 else "")
+		return Options.new(n,v)
 
 class ScenarioPackage:
-	var scene : Dictionary
+	var cut : Dictionary
 	var options : Dictionary
 	
 	func _init(s : Dictionary,o : Dictionary):
-		scene = s
+		cut = s
 		options = o
 	
-	func get_first_scene() -> Scene:
-		return null if scene.is_empty() else scene.values()[0]
+	func get_first_cut() -> Cut:
+		return null if cut.is_empty() else cut.values()[0]
 	
 
 	static func load_text(text : String) -> ScenarioPackage:
 		@warning_ignore("shadowed_variable")
-		var scene : Dictionary = {}
+		var cut : Dictionary = {}
 		@warning_ignore("shadowed_variable")
 		var options : Dictionary = {}
 		
@@ -100,15 +104,15 @@ class ScenarioPackage:
 			if l.begins_with("@"):
 				if not name.is_empty():
 					match mode:
-						"Scene":
-							scene[name] = Scene.create(contents)
+						"Cut":
+							cut[name] = Cut.create(contents)
 						"Options":
 							options[name] = Options.create(contents)
 					mode = ""
 					name = ""
 					contents = ""
 				if l.to_lower().begins_with("@scene "):
-					mode = "Scene"
+					mode = "Cut"
 					name = l.split(" ")[1]
 				elif l.to_lower().begins_with(("@options ")):
 					mode = "Options"
@@ -117,10 +121,10 @@ class ScenarioPackage:
 				contents += l + "\n"
 		if not name.is_empty():
 			match mode:
-				"Scene":
-					scene[name] = Scene.create(contents)
+				"Cut":
+					cut[name] = Cut.create(contents)
 				"Options":
 					options[name] = Options.create(contents)
-		return ScenarioPackage.new(scene,options)
+		return ScenarioPackage.new(cut,options)
 
 

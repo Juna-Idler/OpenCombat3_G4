@@ -6,22 +6,47 @@ var _scene_changer : SceneChanger
 var story_data
 
 @onready var dialog : DialogWindow = $Dialog
+@onready var battle = $Battle
 
 
-var vs_enemy_server :=  VsEnemyServer.new()
+class Controller extends I_StoryController:
+	var dialog : DialogWindow
+	var battle : StoryBattle
+	
+	func _init(d : DialogWindow,b : StoryBattle):
+		dialog = d
+		battle = b
+	
+	func _play_cut_async(cut : DialogData.Cut) -> bool:
+		dialog.show()
+		await dialog.play_cut_async(cut)
+		return false
 
-const PlayablePlayerFieldScene := preload("res://game_client/match/field/player/playable_field.tscn")
-const EnemyFieldScene := preload("res://game_client/match/field/enemy/enemy_field.tscn")
+	func _show_options_async(option_names : PackedStringArray) -> int:
+		return await dialog.show_options_async(option_names)
 
-var myself : PlayablePlayerField
-var enemy : EnemyField
+	func _battle_start_async(deck : PackedInt32Array,enemy_name : String) -> int:
+		dialog.hide()
+		battle.initialize(deck,enemy_name)
+		await battle.battle_finished
+		battle.terminalize()
+		return battle.battle_result
+	
+	
 
-var enemy_data : EnemyData
-
-@onready var panel_deck_list = $CanvasLayerCardList/PanelDeckList
-@onready var deck_list = $CanvasLayerCardList/PanelDeckList/DeckList
-@onready var panel_card_detail = $CanvasLayerCardList/PanelCardDetail
-@onready var card_detail = $CanvasLayerCardList/PanelCardDetail/CardDetail
+class TestScript extends I_StoryScript:
+	var scenario : DialogData.ScenarioPackage
+	
+	func _init(scenario_text : String):
+		scenario = DialogData.ScenarioPackage.load_text(scenario_text)
+	
+	func _start(controller : I_StoryController):
+		var c_result := await controller._play_cut_async(scenario.get_first_cut())
+		var o = scenario.options.get("選択肢")
+		await controller._show_options_async(o.name)
+		var deck : PackedInt32Array = [1,2,3,7,8,9,7,8,9,7,8,9,7,8,9]
+		var b_result := await controller._battle_start_async(deck,"dummy")
+		await controller._play_cut_async(scenario.cut.get("After"))
 
 
 
@@ -31,37 +56,27 @@ func _ready():
 func _process(_delta):
 	pass
 
-func _initialize(changer : SceneChanger,_param : Array):
+func _initialize(changer : SceneChanger,param : Array):
 	_scene_changer = changer
+	
+#	var script : I_StoryScript = param[0]
+#	await script._start()
 	
 #	story_data = _param[0]
 #	story_data.start(dialog)
-	
+	var my_deck : PackedInt32Array = [1,2,3,7,8,9,7,8,9,7,8,9,7,8,9]
+
 	
 	var text_resource := load("res://game_client/story/test.txt")
-	var scenario := DialogData.ScenarioPackage.load_text(text_resource.text)
-	await dialog.set_and_wait_scenario(scenario.get_first_scene())
 	
-	var c := await dialog.show_choices(["選択肢1","洗濯し2"])
-	dialog.hide()
+	var script := TestScript.new(text_resource.text)
 	
-	myself = PlayablePlayerFieldScene.instantiate()
-	myself.hand_selected.connect(on_hand_selected)
-	enemy = EnemyFieldScene.instantiate()
-
-	enemy_data = EnemyDataFactory.create("dummy")
-	enemy.set_avatar_texture(enemy_data.enemy_image)
-	var e_catalog := enemy_data.factory._get_catalog()
-	Global.catalog_factory.register(e_catalog._get_catalog_name(),e_catalog)
-
-	var my_deck : PackedInt32Array = [1,2,3,7,8,9,7,8,9,7,8,9,7,8,9]
+	await script._start(Controller.new(dialog,battle))
 	
-	vs_enemy_server.initialize(Global.game_settings.player_name,my_deck,Global.card_catalog,
-			enemy_data)
-
-	$match_scene.initialize(vs_enemy_server,myself,enemy)
-	
-	vs_enemy_server._send_ready()
+#	var scenario := DialogData.ScenarioPackage.load_text(text_resource.text)
+#	await dialog.play_cut_async(scenario.get_first_cut())
+#
+#	var c := await dialog.show_options_async(["選択肢1","洗濯し2"])
 
 	pass
 	
@@ -71,57 +86,4 @@ func _fade_in_finished():
 func _terminalize():
 	pass
 
-func on_hand_selected(index : int,hand : Array[Card3D]):
-	myself.hand_area.set_playable(false)
-	var order : PackedInt32Array = []
-	for h in hand:
-		order.append(h.id_in_deck)
-	match $match_scene.phase:
-		IGameServer.Phase.COMBAT:
-			vs_enemy_server._send_combat_select($match_scene.round_count,index,order)
-		IGameServer.Phase.RECOVERY:
-			vs_enemy_server._send_recovery_select($match_scene.round_count,index,order)
-		IGameServer.Phase.GAME_END:
-			pass
-	await myself.fix_select_card(hand[index])
-	pass
-
-func _on_match_scene_performed():
-	if vs_enemy_server.non_playable_recovery_phase:
-		vs_enemy_server._send_recovery_select($match_scene.round_count,-1)
-		return
-	if $match_scene.phase != IGameServer.Phase.GAME_END:
-		myself.hand_area.set_playable(true)
-	else:
-		pass
-
-	
-
-
-func _on_panel_deck_list_gui_input(event):
-	if (event is InputEventMouseButton
-			and event.button_index == MOUSE_BUTTON_LEFT
-			and event.pressed):
-		panel_deck_list.hide()
-		deck_list.terminalize()
-
-func _on_button_deck_list_close_pressed():
-	panel_deck_list.hide()
-	deck_list.terminalize()
-	
-	
-
-func _on_card_detail_gui_input(event):
-	if (event is InputEventMouseButton
-			and event.button_index == MOUSE_BUTTON_LEFT
-			and event.pressed):
-		panel_card_detail.hide()
-
-func _on_match_scene_request_card_detail(cd, color, level, power, hit, block, skills, picture):
-	if cd:
-		panel_card_detail.show()
-		card_detail.initialize(cd, color, level, power, hit, block, skills, picture)
-	else:
-		panel_card_detail.hide()
-		
 

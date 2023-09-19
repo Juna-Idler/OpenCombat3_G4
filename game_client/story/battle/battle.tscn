@@ -1,0 +1,67 @@
+[gd_scene load_steps=6 format=3 uid="uid://damo7jqerj1jn"]
+
+[ext_resource type="Script" path="res://game_client/story/battle/battle.gd" id="1_6uqms"]
+[ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="1_il2yd"]
+[ext_resource type="PackedScene" uid="uid://4v2h15esi7xs" path="res://game_client/deck_build/deck_list/deck_list.tscn" id="2_7k6lf"]
+[ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="3_o8dqr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1y3e3"]
+bg_color = Color(0, 0, 0, 0.752941)
+
+[node name="Battle" type="Node"]
+script = ExtResource("1_6uqms")
+
+[node name="match_scene" parent="." instance=ExtResource("1_il2yd")]
+
+[node name="CanvasLayerCardList" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="PanelDeckList" type="Panel" parent="CanvasLayerCardList"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1y3e3")
+
+[node name="DeckList" parent="CanvasLayerCardList/PanelDeckList" instance=ExtResource("2_7k6lf")]
+layout_mode = 1
+
+[node name="ButtonDeckListClose" type="Button" parent="CanvasLayerCardList/PanelDeckList"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_bottom = 64.0
+grow_horizontal = 0
+text = "X"
+
+[node name="PanelCardDetail" type="Panel" parent="CanvasLayerCardList"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CardDetail" parent="CanvasLayerCardList/PanelCardDetail" instance=ExtResource("3_o8dqr")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -256.0
+offset_right = 400.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="performed" from="match_scene" to="." method="_on_match_scene_performed"]
+[connection signal="request_card_detail" from="match_scene" to="." method="_on_match_scene_request_card_detail"]
+[connection signal="gui_input" from="CanvasLayerCardList/PanelDeckList" to="." method="_on_panel_deck_list_gui_input"]
+[connection signal="pressed" from="CanvasLayerCardList/PanelDeckList/ButtonDeckListClose" to="." method="_on_button_deck_list_close_pressed"]
+[connection signal="gui_input" from="CanvasLayerCardList/PanelCardDetail/CardDetail" to="." method="_on_card_detail_gui_input"]

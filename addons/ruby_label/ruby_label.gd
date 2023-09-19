@@ -585,7 +585,7 @@ class UnbreakableWordData:
 		width = x
 
 func build_words():
-	if text_input.is_empty() or not ruby_regex.is_valid():
+	if not ruby_regex.is_valid():
 		return
 	var font := font_font if font_font else get_theme_default_font()
 	if not font:
@@ -609,8 +609,6 @@ func layout():
 	if not get_parent():
 		return
 	lines = []
-	if unbreakable_words.is_empty():
-		return
 	var font := font_font if font_font else get_theme_default_font()
 	if not font:
 		return

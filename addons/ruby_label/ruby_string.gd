@@ -114,6 +114,8 @@ class RubyString:
 				target = target.substr(m.get_end())
 			else:
 				var lb_words := line_break.separate_word(target)
+				if lb_words.is_empty():
+					break
 				if not stock_units.is_empty():
 					var prev = stock_units.back().base_text
 					if not line_break.is_link(prev[prev.length()-1],lb_words[0][0]):

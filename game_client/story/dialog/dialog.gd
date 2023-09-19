@@ -66,6 +66,7 @@ func abort():
 
 func play_cut_async(c : DialogData.Cut) -> bool:
 	cut = c
+	current_index = 0
 	await scenario_finished
 	return mode == Mode.DIALOG
 	

@@ -32,7 +32,23 @@ class Controller extends I_StoryController:
 		battle.terminalize()
 		return battle.battle_result
 	
-	
+	func _fade_in_dialog_async(duration : float):
+		var tween := dialog.create_tween()
+		dialog.show()
+		dialog.modulate.a = 0.0
+		tween.tween_property(dialog,"modulate:a",1.0,duration)
+		await tween.finished
+	func _fade_out_dialog_async(duration : float):
+		var tween := dialog.create_tween()
+		tween.tween_property(dialog,"modulate:a",0.0,duration)
+		await tween.finished
+		dialog.hide()
+		dialog.clear()
+		
+	func _fade_in_battle(_duration : float):
+		pass
+	func _fade_out_battle(_duration : float):
+		pass
 
 class TestScript extends I_StoryScript:
 	var scenario : DialogData.ScenarioPackage
@@ -41,12 +57,24 @@ class TestScript extends I_StoryScript:
 		scenario = DialogData.ScenarioPackage.load_text(scenario_text)
 	
 	func _start(controller : I_StoryController):
-		var c_result := await controller._play_cut_async(scenario.get_first_cut())
+		var c_result := await controller._play_cut_async(scenario.cut.get("Start"))
 		var o = scenario.options.get("選択肢")
-		await controller._show_options_async(o.name)
-		var deck : PackedInt32Array = [1,2,3,7,8,9,7,8,9,7,8,9,7,8,9]
+		var option := await controller._show_options_async(o.name)
+		var deck : PackedInt32Array
+		if option == 0:
+			deck = [7,8,9,7,8,9,7,8,9,7,8,9,7,8,9]
+		else:
+			deck = [1,2,3]
+		await controller._fade_out_dialog_async(1.0)
 		var b_result := await controller._battle_start_async(deck,"dummy")
-		await controller._play_cut_async(scenario.cut.get("After"))
+		await controller._fade_in_dialog_async(1.0)
+		if b_result > 0:
+			await controller._play_cut_async(scenario.cut.get("Win"))
+		elif b_result == 0:
+			await controller._play_cut_async(scenario.cut.get("Lose"))
+		await controller._play_cut_async(scenario.cut.get("End"))
+		await controller._fade_out_dialog_async(1.0)
+
 
 
 

@@ -64,6 +64,11 @@ func abort():
 	mode = Mode.ABORT
 	scenario_finished.emit()
 
+func clear():
+	dialog_name.text_input = ""
+	dialog_text.text_input = ""
+	dialog_text.display_rate = 100
+
 func play_cut_async(c : DialogData.Cut) -> bool:
 	cut = c
 	current_index = 0

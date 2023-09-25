@@ -1,4 +1,4 @@
-@Scene Start
+@Cut Start
  天の声
 	デッキを選べ
 
@@ -7,14 +7,14 @@
 勝てないやつ	
 
 
-@Scene Win
+@Cut Win
  ナレーション
 	勝ち申した
 
-@Scene Lose
+@Cut Lose
  ナレーション
 	負けました
 
-@Scene End
+@Cut End
  
 	終わり

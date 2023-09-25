@@ -111,7 +111,7 @@ class ScenarioPackage:
 					mode = ""
 					name = ""
 					contents = ""
-				if l.to_lower().begins_with("@scene "):
+				if l.to_lower().begins_with("@cut "):
 					mode = "Cut"
 					name = l.split(" ")[1]
 				elif l.to_lower().begins_with(("@options ")):

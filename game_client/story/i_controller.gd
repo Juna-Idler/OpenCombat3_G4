@@ -19,7 +19,7 @@ func _fade_out_dialog_async(_duration : float):
 	await null
 
 
-func _battle_start_async(_deck : PackedInt32Array,_enemy_name : String) -> int:
+func _battle_start_async(_deck : PackedInt32Array,_enemy_name : String,_battle_script : I_BattleScript) -> int:
 	@warning_ignore("redundant_await")
 	return await -1
 

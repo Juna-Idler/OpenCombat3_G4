@@ -40,6 +40,8 @@ func _init(factory : MechanicsData.ICardFactory, deck : PackedInt32Array,
 		_life += c.data.level
 	if shuffle:
 		pile.shuffle()
+	else:
+		pile.reverse()
 	_stock = PackedInt32Array(pile)
 	for _i in range(hand_count):
 		_draw_card()

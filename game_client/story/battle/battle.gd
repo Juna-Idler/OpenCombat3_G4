@@ -16,7 +16,7 @@ const EnemyFieldScene := preload("res://game_client/match/field/enemy/enemy_fiel
 var myself : PlayablePlayerField
 var enemy : EnemyField
 
-var enemy_data : EnemyData
+var _enemy_data : EnemyData
 
 var battle_script : I_BattleScript
 
@@ -36,21 +36,25 @@ func _process(_delta):
 	pass
 
 
-func initialize(my_deck : PackedInt32Array,enemy_name : String,bs : I_BattleScript):
+func initialize(player_name : String,player_deck : PackedInt32Array,
+		player_hand : int,player_shuffle : bool,
+		player_catalog :I_CardCatalog,player_factory : MechanicsData.ICardFactory,
+		enemy_data : EnemyData,bs : I_BattleScript):
+	
+	_enemy_data = enemy_data
 	
 	myself = PlayablePlayerFieldScene.instantiate()
 	myself.hand_selected.connect(on_hand_selected)
 	enemy = EnemyFieldScene.instantiate()
 
-	enemy_data = EnemyDataFactory.create(enemy_name)
 	enemy.set_avatar_texture(enemy_data.enemy_image)
 	var e_catalog := enemy_data.catalog
 	Global.catalog_factory.register(e_catalog._get_catalog_name(),e_catalog)
 	
 	battle_script = bs
 
-	vs_enemy_server.initialize(Global.game_settings.player_name,my_deck,Global.card_catalog,
-			enemy_data)
+	vs_enemy_server.initialize(player_name,player_deck,player_hand,player_shuffle,
+			player_catalog,player_factory,enemy_data)
 
 	match_scene.initialize(vs_enemy_server,myself,enemy)
 	
@@ -64,7 +68,7 @@ func terminalize():
 	myself.hand_selected.disconnect(on_hand_selected)
 	myself.queue_free()
 	enemy.queue_free()
-	Global.catalog_factory.delete(enemy_data.catalog._get_catalog_name())
+	Global.catalog_factory.delete(_enemy_data.catalog._get_catalog_name())
 	
 
 func on_hand_selected(index : int,hand : Array[Card3D]):

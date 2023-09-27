@@ -5,7 +5,7 @@ var _scene_changer : SceneChanger
 
 var story_data
 
-@onready var dialog : DialogWindow = $Dialog
+@onready var dialog : DialogWindow = %Dialog
 @onready var battle = $Battle
 
 
@@ -24,13 +24,19 @@ class Controller extends I_StoryController:
 	func _show_options_async(option_names : PackedStringArray) -> int:
 		return await dialog.show_options_async(option_names)
 
-	func _battle_start_async(deck : PackedInt32Array,enemy_name : String,battle_script : I_BattleScript) -> int:
+	func _battle_start_async(player_name : String,player_deck : PackedInt32Array,player_hand : int,
+		enemy_name : String,battle_script : I_BattleScript) -> int:
 		dialog.hide()
-		battle.initialize(deck,enemy_name,battle_script)
+		var enemy_data := EnemyDataFactory.create(enemy_name)
+#		var factory := PlayerCardFactory.new(card_catalog)
+#		battle.initialize(player_name,Global.card_catalog,player_deck,player_hand,enemy_data,battle_script)
+		var deck = [1,2,4,3,3,3,3,3]
+		battle.initialize(player_name,deck,player_hand,false,
+				enemy_data.catalog,enemy_data.factory,enemy_data,battle_script)
 		await battle.battle_finished
 		battle.terminalize()
 		return battle.battle_result
-	
+
 	func _fade_in_dialog_async(duration : float):
 		var tween := dialog.create_tween()
 		dialog.show()
@@ -70,7 +76,8 @@ class TestScript extends I_StoryScript:
 			deck = [1,2,3]
 		await controller._fade_out_dialog_async(1.0)
 		var battle_resource = load("res://story_data/tutorial/1.txt")
-		var b_result := await controller._battle_start_async(deck,"dummy",TestBattleScript.new(controller,battle_resource.text))
+		var b_result := await controller._battle_start_async(Global.game_settings.player_name,
+				deck,1,"tutorial",TestBattleScript.new(controller,battle_resource.text))
 		await controller._fade_in_dialog_async(1.0)
 		if b_result > 0:
 			c_result = await controller._play_cut_async(scenario.cut.get("Win"))
@@ -112,11 +119,30 @@ class TestBattleScript extends I_BattleScript:
 					await controller._fade_out_dialog_async(0.5)
 				2:
 					await controller._fade_in_dialog_async(0.5)
-					await controller._play_cut_async(scenario.cut["Combat"])
+					await controller._play_cut_async(scenario.cut["CardStats"])
 					await controller._fade_out_dialog_async(0.5)
+				3:
+					await controller._fade_in_dialog_async(0.5)
+					await controller._play_cut_async(scenario.cut["CardInfo"])
+					await controller._fade_out_dialog_async(0.5)
+				4:
+					await controller._fade_in_dialog_async(0.5)
+					await controller._play_cut_async(scenario.cut["DefeatCondition"])
+					await controller._fade_out_dialog_async(0.5)
+					
+		if data.phase == IGameServer.Phase.RECOVERY:
+			match data.round_count:
+				3:
+					await controller._fade_in_dialog_async(0.5)
+					await controller._play_cut_async(scenario.cut["Damage_Recovery"])
+					await controller._fade_out_dialog_async(0.5)
+					
 		return true
 		
 	func _end_event() -> void:
+		await controller._fade_in_dialog_async(0.5)
+		await controller._play_cut_async(scenario.cut["End"])
+		await controller._fade_out_dialog_async(0.5)
 		return
 
 

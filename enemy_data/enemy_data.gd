@@ -12,6 +12,9 @@ var deck_list : PackedInt32Array
 var catalog : I_CardCatalog
 var factory : MechanicsData.ICardFactory
 
+var hand : int
+var shuffle : bool
+
 func _init(n,rn,t,health,i,list,c,f):
 	name = n
 	ruby_name = rn
@@ -21,4 +24,5 @@ func _init(n,rn,t,health,i,list,c,f):
 	deck_list = list
 	catalog = c
 	factory = f
-	
+	hand = 1
+	shuffle = false

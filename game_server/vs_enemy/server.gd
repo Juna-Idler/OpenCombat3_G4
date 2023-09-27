@@ -24,17 +24,17 @@ var non_playable_recovery_phase : bool = false
 func _init():
 	pass
 
-func initialize(name:String,deck:PackedInt32Array,card_catalog : I_CardCatalog,
+func initialize(name:String,deck:PackedInt32Array,hand : int,shuffle : bool,
+		card_catalog : I_CardCatalog,card_factory : MechanicsData.ICardFactory,
 		enemy : EnemyData):
 	_player_name = name;
 	
 	_player_catalog = card_catalog
 	_enemy_data = enemy
-
 	
-	var factory := PlayerCardFactory.new(card_catalog)
+#	var factory := PlayerCardFactory.new(card_catalog)
 	
-	_player = StandardPlayer.new(factory,deck,4,true)
+	_player = StandardPlayer.new(card_factory,deck,hand,shuffle)
 	_enemy = EnemyPlayer.new(enemy)
 	
 

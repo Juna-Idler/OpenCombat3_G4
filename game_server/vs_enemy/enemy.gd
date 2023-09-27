@@ -12,9 +12,12 @@ func _init(enemy_data : EnemyData):
 		_deck_list.append(c);
 		pile.append(i);
 	_life = enemy_data.hp
-	pile.shuffle()
+	if enemy_data.shuffle:
+		pile.shuffle()
+	else:
+		pile.reverse()
 	_stock = PackedInt32Array(pile)
-	for _i in range(2):
+	for _i in range(enemy_data.hand):
 		_draw_card()
 
 	

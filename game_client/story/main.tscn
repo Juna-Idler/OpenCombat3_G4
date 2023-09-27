@@ -8,5 +8,12 @@
 script = ExtResource("1_2noy4")
 
 [node name="Battle" parent="." instance=ExtResource("2_8l4fu")]
+unique_name_in_owner = true
 
-[node name="Dialog" parent="." instance=ExtResource("5_gqcw5")]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 50
+
+[node name="Dialog" parent="CanvasLayer" instance=ExtResource("5_gqcw5")]
+unique_name_in_owner = true
+offset_top = 0.0
+offset_bottom = 0.0

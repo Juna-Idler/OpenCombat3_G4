@@ -1,0 +1,107 @@
+{
+	"Enemy": {
+		"id": "Tutorial",
+		"name": "Tutorial",
+		"ruby_name": "",
+		"text": "",
+		"hp": 10,
+		"list": [
+			1,
+			3,
+			3,
+			1,
+			1,
+			1
+		]
+	},
+	"Cards": [
+		{
+			"id": 1,
+			"name": "なにもしない",
+			"ruby_name": "",
+			"text": "",
+			"color": 0,
+			"level": 0,
+			"power": "0",
+			"hit": "0",
+			"block": "0",
+			"skills": [],
+			"abilities": []
+		},
+		{
+			"id": 2,
+			"name": "素早い攻撃",
+			"ruby_name": "",
+			"text": "",
+			"color": 2,
+			"level": 1,
+			"power": "2",
+			"hit": "1",
+			"block": "0",
+			"skills": [],
+			"abilities": []
+		},
+		{
+			"id": 3,
+			"name": "大振りな攻撃",
+			"ruby_name": "",
+			"text": "",
+			"color": 1,
+			"level": 1,
+			"power": "1",
+			"hit": "2",
+			"block": "0",
+			"skills": [],
+			"abilities": []
+		},
+		{
+			"id": 4,
+			"name": "守りを固める",
+			"ruby_name": "",
+			"text": "",
+			"color": 3,
+			"level": 1,
+			"power": "0",
+			"hit": "0",
+			"block": "1",
+			"skills": [],
+			"abilities": []
+		}
+	],
+	"Skills": [
+		{
+			"id": 1,
+			"name": "なにもしない",
+			"ruby_name": "",
+			"text": "",
+			"param_type": [
+				1
+			],
+			"parameter": [
+				"X"
+			],
+			"enchants": []
+		}
+	],
+	"Abilities": [
+		{
+			"id": 100,
+			"name": "無尽蔵",
+			"ruby_name": "",
+			"text": "",
+			"enchants": [
+				100
+			]
+		}
+	],
+	"Enchantments": [
+		{
+			"id": 100,
+			"name": "無尽蔵",
+			"ruby_name": "",
+			"text": "",
+			"param_type": [],
+			"parameter": []
+		}
+	]
+}

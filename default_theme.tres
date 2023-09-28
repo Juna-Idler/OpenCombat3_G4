@@ -1,0 +1,63 @@
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://ci5c8vmqhfqwc"]
+
+[ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="1_uah4p"]
+
+[sub_resource type="Gradient" id="Gradient_cbof8"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(1, 1, 1, 0.752941)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_txykl"]
+gradient = SubResource("Gradient_cbof8")
+width = 2
+height = 24
+
+[sub_resource type="Gradient" id="Gradient_k3ear"]
+offsets = PackedFloat32Array(0.471861)
+colors = PackedColorArray(1, 1, 1, 0.501961)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pvvud"]
+gradient = SubResource("Gradient_k3ear")
+width = 2
+height = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2roji"]
+bg_color = Color(1, 1, 1, 0.752941)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_klv8w"]
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_687wh"]
+bg_color = Color(0, 0, 0, 0.878431)
+
+[resource]
+Button/font_sizes/font_size = 32
+Button/fonts/font = ExtResource("1_uah4p")
+CheckButton/font_sizes/font_size = 20
+CheckButton/fonts/font = ExtResource("1_uah4p")
+HSlider/icons/grabber = SubResource("GradientTexture2D_txykl")
+HSlider/icons/grabber_highlight = SubResource("GradientTexture2D_txykl")
+HSlider/icons/tick = SubResource("GradientTexture2D_pvvud")
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_2roji")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_2roji")
+HSlider/styles/slider = SubResource("StyleBoxFlat_klv8w")
+Label/fonts/font = ExtResource("1_uah4p")
+LineEdit/font_sizes/font_size = 20
+LineEdit/fonts/font = ExtResource("1_uah4p")
+Panel/styles/panel = SubResource("StyleBoxFlat_687wh")

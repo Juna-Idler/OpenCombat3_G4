@@ -1,6 +1,54 @@
-[gd_scene load_steps=2 format=3 uid="uid://e7y1u7v8itww"]
+[gd_scene load_steps=5 format=3 uid="uid://e7y1u7v8itww"]
 
 [ext_resource type="Script" path="res://game_client/tutorial/main.gd" id="1_qy5jx"]
+[ext_resource type="PackedScene" uid="uid://cvtppcww7rmhm" path="res://game_client/story/story.tscn" id="2_kviu4"]
+[ext_resource type="Theme" uid="uid://ci5c8vmqhfqwc" path="res://default_theme.tres" id="3_htg1y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_72txi"]
+bg_color = Color(0, 0, 0, 1)
 
 [node name="main" type="Node"]
 script = ExtResource("1_qy5jx")
+
+[node name="Story" parent="." instance=ExtResource("2_kviu4")]
+
+[node name="Menu" type="CanvasLayer" parent="."]
+layer = 60
+
+[node name="Panel" type="Panel" parent="Menu"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_htg1y")
+theme_override_styles/panel = SubResource("StyleBoxFlat_72txi")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Panel"]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 64.0
+offset_right = 896.0
+offset_bottom = 648.0
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Button1" type="Button" parent="Menu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "TUTORIAL1"
+
+[node name="Button2" type="Button" parent="Menu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "TUTORIAL2
+"
+
+[node name="ButtonBack" type="Button" parent="Menu/Panel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 264.0
+offset_bottom = 72.0
+text = "BACK"
+
+[connection signal="pressed" from="Menu/Panel/VBoxContainer/Button1" to="." method="_on_button_1_pressed"]
+[connection signal="pressed" from="Menu/Panel/ButtonBack" to="." method="_on_button_back_pressed"]

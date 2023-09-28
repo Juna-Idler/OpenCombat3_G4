@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cvtppcww7rmhm"]
+
+[ext_resource type="Script" path="res://game_client/story/story.gd" id="1_j1cik"]
+[ext_resource type="PackedScene" uid="uid://damo7jqerj1jn" path="res://game_client/story/battle/battle.tscn" id="2_dfhrw"]
+[ext_resource type="PackedScene" uid="uid://bgb6srewoa364" path="res://game_client/story/dialog/dialog.tscn" id="3_0q0j3"]
+
+[node name="Story" type="Node"]
+script = ExtResource("1_j1cik")
+
+[node name="Battle" parent="." instance=ExtResource("2_dfhrw")]
+unique_name_in_owner = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 50
+
+[node name="Dialog" parent="CanvasLayer" instance=ExtResource("3_0q0j3")]
+unique_name_in_owner = true
+offset_top = 0.0
+offset_bottom = 0.0

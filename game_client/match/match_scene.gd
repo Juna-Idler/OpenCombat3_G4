@@ -296,8 +296,10 @@ func _on_card_clicked(card : Card3D):
 	
 
 func _on_request_card_list_view(p_cards : Array[Card3D],d_cards : Array[Card3D]):
-	%CardList.visible = true
-	%CardList.put_cards(p_cards,d_cards,0.3)
+	if %CardList.is_busy():
+		return
+	await %CardList.put_cards(p_cards,d_cards,0.3)
+#	%CardList.visible = true
 
 func _on_request_enchant_list_view(enchantment : Dictionary):
 	%EnchantListPanel.visible = true
@@ -305,7 +307,8 @@ func _on_request_enchant_list_view(enchantment : Dictionary):
 
 
 func _on_card_list_clicked():
-	%CardList.visible = false
+	pass
+#	%CardList.visible = false
 
 
 

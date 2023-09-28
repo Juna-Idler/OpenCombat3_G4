@@ -17,11 +17,17 @@ var is_aborted := false
 var cut : DialogData.Cut :
 	set(v):
 		cut = v
-		if cut.list[0].command == DialogData.CommandType.MESSAGE:
+		if (cut and not cut.list.is_empty() and
+				cut.list[0].command == DialogData.CommandType.MESSAGE):
 			var m := cut.list[0] as DialogData.CommandMessage
 			dialog_name.text_input = m.name
 			dialog_text.text_input = m.text
 			dialog_text.display_rate = 0.0
+		else:
+			dialog_name.text_input = ""
+			dialog_text.text_input = ""
+			dialog_text.display_rate = 100
+			
 
 var current_index : int = 0
 
@@ -92,6 +98,8 @@ func show_options_async(option_names : PackedStringArray) -> int:
 
 
 func dialog_next():
+	if not cut:
+		return
 	if mode == Mode.DIALOG:
 		if dialog_text.display_rate < 100:
 			dialog_text.display_rate = 100

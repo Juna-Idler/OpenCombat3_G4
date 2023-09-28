@@ -48,8 +48,7 @@ func initialize(player_name : String,player_deck : PackedInt32Array,
 	enemy = EnemyFieldScene.instantiate()
 
 	enemy.set_avatar_texture(enemy_data.enemy_image)
-	var e_catalog := enemy_data.catalog
-	Global.catalog_factory.register(e_catalog._get_catalog_name(),e_catalog)
+	Global.catalog_factory.register(enemy_data.catalog._get_catalog_name(),enemy_data.catalog)
 	
 	battle_script = bs
 
@@ -65,10 +64,17 @@ func initialize(player_name : String,player_deck : PackedInt32Array,
 
 func terminalize():
 	match_scene.terminalize()
-	myself.hand_selected.disconnect(on_hand_selected)
-	myself.queue_free()
-	enemy.queue_free()
-	Global.catalog_factory.delete(_enemy_data.catalog._get_catalog_name())
+	if myself:
+		if myself.hand_selected.is_connected(on_hand_selected):
+			myself.hand_selected.disconnect(on_hand_selected)
+		myself.queue_free()
+		myself = null
+	if enemy:
+		enemy.queue_free()
+		enemy = null
+	if _enemy_data:
+		Global.catalog_factory.delete(_enemy_data.catalog._get_catalog_name())
+		_enemy_data = null
 	
 
 func on_hand_selected(index : int,hand : Array[Card3D]):

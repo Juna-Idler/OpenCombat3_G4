@@ -9,8 +9,12 @@ const CARD_SPACE := 0.1
 
 signal clicked
 
+var _tween : Tween
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	_tween = create_tween()
+	_tween.kill()
 	pass # Replace with function body.
 
 class OriginalPosition:
@@ -27,10 +31,17 @@ class OriginalPosition:
 
 var original_position : Array[OriginalPosition]
 
+func is_busy() -> bool:
+	return _tween.is_running()
+
 
 func put_cards(p_cards : Array[Card3D],d_cards : Array[Card3D],duration : float):
+	if p_cards.is_empty() and d_cards.is_empty():
+		return
 	original_position = []
-	var tween := create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	if _tween.is_running():
+		await _tween.finished
+	_tween = create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	
 	var count := p_cards.size()
 	var step := AREA_WIDTH / (count + 1)
@@ -46,8 +57,8 @@ func put_cards(p_cards : Array[Card3D],d_cards : Array[Card3D],duration : float)
 		c.visible = true
 		c.set_ray_pickable(true)
 		var pos := Vector3(position.x + start + step * i,position.y + 1,position.z + 0.01 * (i + 1))
-		tween.tween_property(c,"global_position",pos,duration)
-		tween.tween_property(c,"rotation",Vector3.ZERO,duration)
+		_tween.tween_property(c,"global_position",pos,duration)
+		_tween.tween_property(c,"rotation",Vector3.ZERO,duration)
 		
 	count = d_cards.size()
 	step = AREA_WIDTH / (count + 1)
@@ -62,20 +73,25 @@ func put_cards(p_cards : Array[Card3D],d_cards : Array[Card3D],duration : float)
 		c.visible = true
 		c.set_ray_pickable(true)
 		var pos = Vector3(position.x + start + step * i,position.y - 1,position.z + 0.01 * (i + 1))
-		tween.tween_property(c,"global_position",pos,duration)
-		tween.tween_property(c,"rotation",Vector3.ZERO,duration)
+		_tween.tween_property(c,"global_position",pos,duration)
+		_tween.tween_property(c,"rotation",Vector3.ZERO,duration)
 	
-	await tween.finished
+	await _tween.finished
+	show()
 	$MeshInstance3D.visible = true
 	
 
 func restore(duration : float):
-	var tween := create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	if original_position.is_empty():
+		return
+	if _tween.is_running():
+		await _tween.finished
+	_tween = create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	for op in original_position:
 		op.card.set_ray_pickable(false)
-		tween.tween_property(op.card,"position",op.position,duration)
-		tween.tween_property(op.card,"rotation",op.rotation,duration)
-	await tween.finished
+		_tween.tween_property(op.card,"position",op.position,duration)
+		_tween.tween_property(op.card,"rotation",op.rotation,duration)
+	await _tween.finished
 	for op in original_position:
 		op.card.visible = op.visible
 	original_position = []
@@ -84,6 +100,9 @@ func _on_area_3d_input_event(_camera, event, _position, _normal, _shape_idx):
 	if (event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT
 			and event.pressed):
+		if is_busy():
+			return
 		$MeshInstance3D.visible = false
+		hide()
+		await restore(0.3)
 		clicked.emit()
-		restore(0.3)

@@ -153,7 +153,9 @@ func _on_menu_start_pressed():
 	
 	var my_deck := menu.get_my_deck() as DeckData
 
-	server.initialize(Global.game_settings.player_name,my_deck.cards,my_deck.catalog,
+	var factory := PlayerCardFactory.new(my_deck.catalog)
+	server.initialize(Global.game_settings.player_name,my_deck.cards,4,true,
+			my_deck.catalog,factory,
 			enemy_data)
 
 	$match_scene.initialize(server,myself,enemy)

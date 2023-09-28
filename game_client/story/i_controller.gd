@@ -2,6 +2,9 @@
 class_name I_StoryController
 
 
+func _dialog_clear() -> void:
+	return
+
 func _play_cut_async(_cut : DialogData.Cut) -> bool:
 	@warning_ignore("redundant_await")
 	return await false

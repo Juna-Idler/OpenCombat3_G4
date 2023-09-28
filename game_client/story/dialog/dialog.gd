@@ -38,11 +38,6 @@ var mode : Mode
 
 # Called when the node enters the cut tree for the first time.
 func _ready():
-	var text_resource := load("res://game_client/story/test.txt")
-	var scenario = DialogData.ScenarioPackage.load_text(text_resource.text)
-
-	cut = scenario.cut.values()[0]
-
 	$HSlider.value = character_per_second
 	$LineEdit.text = str(character_per_second)
 

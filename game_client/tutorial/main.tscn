@@ -35,12 +35,15 @@ alignment = 1
 
 [node name="Button1" type="Button" parent="Menu/Panel/VBoxContainer"]
 layout_mode = 2
-text = "TUTORIAL1"
+text = "1.「基礎」"
 
 [node name="Button2" type="Button" parent="Menu/Panel/VBoxContainer"]
 layout_mode = 2
-text = "TUTORIAL2
-"
+text = "2.「スキル」"
+
+[node name="Button3" type="Button" parent="Menu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "3.「アビリティとエンチャント」"
 
 [node name="ButtonBack" type="Button" parent="Menu/Panel"]
 layout_mode = 0
@@ -51,4 +54,6 @@ offset_bottom = 72.0
 text = "BACK"
 
 [connection signal="pressed" from="Menu/Panel/VBoxContainer/Button1" to="." method="_on_button_1_pressed"]
+[connection signal="pressed" from="Menu/Panel/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="Menu/Panel/VBoxContainer/Button3" to="." method="_on_button_3_pressed"]
 [connection signal="pressed" from="Menu/Panel/ButtonBack" to="." method="_on_button_back_pressed"]

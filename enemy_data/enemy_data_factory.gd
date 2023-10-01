@@ -96,7 +96,7 @@ class EnemyCatalog extends I_CardCatalog:
 			var i : int = -1
 			skills.assign(c["skills"].map(func(s):
 				i += 1
-				return Global.card_catalog.parse_card_skill(s["catalog_string"],i,skill_catalog)
+				return Global.card_catalog.parse_card_skill(s,i,skill_catalog)
 			))
 			var abilities : Array[CatalogData.AbilityData] = []
 			abilities.assign(c["abilities"].map(func(a : int):return ability_catalog[a]))

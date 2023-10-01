@@ -28,9 +28,9 @@ func _battle_start_async(_player_name : String,_player_deck : PackedInt32Array,
 	@warning_ignore("redundant_await")
 	return await -1
 
-func _tutorial_battle_start_async(player_name : String,
-		player_deck : PackedInt32Array,player_hand : int,
-		enemy_data : EnemyData,battle_script : I_BattleScript) -> int:
+func _tutorial_battle_start_async(_player_name : String,
+		_player_deck : PackedInt32Array,_player_hand : int,
+		_enemy_data : EnemyData,_battle_script : I_BattleScript) -> int:
 	@warning_ignore("redundant_await")
 	return await -1
 

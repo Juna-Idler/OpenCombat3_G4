@@ -4,7 +4,7 @@
 		"name": "Dummy",
 		"ruby_name": "",
 		"text": "",
-		"hp": 10,
+		"hp": 30,
 		"list": [
 			1,
 			1,
@@ -26,9 +26,7 @@
 			"hit": "0",
 			"block": "1",
 			"skills": [
-				{
-					"catalog_string": "0:1:0"
-				}
+				"0:1:0"
 			],
 			"abilities": []
 		},

@@ -66,20 +66,111 @@
 			"block": "1",
 			"skills": [],
 			"abilities": []
+		},
+		{
+			"id": 5,
+			"name": "素早い攻撃",
+			"ruby_name": "",
+			"text": "",
+			"color": 2,
+			"level": 1,
+			"power": "2",
+			"hit": "1",
+			"block": "0",
+			"skills": [
+				"9:1:1 1 0"
+			],
+			"abilities": []
+		},
+		{
+			"id": 6,
+			"name": "大振りな攻撃",
+			"ruby_name": "",
+			"text": "",
+			"color": 1,
+			"level": 1,
+			"power": "1",
+			"hit": "2",
+			"block": "0",
+			"skills": [
+				"0:2:"
+			],
+			"abilities": []
+		},
+		{
+			"id": 7,
+			"name": "守りを固める",
+			"ruby_name": "",
+			"text": "",
+			"color": 3,
+			"level": 1,
+			"power": "0",
+			"hit": "0",
+			"block": "1",
+			"skills": [
+				"5:1:0 0 2"
+			],
+			"abilities": []
+		},
+		{
+			"id": 8,
+			"name": "絶対バリア",
+			"ruby_name": "",
+			"text": "",
+			"color": 3,
+			"level": 1,
+			"power": "0",
+			"hit": "0",
+			"block": "0",
+			"skills": [
+				"0:4:"
+			],
+			"abilities": []
 		}
 	],
 	"Skills": [
 		{
 			"id": 1,
-			"name": "なにもしない",
+			"name": "強化",
 			"ruby_name": "",
-			"text": "",
+			"text": "交戦前　このカードに{A}を加算する",
 			"param_type": [
-				1
+				2
 			],
 			"parameter": [
-				"X"
+				"A"
 			],
+			"enchants": []
+		},
+		{
+			"id": 2,
+			"name": "貫通",
+			"ruby_name": "",
+			"text": "交戦後　交戦時攻撃した場合、相手カードの防壁の半分（切り上げ）のダメージを相手に与える。",
+			"param_type": [],
+			"parameter": [],
+			"enchants": []
+		},
+		{
+			"id": 3,
+			"name": "溜め",
+			"ruby_name": "",
+			"text": "終了時　このフェイズ中にダメージを受けていない場合、自身に「{:次強化}({A})」を付与する。",
+			"param_type": [
+				2
+			],
+			"parameter": [
+				"A"
+			],
+			"enchants": []
+		},
+		{
+			"id": 4,
+			"name": "隔絶",
+			"ruby_name": "",
+			"text": "交戦時　交戦結果を強制的に互角にする。自分は1のダメージを受ける。　優先順位255",
+			"param_type": [],
+			"parameter": [],
 			"enchants": []
 		}
 	],

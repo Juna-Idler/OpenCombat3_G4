@@ -51,7 +51,7 @@ func _create_enchant(match_id:int,data_id : int,param : Array,
 		attached : MechanicsData.IPlayer,opponent : MechanicsData.IPlayer) -> MechanicsData.IEnchantment:
 	return enchant_behaviors[data_id].new(match_id,param,attached,opponent)
 
-func _ability_behavior(data_id : int,
+func _ability_behavior(data_id : int,card_deck_id : PackedInt32Array,
 		myself : MechanicsData.IPlayer,
 		rival : MechanicsData.IPlayer) -> Array[IGameServer.EffectFragment]:
-	return ability_behaviors[data_id].effect(myself,rival)
+	return ability_behaviors[data_id].effect(card_deck_id,myself,rival)

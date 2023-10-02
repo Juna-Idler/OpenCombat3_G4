@@ -53,18 +53,25 @@ func _recover(_index : int) -> IGameServer.EffectLog:
 	return IGameServer.EffectLog.new(IGameServer.EffectSourceType.SYSTEM_PROCESS,0,0,fragments)
 	
 
-func _discard_card(card : int,opponent : bool = false) -> IGameServer.EffectFragment:
+func _discard_card(card : int,opponent : bool = false,no_passive = false) -> IGameServer.EffectFragment:
 	var index := _hand.find(card)
 	if index >= 0:
 		_hand.remove_at(index)
-#		_life -= _deck_list[card].level
-		_discard.append(card)
-		var passive : Array[IGameServer.PassiveLog] = []
+	else:
+		index = _stock.find(card)
+		if index >= 0:
+			_stock.remove_at(index)
+		else:
+			return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,-1,[])
+
+#	_life -= _deck_list[card].level
+	_discard.append(card)
+	var passive : Array[IGameServer.PassiveLog] = []
+	if not no_passive:
 		passive_discarded.emit(card,
 				func (plog : IGameServer.PassiveLog): passive.append(plog))
-		return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,card,passive)
-	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,-1,[])
-	
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,card,passive)
+
 
 #	CREATE_CARD,	# [card_id : int,opponent_source : bool,data_id : int,position : int,changes : Dictionary]
 func _create_card(factory : ICardFactory , data_id:int,position : int,changes : Dictionary,

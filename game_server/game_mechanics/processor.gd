@@ -54,10 +54,10 @@ func standby(p1 : MechanicsData.IPlayer,p2 : MechanicsData.IPlayer) -> IGameServ
 			else:
 				p2_abilities[a] = PackedInt32Array([c.id_in_deck])
 	for a in p1_abilities:
-		var fragments := player1._get_card_factory()._ability_behavior(a.id,player1,player2)
+		var fragments := player1._get_card_factory()._ability_behavior(a.id,p1_abilities[a],player1,player2)
 		p1_initial.append(IGameServer.AbilityLog.new(a.id,p1_abilities[a],fragments))
 	for a in p2_abilities:
-		var fragments := player2._get_card_factory()._ability_behavior(a.id,player2,player1)
+		var fragments := player2._get_card_factory()._ability_behavior(a.id,p2_abilities[a],player2,player1)
 		p2_initial.append(IGameServer.AbilityLog.new(a.id,p2_abilities[a],fragments))
 		
 

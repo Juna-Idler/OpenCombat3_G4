@@ -257,12 +257,7 @@ func _perform_ability(ability : IGameServer.AbilityLog) -> void:
 		original_rotation[i] = card.rotation
 		tween.tween_property(card,"position",Vector3(positions[i],0.0,1.0),0.5)
 		tween.tween_property(card,"rotation",Vector3.ZERO,0.5)
-	tween.chain().tween_interval(0.5)
-	await tween.finished
-	tween = create_tween().set_parallel()
-	for i in ability.card_id.size():
-		tween.tween_property(_deck[ability.card_id[i]],"position",original_pos[i],0.5)
-		tween.tween_property(_deck[ability.card_id[i]],"rotation",original_rotation[i],0.5)
+	tween.chain().tween_interval(0.3)
 	await tween.finished
 	
 	for f in ability.fragment:
@@ -270,6 +265,18 @@ func _perform_ability(ability : IGameServer.AbilityLog) -> void:
 			await _rival._perform_effect_fragment(f)
 		else:
 			await _perform_effect_fragment(f)
+	
+	tween = create_tween()
+	tween.tween_interval(0.2)
+	tween.tween_interval(0)
+	tween.set_parallel()
+	for i in ability.card_id.size():
+		var c := _deck[ability.card_id[i]]
+		if c.location == Card3D.CardLocation.STOCK:
+			tween.tween_property(c,"position",original_pos[i],0.5)
+			tween.tween_property(c,"rotation",original_rotation[i],0.5)
+	await tween.finished
+	
 
 
 func _perform_effect(effect : IGameServer.EffectLog) -> void:
@@ -384,14 +391,17 @@ func _perform_effect_draw_card_fragment(card_id : int,opponent : bool):
 
 func _perform_effect_discard_card_fragment(card_id : int,opponent : bool):
 	var card := _deck[card_id]
-	assert (card.location == Card3D.CardLocation.HAND)
+	assert (card.location == Card3D.CardLocation.HAND or card.location == Card3D.CardLocation.STOCK)
 	_life -= card.level
 	%LabelLife.text = str(_life)
-	card.set_ray_pickable(false)
+	if card.location == Card3D.CardLocation.HAND:
+		card.set_ray_pickable(false)
+		_hand.remove_at(_hand.find(card_id))
+		hand_area.set_cards_in_deck(_hand,_deck)
+		hand_area.move_card(0.5)
+	elif card.location == Card3D.CardLocation.STOCK:
+		_stock_count -= 1
 	_log_display.append_fragment_discard(card.card_name,opponent)
-	_hand.remove_at(_hand.find(card_id))
-	hand_area.set_cards_in_deck(_hand,_deck)
-	hand_area.move_card(0.5)
 	_discard.append(card_id)
 	card.location = Card3D.CardLocation.DISCARD
 	var tween := create_tween().set_parallel()

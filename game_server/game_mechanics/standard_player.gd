@@ -240,17 +240,24 @@ func _draw_card(opponent : bool = false) -> IGameServer.EffectFragment:
 	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DRAW_CARD,opponent,id,passive)
 
 
-func _discard_card(card : int,opponent : bool = false) -> IGameServer.EffectFragment:
+func _discard_card(card : int,opponent : bool = false,no_passive = false) -> IGameServer.EffectFragment:
 	var index := _hand.find(card)
 	if index >= 0:
 		_hand.remove_at(index)
-		_life -= _deck_list[card].level
-		_discard.append(card)
-		var passive : Array[IGameServer.PassiveLog] = []
+	else:
+		index = _stock.find(card)
+		if index >= 0:
+			_stock.remove_at(index)
+		else:
+			return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,-1,[])
+
+	_life -= _deck_list[card].level
+	_discard.append(card)
+	var passive : Array[IGameServer.PassiveLog] = []
+	if not no_passive:
 		passive_discarded.emit(card,
 				func (plog : IGameServer.PassiveLog): passive.append(plog))
-		return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,card,passive)
-	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,-1,[])
+	return IGameServer.EffectFragment.new(IGameServer.EffectFragmentType.DISCARD_CARD,opponent,card,passive)
 	
 func _bounce_card(card : int,position : int,opponent : bool = false) -> IGameServer.EffectFragment:
 	var index := _hand.find(card)

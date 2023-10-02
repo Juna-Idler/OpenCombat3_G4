@@ -78,14 +78,17 @@ func _recovery_end(life : int):
 
 func _perform_effect_discard_card_fragment(card_id : int,opponent : bool):
 	var card := _deck[card_id]
-	assert (card.location == Card3D.CardLocation.HAND)
+	assert (card.location == Card3D.CardLocation.HAND or card.location == Card3D.CardLocation.STOCK)
 #	_life -= card.level
 #	%LabelLife.text = str(_life)
-	card.set_ray_pickable(false)
+	if card.location == Card3D.CardLocation.HAND:
+		card.set_ray_pickable(false)
+		_hand.remove_at(_hand.find(card_id))
+		hand_area.set_cards_in_deck(_hand,_deck)
+		hand_area.move_card(0.5)
+	elif card.location == Card3D.CardLocation.STOCK:
+		_stock_count -= 1
 	_log_display.append_fragment_discard(card.card_name,opponent)
-	_hand.remove_at(_hand.find(card_id))
-	hand_area.set_cards_in_deck(_hand,_deck)
-	hand_area.move_card(0.5)
 	_discard.append(card_id)
 	card.location = Card3D.CardLocation.DISCARD
 	var tween := create_tween().set_parallel()

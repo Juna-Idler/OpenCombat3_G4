@@ -43,7 +43,8 @@ class ICardFactory:
 	func _create_enchant(_enchant_id : int,_data_id : int,_param : Array,_attached : IPlayer,_opponent : IPlayer) -> IEnchantment:
 		return null
 	
-	func _ability_behavior(_data_id : int,_myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> Array[IGameServer.EffectFragment]:
+	func _ability_behavior(_data_id : int,_card_deck_id : PackedInt32Array,
+			_myself : MechanicsData.IPlayer,_rival : MechanicsData.IPlayer) -> Array[IGameServer.EffectFragment]:
 		return []
 
 
@@ -188,7 +189,7 @@ class IPlayer:
 		return null
 		
 #	DISCARD,		# card_id : int
-	func _discard_card(_card : int,_opponent : bool = false) -> IGameServer.EffectFragment:
+	func _discard_card(_card : int,_opponent : bool = false,_no_passive = false) -> IGameServer.EffectFragment:
 		return null
 		
 #	BOUNCE_CARD,	# [card_id : int,position : int]

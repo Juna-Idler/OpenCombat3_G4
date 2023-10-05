@@ -121,7 +121,7 @@ func param_to_string(param_type : int,param) -> String:
 
 
 func _load_card_data():
-	var carddata_resource := load("res://card_data/card_catalog.txt")
+	var carddata_resource := load("res://external_data/card_data/card_catalog.txt")
 	var cards := (carddata_resource.text as String).split("\n")
 	for c in cards:
 		var tsv := c.split("\t")
@@ -152,9 +152,9 @@ func _load_card_data():
 
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/card_" + translation + ".txt")
+		var trans_res = load("res://external_data/card_data/card_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/card_en.txt")
+			trans_res = load("res://external_data/card_data/card_en.txt")
 		var trans = trans_res.text.split("\n")
 		for i in trans.size():
 			var tsv = trans[i].split("\t")
@@ -166,7 +166,7 @@ func _load_card_data():
 
 
 func _load_skill_data():
-	var namedskill_resource := load("res://card_data/skill_catalog.txt")
+	var namedskill_resource := load("res://external_data/card_data/skill_catalog.txt")
 	var namedskills := (namedskill_resource.text as String).split("\n")
 	for s in namedskills:
 		var tsv := s.split("\t")
@@ -189,9 +189,9 @@ func _load_skill_data():
 
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/skill_" + translation + ".txt")
+		var trans_res = load("res://external_data/card_data/skill_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/skill_en.txt")
+			trans_res = load("res://external_data/card_data/skill_en.txt")
 		var trans = (trans_res.text as String).split("\n")
 		for i in trans.size():
 			var tsv := trans[i].split("\t")
@@ -204,7 +204,7 @@ func _load_skill_data():
 			data.text = tsv[3].replace("\\n","\n")
 
 func _load_ability_data():
-	var ability_resource := load("res://card_data/ability_catalog.txt")
+	var ability_resource := load("res://external_data/card_data/ability_catalog.txt")
 	var abilities := (ability_resource.text as String).split("\n")
 	for s in abilities:
 		var tsv := s.split("\t")
@@ -221,9 +221,9 @@ func _load_ability_data():
 
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/ability_" + translation + ".txt")
+		var trans_res = load("res://external_data/card_data/ability_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/ability_en.txt")
+			trans_res = load("res://external_data/card_data/ability_en.txt")
 		var trans := (trans_res.text as String).split("\n")
 		for i in trans.size():
 			var tsv := trans[i].split("\t")
@@ -235,7 +235,7 @@ func _load_ability_data():
 
 
 func _load_enchant_data():
-	var enchant_resource := load("res://card_data/enchant_catalog.txt")
+	var enchant_resource := load("res://external_data/card_data/enchant_catalog.txt")
 	var enchants := (enchant_resource.text as String).split("\n")
 	for s in enchants:
 		var tsv := s.split("\t")
@@ -251,9 +251,9 @@ func _load_enchant_data():
 	
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/enchant_" + translation + ".txt")
+		var trans_res = load("res://external_data/card_data/enchant_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/enchant_en.txt")
+			trans_res = load("res://external_data/card_data/enchant_en.txt")
 		var trans = trans_res.text.split("\n")
 		for i in trans.size():
 			var tsv = trans[i].split("\t")
@@ -268,7 +268,7 @@ func _load_enchant_data():
 
 
 func _load_param_names():
-	var param_names_resource := preload("res://card_data/param_name_catalog.txt")
+	var param_names_resource := preload("res://external_data/card_data/param_name_catalog.txt")
 	var param_names := (param_names_resource.text as String).split("\n")
 	_param_names.resize(param_names.size())
 	for s in param_names:
@@ -280,9 +280,9 @@ func _load_param_names():
 		
 	var translation := TranslationServer.get_locale()
 	if translation.find("ja") != 0:
-		var trans_res = load("res://card_data/param_name_" + translation + ".txt")
+		var trans_res = load("res://external_data/card_data/param_name_" + translation + ".txt")
 		if not trans_res:
-			trans_res = load("res://card_data/param_name_en.txt")
+			trans_res = load("res://external_data/card_data/param_name_en.txt")
 		var trans = trans_res.text.split("\n")
 		for i in trans.size():
 			var tsv = trans[i].split("\t")

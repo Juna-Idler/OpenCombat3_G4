@@ -1,7 +1,7 @@
 
 class_name EnemyDataFactory
 
-const ENEMY_DATA_DIR := "res://enemy_data/"
+const ENEMY_DATA_DIR := "res://external_data/enemy_data/"
 
 static func create(name : String) -> EnemyData:
 	var dir_path := ENEMY_DATA_DIR.path_join(name)

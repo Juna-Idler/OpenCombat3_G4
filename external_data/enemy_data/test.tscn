@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bqu0hu00bigmu"]
 
-[ext_resource type="Script" path="res://enemy_data/test.gd" id="1_3a5b0"]
+[ext_resource type="Script" path="res://external_data/enemy_data/test.gd" id="1_3a5b0"]
 
 [node name="test" type="Control"]
 layout_mode = 3

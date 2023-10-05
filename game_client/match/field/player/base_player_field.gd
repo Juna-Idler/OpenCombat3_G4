@@ -485,9 +485,9 @@ func _passive_coroutine(passive : IGameServer.PassiveLog,duration : float) -> vo
 func _perform_simultaneous_initiative(fragment : IGameServer.EffectFragment,duration : float) -> void:
 	assert(fragment.type == IGameServer.EffectFragmentType.INITIATIVE)
 	var initiative : bool = fragment.data
-	
-	_log_display.append_effect_system(_opponent_layout)
-	_log_display.append_fragment_initiative(initiative,fragment.opponent)
+	if initiative:
+		_log_display.append_effect_system(_opponent_layout)
+		_log_display.append_fragment_initiative(initiative,fragment.opponent)
 	for p in fragment.passive:
 		if p.opponent:
 			_rival._passive_sequence(p)

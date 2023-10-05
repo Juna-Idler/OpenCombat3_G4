@@ -150,6 +150,11 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	log_display.append_combat_comparison_effect()
 	_myself._perform_simultaneous_initiative(data.myself.comparison.fragment[0],0.3)
 	_rival._perform_simultaneous_initiative(data.rival.comparison.fragment[0],0.3)
+	var m_initiative : bool = data.myself.comparison.fragment[0].data
+	var r_initiative : bool = data.myself.comparison.fragment[0].data
+	if not m_initiative and not r_initiative:
+		log_display.append_initiative_draw()
+	
 	await get_tree().create_timer(0.5).timeout
 
 	await perform_effect(data.myself.moment,data.rival.moment,I_PlayerField.EffectTiming.MOMENT)

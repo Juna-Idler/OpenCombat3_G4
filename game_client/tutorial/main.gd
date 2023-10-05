@@ -31,8 +31,8 @@ func _terminalize():
 
 
 func _on_button_1_pressed():
-	const Tutorial1_Battle = preload("res://game_client/tutorial/t1_battle_script.gd")
-	const tutorial1_battle_scenario = preload("res://game_client/tutorial/1.txt")
+	const Tutorial1_Battle = preload("res://external_data/tutorial_data/t1_battle_script.gd")
+	const tutorial1_battle_scenario = preload("res://external_data/tutorial_data/1.txt")
 	$Menu.hide()
 	var script := Tutorial.new(Tutorial1_Battle.new(story.controller,tutorial1_battle_scenario.text))
 	script.player_deck = PackedInt32Array([1,2,4,3,3,3,3])
@@ -45,8 +45,8 @@ func _on_button_1_pressed():
 	pass # Replace with function body.
 
 func _on_button_2_pressed():
-	const Tutorial2_Battle = preload("res://game_client/tutorial/t2_battle_script.gd")
-	const tutorial2_battle_scenario = preload("res://game_client/tutorial/2.txt")
+	const Tutorial2_Battle = preload("res://external_data/tutorial_data/t2_battle_script.gd")
+	const tutorial2_battle_scenario = preload("res://external_data/tutorial_data/2.txt")
 	$Menu.hide()
 	var script := Tutorial.new(Tutorial2_Battle.new(story.controller,tutorial2_battle_scenario.text))
 	script.player_deck = PackedInt32Array([6,6,5,7,6])
@@ -57,8 +57,8 @@ func _on_button_2_pressed():
 	$Menu.show()
 
 func _on_button_3_pressed():
-	const Tutorial3_Battle = preload("res://game_client/tutorial/t3_battle_script.gd")
-	const tutorial3_battle_scenario = preload("res://game_client/tutorial/3.txt")
+	const Tutorial3_Battle = preload("res://external_data/tutorial_data/t3_battle_script.gd")
+	const tutorial3_battle_scenario = preload("res://external_data/tutorial_data/3.txt")
 	$Menu.hide()
 	var script := Tutorial.new(Tutorial3_Battle.new(story.controller,tutorial3_battle_scenario.text))
 	script.player_deck = PackedInt32Array([6,6,5,7,6])

@@ -1,0 +1,51 @@
+STRING_ID	変数	TEXT
+ROUND_START	Round	Round {Round} Combat Phase
+COMBAT_START	MyCard,RivalCard	Combat Start:{MyCard} vs {RivalCard}
+ENTER_RECOVERY	MyDamage,RivalDamage	Recovery Phase:My Damage:{MyDamage} vs Opponent Damage:{RivalDamage}.
+TIMING_INITIAL		Ability Effect Timing
+TIMING_START		Effect Timing at Start
+TIMING_BEFORE		Pre-Effect Timing
+TIMING_MOMENT		Effect Timing During Engagement
+TIMING_AFTER		Post-Effect Timing
+TIMING_END		End Effect Timing
+COMBAT_COMPARISON		Power Comparison
+COMBAT_RESULT		Engagement Result
+COMBAT_SUPPLY		Card Replenishment
+RECOVERY_RESULT		Recovery Result
+ABILITY_ACTIVATE_1	AbilityName	Your Ability "{AbilityName}" is activated
+ABILITY_ACTIVATE_2	AbilityName	Your opponent's Ability "{AbilityName}" is activated
+SKILL_ACTIVATE_1	SkillName	Your Skill "{SkillName}" is activated
+SKILL_ACTIVATE_2	SkillName	Your opponent's Skill "{SkillName}" is activated
+ENCHANTMENT_ACTIVATE_1	EnchantName	Your Enchantment "{EnchantName}" is activated
+ENCHANTMENT_ACTIVATE_2	EnchantName	Your opponent's Enchantment "{EnchantName}" is activated.
+DAMAGE_1	Damage,Blocked	Damage to self/{Blocked} Blocked
+DAMAGE_2	Damage,Blocked	Your opponent takes {Damage} damage/{Blocked} blocked.
+RECOVERY_1	Recovery,Damage	You heal {Recovery} points / Remaining {Damage} damage
+RECOVERY_2	Recovery,Damage	Your opponent heals {Recovery} points / {Damage} damage remaining
+INITIATIVE_GET_1		I gain the right to attack
+INITIATIVE_GET_2		My opponent gains the right to attack
+INITIATIVE_LOST_1		I lost my right to attack
+INITIATIVE_LOST_2		My opponent lost the right to attack
+INITIATIVE_DRAW		Both players are now in a duel.
+COMBAT_STATS_1	Stats	My Combat value is changed to {Stats}.
+COMBAT_STATS_2	Stats	Your opponent's Combat Card Value is changed to {Stats}.
+CARD_STATS_1	CardName,Stats	Your "{CardName}" ability value changes to {Stats}.
+CARD_STATS_2	CardName,Stats	The ability value of opponent's {CardName} changes to {Stats}.
+DRAW_CARD_1	CardName	I draw {CardName}.
+DRAW_CARD_2	CardName	My opponent draws {CardName}.
+DRAW_NO_CARD_1		I fail to draw a card
+DRAW_NO_CARD_2		My opponent could not draw a card.
+DISCARD_CARD_1	CardName	I discarded "{CardName}".
+DISCARD_CARD_2	CardName	My opponent discarded "{CardName}".
+BOUNCE_CARD_1	CardName,Position	I put "{CardName}" back into the deck (Position:{Position})
+BOUNCE_CARD_2	CardName,Position	Your opponent returns "{CardName}" to his/her deck (Position:{Position})
+ENCHANT_1	Enchant	{Enchant}" was granted to me
+ENCHANT_2	Enchant	Your opponent has gained "{Enchant}"
+ENCHANT_UPDATE_1	Enchant	Your "{Enchant}" was updated
+ENCHANT_UPDATE_2	Enchant	Your opponent's {Enchant} has been updated
+ENCHANT_DELETE_1	Enchant	My "{Enchant}" has disappeared
+ENCHANT_DELETE_2	Enchant	My opponent's "{Enchant}" has disappeared
+CARD_CREATE_1	CardName,Position	I created "{CardName}" (Position:{Position})
+CARD_CREATE_2	CardName,Position	My opponent created "{CardName}" (Position:{Position})
+PASSIVE_1	Enchant	Passive: My "{Enchant}" changed
+PASSIVE_2	Enchant	Passive: opponent's "{Enchant}" changed

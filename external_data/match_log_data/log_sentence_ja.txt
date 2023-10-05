@@ -1,0 +1,50 @@
+ROUND_START	Round	ラウンド{Round} 戦闘フェイズ
+COMBAT_START	MyCard,RivalCard	戦闘開始:{MyCard} vs {RivalCard}
+ENTER_RECOVERY	MyDamage,RivalDamage	回復フェイズ:自分のダメージ:{MyDamage} vs 相手のダメージ:{RivalDamage}
+TIMING_INITIAL		アビリティ効果タイミング
+TIMING_START		開始時効果タイミング
+TIMING_BEFORE		交戦前効果タイミング
+TIMING_MOMENT		交戦時効果タイミング
+TIMING_AFTER		交戦後効果タイミング
+TIMING_END		終了時効果タイミング
+COMBAT_COMPARISON		Power比較
+COMBAT_RESULT		交戦結果
+COMBAT_SUPPLY		カード補充
+RECOVERY_RESULT		回復結果
+ABILITY_ACTIVATE_1	AbilityName	自分のアビリティ「{AbilityName}」が発動
+ABILITY_ACTIVATE_2	AbilityName	相手のアビリティ「{AbilityName}」が発動
+SKILL_ACTIVATE_1	SkillName	自分のスキル「{SkillName}」が発動
+SKILL_ACTIVATE_2	SkillName	相手のスキル「{SkillName}」が発動
+ENCHANTMENT_ACTIVATE_1	EnchantName	自分のエンチャント「{EnchantName}」が発動
+ENCHANTMENT_ACTIVATE_2	EnchantName	相手のエンチャント「{EnchantName}」が発動
+DAMAGE_1	Damage,Blocked	自分に{Damage}ダメージ/{Blocked}ブロック
+DAMAGE_2	Damage,Blocked	相手に{Damage}ダメージ/{Blocked}ブロック
+RECOVERY_1	Recovery,Damage	自分は{Recovery}点回復/残り{Damage}ダメージ
+RECOVERY_2	Recovery,Damage	相手は{Recovery}点回復/残り{Damage}ダメージ
+INITIATIVE_GET_1		自分は攻撃権を得た
+INITIATIVE_GET_2		相手は攻撃権を得た
+INITIATIVE_LOST_1		自分は攻撃権を失った
+INITIATIVE_LOST_2		相手は攻撃権を失った
+INITIATIVE_DRAW		両者は拮抗した
+COMBAT_STATS_1	Stats	自分の戦闘カード能力値が{Stats}に変動
+COMBAT_STATS_2	Stats	相手の戦闘カード能力値が{Stats}に変動
+CARD_STATS_1	CardName,Stats	自分の「{CardName}」の能力値が{Stats}に変動
+CARD_STATS_2	CardName,Stats	相手の「{CardName}」の能力値が{Stats}に変動
+DRAW_CARD_1	CardName	自分は「{CardName}」をドロー
+DRAW_CARD_2	CardName	相手は「{CardName}」をドロー
+DRAW_NO_CARD_1		自分はカードをドローできなかった
+DRAW_NO_CARD_2		相手はカードをドローできなかった
+DISCARD_CARD_1	CardName	自分は「{CardName}」を捨てた
+DISCARD_CARD_2	CardName	相手は「{CardName}」を捨てた
+BOUNCE_CARD_1	CardName,Position	自分は「{CardName}」をデッキに戻した（位置:{Position}）
+BOUNCE_CARD_2	CardName,Position	相手は「{CardName}」をデッキに戻した（位置:{Position}）
+ENCHANT_1	Enchant	自分に「{Enchant}」が付与された
+ENCHANT_2	Enchant	相手に「{Enchant}」が付与された
+ENCHANT_UPDATE_1	Enchant	自分の「{Enchant}」が更新された
+ENCHANT_UPDATE_2	Enchant	相手の「{Enchant}」が更新された
+ENCHANT_DELETE_1	Enchant	自分の「{Enchant}」が消滅した
+ENCHANT_DELETE_2	Enchant	相手の「{Enchant}」が消滅した
+CARD_CREATE_1	CardName,Position	自分は「{CardName}」を生成した（位置:{Position}）
+CARD_CREATE_2	CardName,Position	相手は「{CardName}」を生成した（位置:{Position}）
+PASSIVE_1	Enchant,Param	パッシブ:自分の「{Enchant}」が変動した
+PASSIVE_2	Enchant,Param	パッシブ:相手の「{Enchant}」が変動した

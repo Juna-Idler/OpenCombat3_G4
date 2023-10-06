@@ -3,7 +3,6 @@ SETTINGS,設定,Settings
 VS_CPU,CPU対戦,CPU Match
 VS_ONLINE,オンライン対戦,Online Match
 DECK_BUILD,デッキ構築,Deck Build
-RETRY,もう一度,Retry
 BACK,戻る,Back
 SURRENDER,負けを認める,Surrender
 DELETE,削除,Delete
@@ -14,8 +13,6 @@ SAVE,保存,Save
 LIST_OPEN,一覧,List
 CARDS,カード,Cards
 COST,コスト,Cost
-RED:%s GREEN:%s BLUE:%s,[color=red]赤[/color]:%s [color=green]緑[/color]:%s [color=blue]青[/color]:%s,[color=red]R[/color]:%s [color=green]G[/color]:%s [color=blue]B[/color]:%s
-L1:%s L2:%s L3:%s,Lv1:%s Lv2:%s Lv3:%s,Lv1:%s Lv2:%s Lv3:%s
 RETURN_TITLE,タイトルに戻る,Return Title
 SAVE,保存,Save
 DECK_NO_SAVE_MESSAGE,変更がありますが破棄しますか？,"There are changes, do you want to discard them?"
@@ -45,3 +42,6 @@ PAUSE,停止,Pause
 NO_WAIT,スキップ,No Wait
 EXIT,終了,Exit
 GAME_SPEED,再生スピード,Game Speed
+TUTORIAL_1,基礎,Basics
+TUTORIAL_2,スキル,Skills
+TUTORIAL_3,アビリティとエンチャント,Abilities and Enchantments

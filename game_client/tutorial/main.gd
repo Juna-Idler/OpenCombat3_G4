@@ -32,7 +32,18 @@ func _terminalize():
 
 func _on_button_1_pressed():
 	const Tutorial1_Battle = preload("res://external_data/tutorial_data/t1_battle_script.gd")
-	const tutorial1_battle_scenario = preload("res://external_data/tutorial_data/1.txt")
+	
+	var scenario_path := "res://external_data/tutorial_data/1.txt"
+
+	var translation := TranslationServer.get_locale()
+	var code := translation.split("_")
+	var language := "en" if code.is_empty() else code[0]
+	if language != "ja":
+		scenario_path =  "res://external_data/tutorial_data/1_%s.txt" % language
+		if not FileAccess.file_exists(scenario_path):
+			scenario_path =  "res://external_data/tutorial_data/1_en.txt"
+	
+	var tutorial1_battle_scenario = load(scenario_path)
 	$Menu.hide()
 	var script := Tutorial.new(Tutorial1_Battle.new(story.controller,tutorial1_battle_scenario.text))
 	script.player_deck = PackedInt32Array([1,2,4,3,3,3,3])

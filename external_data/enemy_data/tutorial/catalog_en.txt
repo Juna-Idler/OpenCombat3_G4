@@ -1,0 +1,32 @@
+ENEMY_ID	Name	RubyName	Text
+Tutorial	Tutorial		
+			
+CARD_ID	Name	RubyName	Text
+1	do nothing		
+2	quick attack		
+3	big swing attack		
+4	fortify defense		
+5	quick attack		
+6	big swing attack		
+7	fortify defense		
+8	absolute barrier		
+			
+			
+SKILL_ID	Name	RubyName	Text
+1	Reinforce		BEFORE: Add {A} effect to this card
+2	Penetrate		AFTER: If you were attacking during Moment,Inflict damage to your opponent equal to half (rounded up) of the opponent's card's block.
+3	Charge		END: If no damage was taken during this phase,Enchant "{:Reinforce} ({A})" to itself.
+4	Isolation		MOMENT: Take away the initiative from both sides. You take 1 damage.
+			
+			
+ABILITY_ID	Name	RubyName	Text
+100	Inexhaustible		Grants "{:Inexhaustible}" to yourself.
+			
+			
+			
+ENCHANT_ID	Name	RubyName	Text
+100	Inexhaustible		START: When there are 0 cards in your deck, add a copy of "your cards that were not in your discard pile at the start of Round 1" to your deck.
+1	Reinforce		BEFORE: Add {Stats} to your combat card. This enchantment disappears.
+			
+			
+END			

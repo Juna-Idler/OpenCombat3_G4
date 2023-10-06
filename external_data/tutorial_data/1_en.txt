@@ -1,0 +1,77 @@
+@Cut Start
+ Tutorial
+	Welcome to the Tutorial.
+	This tutorial explains the operation and basic rules.
+ Tutorial
+	For now, we will deal the initial hand.
+	For the tutorial, you will be dealt one card.
+
+@Cut PlayCard
+ Tutorial
+	The only operation to progress in this game is to select a hand.
+ Tutorial
+	Drag a card from your hand and drop it in the center of the screen.
+	If the aura color of the card you are dragging changes, you can play.
+
+
+@Cut CardStats
+ Tutorial
+	When you play a card, the "Combat" phase will automatically begin.
+	At the end of the Combat Phase, the played cards are placed on top of each other in a specific position as "played".
+	
+ Tutorial
+	Basic Card Information
+	The three numbers in the upper left corner of the card are the card's "Stats".
+ Tutorial
+	The top number is "Power",
+	Compare your Power with your opponent's Power, and the one with the higher Power wins the battle and the right to attack.
+	If they are the same value, they are evenly matched, and neither gets the right to attack.
+ Tutorial
+	The second number from the top is "Hit",
+	Generally speaking, it corresponds to attack power.
+	Only if you get the right to attack, you can damage your opponent by the value of "Hit".
+ Tutorial
+	The third number is "Block," and corresponds to defensive power.
+	Regardless of the right to attack, the damage dealt to you will be replaced up to the value of the Block.
+ Tutorial
+	Let's play the following cards and look at the "Combat Phase" again.
+
+@Cut CardInfo
+ Tutorial
+	There are "Color" and "Level" as basic information for cards other than their ability values.
+ Tutorial
+	Color" is represented by the color used for the frame of the card, but other display methods are under consideration.
+	There are four types of colors: red, green, blue, and colorless.
+ Tutorial
+	Color itself has no effect in the basic system. It is used for conditions and targets of skills, etc.
+ Tutorial
+	Level" is the number in the upper right corner of the card. (but I'm inclined to express it in terms of the number of color icons)
+	It represents the amount of energy a card has. The higher it is, the stronger the card is.
+ Tutorial
+	When you play the next card, you will receive damage and move on to the explanation of "Recovery Phase".
+
+@Cut Damage_Recovery
+ Tutorial
+	When a player takes damage that cannot be prevented by Block, he/she will enter "Recovery Phase" to neutralize the damage before going to the next Combat Phase.
+ Tutorial
+	Draw one more card than usual and discard a card from your hand to recover the level of damage. This is repeated until the damage is reduced to 0.
+ Tutorial
+	You can discard a card from your hand by drag & drop as well as playing.
+
+@Cut DefeatCondition
+ Tutorial
+	The Defeat Condition is that the player's Life becomes 0 or less.
+	And for the "player", Life is the sum of the levels of cards in the deck and in the hand.
+ Tutorial
+	The "player" can fight until he/she runs out of cards in his/her deck and hand.
+	The number of cards in your deck and your Life are shown in the lower right corner (upper left corner for your opponent).
+ Tutorial
+	Enemies for solo play do not discard their cards even if they are damaged.
+ Tutorial
+	Life is set as a mere endurance value regardless of the cards in your hand or deck, so try to cut down your opponent's Life before you run out of cards.
+ Tutorial
+	If you play the next card, your opponent's Life will be reduced to 0 and this tutorial will end.
+
+@Cut End
+ Tutorial
+	Thank you for your hard work.

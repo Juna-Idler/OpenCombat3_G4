@@ -1,0 +1,26 @@
+ENEMY_ID	Name	RubyName	Text
+Dummy	Dummy		
+			
+CARD_ID	Name	RubyName	Text
+1	do nothing		
+2	Inexhaustible		
+			
+			
+			
+			
+SKILL_ID	Name	RubyName	Text
+1	do nothing		
+			
+			
+			
+ABILITY_ID	Name	RubyName	Text
+100	Inexhaustible		
+			
+			
+			
+ENCHANT_ID	Name	RubyName	Text
+100	Inexhaustible		
+			
+			
+			
+END			

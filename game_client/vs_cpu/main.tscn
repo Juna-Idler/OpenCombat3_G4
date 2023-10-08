@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://by1tfuimby7sp"]
+[gd_scene load_steps=12 format=3 uid="uid://by1tfuimby7sp"]
 
 [ext_resource type="Script" path="res://game_client/vs_cpu/main.gd" id="1_x7hgn"]
 [ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="1_yn0n3"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="3_xca0b"]
 [ext_resource type="PackedScene" uid="uid://byeuc141cmuvp" path="res://game_client/vs_cpu/menu.tscn" id="4_1nvn3"]
 [ext_resource type="PackedScene" uid="uid://cnc6sua8jiqfa" path="res://game_client/settings/settings.tscn" id="4_okodh"]
+[ext_resource type="Theme" uid="uid://ci5c8vmqhfqwc" path="res://default_theme.tres" id="4_r4g7j"]
 [ext_resource type="PackedScene" uid="uid://4v2h15esi7xs" path="res://game_client/deck_build/deck_list/deck_list.tscn" id="5_yiot8"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="6_d7h3p"]
 
@@ -69,6 +70,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("4_r4g7j")
 
 [node name="Label" type="Label" parent="CanvasLayerMatch/GameEnd"]
 layout_mode = 1

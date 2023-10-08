@@ -60,4 +60,7 @@ HSlider/styles/slider = SubResource("StyleBoxFlat_klv8w")
 Label/fonts/font = ExtResource("1_uah4p")
 LineEdit/font_sizes/font_size = 20
 LineEdit/fonts/font = ExtResource("1_uah4p")
+OptionButton/fonts/font = ExtResource("1_uah4p")
 Panel/styles/panel = SubResource("StyleBoxFlat_687wh")
+PopupMenu/fonts/font = ExtResource("1_uah4p")
+PopupMenu/fonts/font_separator = ExtResource("1_uah4p")

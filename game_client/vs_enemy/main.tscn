@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://5b4idtfkjgtu"]
+[gd_scene load_steps=12 format=3 uid="uid://5b4idtfkjgtu"]
 
 [ext_resource type="Script" path="res://game_client/vs_enemy/main.gd" id="1_e0nlf"]
 [ext_resource type="PackedScene" uid="uid://dci4g4cu74w6n" path="res://game_client/match/match_scene.tscn" id="2_o13aa"]
 [ext_resource type="FontFile" uid="uid://dttdqnx855wtb" path="res://fonts/ShipporiAntique-Medium.otf" id="3_1b2l4"]
+[ext_resource type="Theme" uid="uid://ci5c8vmqhfqwc" path="res://default_theme.tres" id="4_28evs"]
 [ext_resource type="PackedScene" uid="uid://58kjufmnbjwl" path="res://game_client/vs_enemy/menu.tscn" id="4_t5wg2"]
 [ext_resource type="PackedScene" uid="uid://4v2h15esi7xs" path="res://game_client/deck_build/deck_list/deck_list.tscn" id="5_teo6o"]
 [ext_resource type="PackedScene" uid="uid://da6slh0jarued" path="res://game_client/card/card_detail.tscn" id="6_e7we8"]
@@ -69,6 +70,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("4_28evs")
 
 [node name="Label" type="Label" parent="CanvasLayerMatch/GameEnd"]
 layout_mode = 1

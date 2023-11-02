@@ -2,7 +2,9 @@ extends SceneChanger.IScene
 
 var _scene_changer : SceneChanger
 
-var offline_server := OfflineServer.new()
+@onready var websocket_client : WebsocketClient = $WebsocketClient
+var online_server : OnlineServer
+
 var logger := MatchLogger.new()
 
 var server : IGameServer = null
@@ -24,7 +26,9 @@ var rival : NonPlayablePlayerField
 
 
 
+
 func _ready():
+
 	pass
 #	initialize()
 
@@ -36,6 +40,10 @@ func _process(_delta):
 
 func _initialize(changer : SceneChanger,_param : Array):
 	_scene_changer = changer
+	
+	websocket_client.connect_to_url("127.0.0.1:14739")
+	
+	online_server = OnlineServer.new(websocket_client,"ver")
 	
 	menu.initialize()
 	
@@ -76,9 +84,6 @@ func on_hand_selected(index : int,hand : Array[Card3D]):
 	pass
 
 func _on_match_scene_performed(playable : bool):
-	if offline_server.non_playable_recovery_phase:
-		server._send_recovery_select($match_scene.round_count,-1)
-		return
 	if playable:
 		myself.hand_area.set_playable(true)
 		return
@@ -153,21 +158,19 @@ func _on_menu_back_pressed():
 
 
 func _on_menu_start_pressed():
+
+	var my_deck := menu.get_my_deck() as DeckData
+	
+	online_server.send_match(Global.game_settings.player_name,my_deck.catalog._get_catalog_name(),my_deck.cards,"reg")
+	
+	logger.initialize(online_server)
+	server = logger
+	await online_server.matched
+
 	menu.hide()
 	game_end.hide()
 	%Settings.hide()
-	
-	var my_deck = menu.get_my_deck()
-	var cpu_deck = menu.get_cpu_deck()
-	var d := RegulationData.DeckRegulation.new("",27,30,2,1,"1-27")
-	var m := RegulationData.MatchRegulation.new("",4,60,10,5)
-	
-	offline_server.initialize(Global.game_settings.player_name,my_deck.cards,my_deck.catalog,
-			ICpuCommander.ZeroCommander.new(),cpu_deck.cards,cpu_deck.catalog,d,m,menu.get_shuffle())
-	logger.initialize(offline_server)
-	server = logger
 	$match_scene.initialize(server,myself,rival)
-	
 	server._send_ready()
 
 
@@ -182,5 +185,4 @@ func _on_deck_list_card_clicked(_index):
 	var cd := current_deck_data.catalog._get_card_data(current_deck_data.cards[_index])
 	panel_card_detail.show()
 	card_detail.initialize_origin(cd)
-
 

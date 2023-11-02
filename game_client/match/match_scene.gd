@@ -3,7 +3,7 @@ extends Node
 class_name MatchScene
 
 
-signal performed
+signal performed(playable : bool)
 signal ended(msg : String)
 
 signal request_card_detail(cd,color,level,power,hit,block,skills,picture)
@@ -30,6 +30,7 @@ const phase_names : PackedStringArray = ["Game End","Combat","Recovery"]
 
 func is_performing() -> bool:
 	return _performing
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -130,7 +131,7 @@ func _on_recieved_first_data(data : IGameServer.FirstData):
 	await perform_effect(data.myself.start,data.rival.start,I_PlayerField.EffectTiming.START)
 
 	_performing = false
-	performed.emit()
+	performed.emit(true)
 	pass
 
 		
@@ -171,7 +172,7 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 		my_game_end_point = data.myself.life - data.myself.damage
 		rival_game_end_point = data.rival.life - data.rival.damage
 		_performing = false
-		performed.emit()
+		performed.emit(false)
 		return
 	
 	await perform_effect(data.myself.end,data.rival.end,I_PlayerField.EffectTiming.END)
@@ -199,7 +200,10 @@ func _on_recieved_combat_result(data : IGameServer.CombatData):
 	label_board.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
 	label_board.visible = true
 	_performing = false
-	performed.emit()
+	
+	var playable : bool = (data.next_phase == IGameServer.Phase.COMBAT or
+			(data.next_phase == IGameServer.Phase.RECOVERY and data.myself.damage > 0))
+	performed.emit(playable)
 	
 func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	_performing = true
@@ -221,7 +225,7 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 		my_game_end_point = data.myself.life - data.myself.damage
 		rival_game_end_point = data.rival.life - data.rival.damage
 		_performing = false
-		performed.emit()
+		performed.emit(false)
 		return
 
 	if data.next_phase == IGameServer.Phase.COMBAT:
@@ -240,7 +244,10 @@ func _on_recieved_recovery_result(data : IGameServer.RecoveryData):
 	label_board.text = "Round:%s\nPhase:%s" % [round_count,phase_names[phase+1]]
 	label_board.visible = true
 	_performing = false
-	performed.emit()
+
+	var playable : bool = (data.next_phase == IGameServer.Phase.COMBAT or
+			(data.next_phase == IGameServer.Phase.RECOVERY and data.myself.damage > 0))
+	performed.emit(playable)
 	
 	
 func _on_recieved_end(msg:String):

@@ -75,13 +75,14 @@ func on_hand_selected(index : int,hand : Array[Card3D]):
 	await myself.fix_select_card(hand[index])
 	pass
 
-func _on_match_scene_performed():
+func _on_match_scene_performed(playable : bool):
 	if server.non_playable_recovery_phase:
 		server._send_recovery_select($match_scene.round_count,-1)
 		return
-	if $match_scene.phase != IGameServer.Phase.GAME_END:
+	if playable:
 		myself.hand_area.set_playable(true)
-	else:
+		return
+	if $match_scene.phase == IGameServer.Phase.GAME_END:
 		if game_end.visible:
 			return
 		game_end.show()

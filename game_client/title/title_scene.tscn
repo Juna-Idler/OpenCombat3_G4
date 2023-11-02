@@ -48,13 +48,28 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -192.0
+offset_left = 320.0
 offset_top = 88.0
-offset_right = 128.0
-offset_bottom = 192.0
+offset_right = 576.0
+offset_bottom = 152.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "START"
+
+[node name="ButtonOnline" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = 88.0
+offset_right = 128.0
+offset_bottom = 152.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "ONLINE"
 
 [node name="Button2" type="Button" parent="."]
 layout_mode = 1
@@ -63,10 +78,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 192.0
-offset_top = 80.0
-offset_right = 512.0
-offset_bottom = 184.0
+offset_left = -576.0
+offset_top = 216.0
+offset_right = -320.0
+offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "REPLAY"
@@ -78,10 +93,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -192.0
+offset_left = -128.0
 offset_top = 216.0
 offset_right = 128.0
-offset_bottom = 320.0
+offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "DECK"
@@ -93,10 +108,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 192.0
+offset_left = 320.0
 offset_top = 216.0
 offset_right = 576.0
-offset_bottom = 320.0
+offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "VS_ENEMY"
@@ -110,8 +125,8 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -576.0
 offset_top = 88.0
-offset_right = -256.0
-offset_bottom = 192.0
+offset_right = -320.0
+offset_bottom = 152.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "TUTORIAL"
@@ -150,6 +165,7 @@ visible = false
 layout_mode = 1
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="ButtonOnline" to="." method="_on_button_online_pressed"]
 [connection signal="pressed" from="Button2" to="." method="_on_button_2_pressed"]
 [connection signal="pressed" from="Button3" to="." method="_on_button_3_pressed"]
 [connection signal="pressed" from="Button4" to="." method="_on_button_4_pressed"]

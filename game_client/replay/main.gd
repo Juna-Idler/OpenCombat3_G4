@@ -98,7 +98,7 @@ func _on_timer_timeout():
 		performing_counter.start()
 		replay_server.step_forward()
 
-func on_match_scene_performed():
+func on_match_scene_performed(_playable : bool):
 	if match_scene.phase == IGameServer.Phase.GAME_END:
 		return
 

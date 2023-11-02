@@ -53,9 +53,13 @@ func _on_button_3_pressed():
 
 func _on_button_4_pressed():
 	_scene_changer.goto_scene("res://game_client/vs_enemy/main.tscn",[])
-	pass # Replace with function body.
 
 
 func _on_button_tutorial_pressed():
 	_scene_changer.goto_scene("res://game_client/tutorial/main.tscn",[])
-	pass # Replace with function body.
+
+
+func _on_button_online_pressed():
+	_scene_changer.goto_scene("res://game_client/online/main.tscn",[])
+	
+	

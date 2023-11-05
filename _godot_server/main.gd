@@ -85,7 +85,7 @@ class GameRoom:
 			player2.select = index
 			game.reorder_hand2(hands_order)
 			
-		if player1.select > 0 and player2.select > 0:
+		if player1.select >= 0 and player2.select >= 0:
 			var data := game.combat(player1.select,player2.select)
 			var serialized_data := data.serialize()
 			var p1_json := JSON.stringify({"type":"Combat","data":serialized_data})
@@ -112,7 +112,7 @@ class GameRoom:
 			player2.select = index
 			game.reorder_hand2(hands_order)
 			
-		if (player1.select > 0 or game_player1._is_recovery()) and (player2.select > 0 or game_player2._is_recovery()):
+		if (player1.select >= 0 or game_player1._is_recovery()) and (player2.select >= 0 or game_player2._is_recovery()):
 			var data := game.recover(player1.select,player2.select)
 			var serialized_data := data.serialize()
 			var p1_json := JSON.stringify({"type":"Recovery","data":serialized_data})
@@ -181,7 +181,7 @@ func _on_websocket_server_received(client_id : int, message : String):
 	var type : String = dic.get("type")
 	var data : Dictionary = dic.get("data")
 	
-	print(type + str(client_id))
+	print(type + ":" + str(client_id))
 
 	match type:
 		"Version":
@@ -208,7 +208,6 @@ func _on_websocket_server_received(client_id : int, message : String):
 				match_users[wait.client_id] = room
 				match_users[client_id] = room
 				wait = null
-
 				
 			else:
 				wait = client
@@ -228,6 +227,7 @@ func _on_websocket_server_received(client_id : int, message : String):
 						(match_users.get(client_id) as GameRoom).receive_combat_select(client_id,rc,i,ho)
 					"R":
 						(match_users.get(client_id) as GameRoom).receive_recovery_select(client_id,rc,i,ho)
+			print("round:%d phase:%s index:%s" % [rc,p,i])
 		
 		"End":
 			if match_users.has(client_id):

@@ -50,7 +50,16 @@ func initialize(name:String,deck:PackedInt32Array,card_catalog : CardCatalog,
 	
 
 func _get_primary_data() -> PrimaryData:
-
+	var my_deck_list : PackedInt32Array = []
+	for c in _player._get_deck_list():
+		my_deck_list.append(c.data.id)
+	var r_deck_list  : PackedInt32Array = []
+	for c in _cpu_player._get_deck_list():
+		r_deck_list.append(c.data.id)
+	return PrimaryData.new(_player_name,my_deck_list,"Basic",
+			_commander._get_commander_name(),r_deck_list,"Basic",
+			deck_regulation.to_regulation_string(),
+			match_regulation.to_regulation_string())
 
 func _send_ready():
 

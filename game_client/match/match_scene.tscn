@@ -10,7 +10,7 @@
 background_mode = 1
 background_color = Color(0.219608, 0.219608, 0.219608, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_joha1"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1tno8"]
 resource_local_to_scene = true
 transparency = 2
 alpha_scissor_threshold = 0.5
@@ -18,7 +18,7 @@ alpha_antialiasing_mode = 0
 shading_mode = 0
 billboard_mode = 1
 
-[sub_resource type="QuadMesh" id="QuadMesh_n0rug"]
+[sub_resource type="QuadMesh" id="QuadMesh_tiw8e"]
 resource_local_to_scene = true
 size = Vector2(2, 1)
 
@@ -45,8 +45,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 visible = false
 
 [node name="LabelBoard" parent="Field" instance=ExtResource("3_hyybm")]
-material_override = SubResource("StandardMaterial3D_joha1")
-mesh = SubResource("QuadMesh_n0rug")
+material_override = SubResource("StandardMaterial3D_1tno8")
+mesh = SubResource("QuadMesh_tiw8e")
 label_settings = SubResource("LabelSettings_jsf2d")
 viewport_size = Vector2i(512, 256)
 board_size = Vector2(2, 1)

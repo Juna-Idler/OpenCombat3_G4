@@ -7,6 +7,7 @@ var initial_life : int
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	super()
 	hand_area = $HandArea
 	pass # Replace with function body.
 
@@ -26,6 +27,8 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	
 	_playing_card.set_ray_pickable(false)
 	_playing_card.location = Card3D.CardLocation.COMBAT
+	_put_on_aura(_playing_card,CatalogData.RGB[_playing_card.color])
+	
 #	_life -= _playing_card.level
 	
 	while _skill_titles.size() < _playing_card.skills.size():

@@ -5,6 +5,7 @@ class_name BasePlayerField
 
 const Card3D_Scene := preload("res://game_client/match/parts/card3d.tscn")
 const SkillTitleScene := preload("res://game_client/match/field/parts/skill_title.tscn")
+const CardAuraScene := preload("res://game_client/match/parts/card_aura.tscn")
 
 
 var _opponent_layout : bool
@@ -14,6 +15,10 @@ var _opponent_layout : bool
 
 @onready var card_holder = $CardHolder
 var hand_area : HandArea
+
+var _card_aura : CardAura
+var _aura_tween : Tween
+
 
 @onready var enchant_display := $CanvasLayer/Node2D/EnchantDisplay
 
@@ -44,9 +49,15 @@ var _log_display : LogDisplay
 var _rival : I_PlayerField
 
 
+
+
+
 @onready var damage_combat_pos : Vector2 = %Damage.position
-# Called when the node enters the scene tree for the first time.
+
 func _ready():
+	_card_aura = CardAuraScene.instantiate()
+	_aura_tween = create_tween()
+	_aura_tween.kill()
 	pass
 
 func _get_catalog() -> I_CardCatalog:
@@ -147,6 +158,7 @@ func _combat_start(hand : PackedInt32Array,select : int) -> void:
 	
 	_playing_card.set_ray_pickable(false)
 	_playing_card.location = Card3D.CardLocation.COMBAT
+	_put_on_aura(_playing_card,CatalogData.RGB[_playing_card.color])
 	_life -= _playing_card.level
 	%LabelLife.text = str(_life)
 	
@@ -199,6 +211,7 @@ func _get_enchant_dictionary() -> Dictionary:	# key = id, value = Enchant
 	return enchant_display.get_enchant_dictionary()
 
 func _combat_end() -> void:
+	_take_off_aura(_playing_card)
 	_played.append(_playing_card.id_in_deck)
 	_playing_card.location = Card3D.CardLocation.PLAYED
 	var pos : Vector3 = $PlayedPosition.position
@@ -655,6 +668,26 @@ func _on_area_3d_input_event(_camera, event, _position, _normal, _shape_idx):
 			and event.pressed):
 		request_enchant_list_view.emit(_get_enchant_dictionary())
 		pass
+
+func _put_on_aura(card : Card3D,color : Color):
+	var parent := _card_aura.get_parent()
+	if parent:
+		if card == parent:
+			_card_aura.set_aura_color(color)
+			return
+		_card_aura.get_parent().remove_child(_card_aura)
+	card.add_child(_card_aura)
+	_aura_tween.kill()
+	_aura_tween = create_tween()
+	_aura_tween.tween_method(_card_aura.set_aura_intensity,0.0,1.0,0.3)
+	_card_aura.set_aura_color(color)
+
+func _take_off_aura(card : Card3D):
+	_aura_tween.kill()
+	_aura_tween = create_tween()
+	_aura_tween.tween_method(_card_aura.set_aura_intensity,1.0,0.0,0.3)
+	_aura_tween.tween_callback(card.remove_child.bind(_card_aura))
+
 
 func _set_complete_board(data : IGameServer.CompleteData.PlayerData):
 	deserialize(data)
